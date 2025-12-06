@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#1a1a2e">
+    <meta name="theme-color" content="#5B5FC7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Инвентаризация">
@@ -11,9 +11,9 @@
     
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #a5b4fc;
+            --primary: #5B5FC7;
+            --primary-dark: #4E52B0;
+            --primary-light: #8B8FE8;
             --success: #22c55e;
             --success-dark: #16a34a;
             --danger: #ef4444;
@@ -22,26 +22,28 @@
             --warning-dark: #d97706;
             --info: #3b82f6;
             
-            --bg-dark: #1a1a2e;
-            --bg-card: #16213e;
-            --bg-light: #0f3460;
-            --bg-surface: #1e3a5f;
+            --bg-main: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-sidebar: #ffffff;
+            --bg-header: #ffffff;
+            --bg-input: #f8fafc;
             
-            --text-primary: #ffffff;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
             
-            --border-color: rgba(255,255,255,0.1);
-            --border-light: rgba(255,255,255,0.05);
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --shadow-xl: 0 20px 50px rgba(0,0,0,0.15);
             
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 24px;
-            
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
-            --shadow-lg: 0 10px 40px rgba(0,0,0,0.5);
             
             --transition: 0.2s ease;
             
@@ -59,7 +61,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-dark);
+            background: var(--bg-main);
             color: var(--text-primary);
             line-height: 1.5;
             overflow: hidden;
@@ -67,11 +69,11 @@
             min-height: 100dvh;
         }
 
-        /* === STATUS BAR === */
+        /* === STATUS BAR SPACER === */
         .status-bar-spacer {
             height: var(--safe-top);
             min-height: 20px;
-            background: #0d0d1a;
+            background: #1a1a2e;
             position: fixed;
             top: 0;
             left: 0;
@@ -90,17 +92,19 @@
         /* === SIDEBAR === */
         .sidebar {
             width: 280px;
-            background: var(--bg-card);
+            background: var(--bg-sidebar);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
             z-index: 200;
+            box-shadow: var(--shadow-sm);
         }
 
         .logo-section { 
-            padding: 24px 20px;
+            padding: 20px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
         }
         .logo-title { 
             font-size: 1.125rem; 
@@ -109,27 +113,30 @@
         }
         .logo-subtitle { 
             font-size: 0.8125rem; 
-            opacity: 0.85;
+            opacity: 0.9;
             margin-top: 2px;
         }
 
-        /* Progress Circle */
+        /* Progress Section */
         .progress-section {
             padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .progress-circle-container {
             display: flex;
             align-items: center;
             gap: 16px;
-            border-bottom: 1px solid var(--border-color);
         }
         .progress-circle {
-            width: 64px;
-            height: 64px;
+            width: 70px;
+            height: 70px;
             position: relative;
         }
         .progress-circle svg {
             transform: rotate(-90deg);
-            width: 64px;
-            height: 64px;
+            width: 70px;
+            height: 70px;
         }
         .progress-circle-bg {
             fill: none;
@@ -149,17 +156,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 1.125rem;
             font-weight: 800;
-            color: var(--text-primary);
+            color: var(--primary);
         }
         .progress-info { flex: 1; }
-        .progress-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .progress-stats { margin-top: 4px; }
-        .progress-stat { font-size: 0.8125rem; color: var(--text-secondary); display: flex; justify-content: space-between; }
-        .progress-stat span:last-child { font-weight: 600; color: var(--text-primary); }
+        .progress-label { 
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        .progress-stats { margin-top: 6px; }
+        .progress-stat { 
+            font-size: 0.875rem; 
+            color: var(--text-secondary); 
+            display: flex; 
+            justify-content: space-between;
+            padding: 2px 0;
+        }
+        .progress-stat span:last-child { font-weight: 700; color: var(--text-primary); }
 
-        /* Quick Stats */
+        /* Quick Stats Grid */
         .quick-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -168,16 +187,16 @@
             border-bottom: 1px solid var(--border-color);
         }
         .quick-stat {
-            background: var(--bg-surface);
+            background: var(--bg-input);
             padding: 12px;
             border-radius: var(--radius-md);
             text-align: center;
             cursor: pointer;
             transition: all var(--transition);
-            border: 1px solid transparent;
+            border: 2px solid transparent;
         }
         .quick-stat:hover {
-            border-color: var(--primary);
+            border-color: var(--primary-light);
             transform: translateY(-1px);
         }
         .quick-stat-value {
@@ -194,7 +213,8 @@
             color: var(--text-muted);
             text-transform: uppercase;
             margin-top: 4px;
-            letter-spacing: 0.5px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         /* Sidebar Actions */
@@ -207,8 +227,8 @@
         .sidebar-btn {
             flex: 1;
             padding: 10px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
             color: var(--text-secondary);
             font-size: 0.75rem;
@@ -221,8 +241,9 @@
             gap: 4px;
         }
         .sidebar-btn:hover {
-            background: var(--bg-light);
-            color: var(--text-primary);
+            background: var(--bg-card);
+            border-color: var(--primary-light);
+            color: var(--primary);
         }
         .sidebar-btn.primary {
             background: var(--primary);
@@ -232,7 +253,7 @@
         .sidebar-btn.primary:hover {
             background: var(--primary-dark);
         }
-        .sidebar-btn-icon { font-size: 1.125rem; }
+        .sidebar-btn-icon { font-size: 1.25rem; }
 
         /* Categories */
         .categories-section { 
@@ -264,12 +285,12 @@
             border-left: 3px solid transparent;
         }
         .category-item:hover { 
-            background: var(--bg-surface);
+            background: var(--bg-input);
             color: var(--text-primary);
         }
         .category-item.active { 
-            background: rgba(99, 102, 241, 0.15);
-            color: var(--primary-light);
+            background: rgba(91, 95, 199, 0.08);
+            color: var(--primary);
             font-weight: 600;
             border-left-color: var(--primary);
         }
@@ -278,13 +299,14 @@
         .category-count { 
             font-size: 0.75rem;
             color: var(--text-muted);
-            background: var(--bg-surface);
+            background: var(--bg-input);
             padding: 2px 8px;
             border-radius: 10px;
+            font-weight: 600;
         }
         .category-item.active .category-count {
-            background: rgba(99, 102, 241, 0.3);
-            color: var(--primary-light);
+            background: rgba(91, 95, 199, 0.15);
+            color: var(--primary);
         }
 
         /* === MAIN CONTENT === */
@@ -298,10 +320,11 @@
 
         /* === HEADER === */
         .header { 
-            background: var(--bg-card);
+            background: var(--bg-header);
             padding: 16px 24px;
             border-bottom: 1px solid var(--border-color);
             flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
         }
 
         .header-row {
@@ -327,10 +350,10 @@
         .search-box input { 
             width: 100%; 
             padding: 12px 44px 12px 42px; 
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-lg); 
             font-size: 0.9375rem; 
-            background: var(--bg-surface);
+            background: var(--bg-input);
             color: var(--text-primary);
             transition: all var(--transition);
         }
@@ -338,7 +361,8 @@
         .search-box input:focus { 
             outline: none; 
             border-color: var(--primary);
-            background: var(--bg-light);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(91, 95, 199, 0.1);
         }
         .search-clear {
             position: absolute;
@@ -349,12 +373,13 @@
             height: 28px;
             border-radius: 50%;
             border: none;
-            background: var(--bg-light);
+            background: var(--bg-main);
             color: var(--text-muted);
             cursor: pointer;
             display: none;
             align-items: center;
             justify-content: center;
+            font-size: 0.875rem;
         }
         .search-clear.show { display: flex; }
 
@@ -371,17 +396,17 @@
             display: inline-flex; 
             align-items: center; 
             gap: 6px; 
-            border: 1px solid var(--border-color);
-            background: var(--bg-surface);
+            border: 2px solid var(--border-color);
+            background: white;
             color: var(--text-secondary);
             transition: all var(--transition);
         }
-        .btn:hover { background: var(--bg-light); color: var(--text-primary); }
+        .btn:hover { background: var(--bg-input); color: var(--text-primary); border-color: var(--primary-light); }
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: var(--primary); border-color: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
         .btn-success { background: var(--success); border-color: var(--success); color: white; }
-        .btn-success:hover { background: var(--success-dark); }
+        .btn-success:hover { background: var(--success-dark); border-color: var(--success-dark); }
         .btn-icon { font-size: 1rem; }
 
         /* Filters */
@@ -396,8 +421,8 @@
         
         .filter-chip { 
             padding: 8px 14px; 
-            border: 1px solid var(--border-color);
-            background: var(--bg-surface);
+            border: 2px solid var(--border-color);
+            background: white;
             border-radius: 20px; 
             cursor: pointer; 
             font-size: 0.8125rem; 
@@ -409,30 +434,27 @@
             align-items: center;
             gap: 6px;
         }
-        .filter-chip:hover { background: var(--bg-light); color: var(--text-primary); }
+        .filter-chip:hover { background: var(--bg-input); border-color: var(--primary-light); }
         .filter-chip.active { 
             background: var(--primary);
             border-color: var(--primary);
             color: white;
         }
         .filter-chip-count {
-            background: rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.1);
             padding: 2px 6px;
             border-radius: 8px;
             font-size: 0.75rem;
+        }
+        .filter-chip.active .filter-chip-count {
+            background: rgba(255,255,255,0.25);
         }
 
         /* === CONTENT === */
         .content-area { 
             flex: 1; 
-            display: flex; 
-            overflow: hidden;
-        }
-        
-        .list-section { 
-            flex: 1; 
             overflow-y: auto; 
-            padding: 16px 24px 100px;
+            padding: 20px 24px 100px;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -445,420 +467,203 @@
         .empty-state-text { font-size: 1rem; font-weight: 600; color: var(--text-secondary); }
 
         /* Category Header */
-        .list-category-header { 
+        .category-header { 
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            padding: 12px 16px;
-            border-radius: var(--radius-md); 
-            margin: 16px 0 12px;
+            color: white;
+            padding: 14px 18px;
+            border-radius: var(--radius-lg); 
+            margin: 20px 0 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--shadow-md);
         }
-        .list-category-header:first-child { margin-top: 0; }
-        .list-category-title { 
-            font-size: 0.9375rem; 
+        .category-header:first-child { margin-top: 0; }
+        .category-header-title { 
+            font-size: 1rem; 
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
-        .list-category-stats { 
-            font-size: 0.8125rem;
+        .category-header-stats { 
+            font-size: 0.875rem;
             background: rgba(255,255,255,0.2);
-            padding: 4px 10px;
-            border-radius: 10px;
+            padding: 4px 12px;
+            border-radius: 12px;
         }
 
-        /* Equipment Cards */
+        /* Equipment Grid - 2 columns on iPad */
         .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 12px;
+        }
+        
+        /* Equipment Card */
+        .equipment-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            border: 2px solid var(--border-color);
+            transition: all var(--transition);
             display: flex;
             flex-direction: column;
-            gap: 8px;
-        }
-        
-        .equipment-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-md);
-            padding: 14px 16px;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all var(--transition);
+            gap: 10px;
         }
         .equipment-card:hover {
-            background: var(--bg-surface);
-            border-color: var(--primary);
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
         }
         .equipment-card.checked {
-            background: rgba(34, 197, 94, 0.08);
-            border-color: rgba(34, 197, 94, 0.3);
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: var(--success);
         }
         .equipment-card.write-off {
-            background: rgba(239, 68, 68, 0.08);
-            border-color: rgba(239, 68, 68, 0.3);
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: var(--danger);
         }
         
-        .card-checkbox {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            border: 2px solid var(--border-color);
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .card-status {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 1.25rem;
             flex-shrink: 0;
-            background: var(--bg-surface);
-            color: transparent;
-            transition: all var(--transition);
+            background: var(--bg-input);
         }
-        .equipment-card.checked .card-checkbox {
+        .equipment-card.checked .card-status {
             background: var(--success);
-            border-color: var(--success);
             color: white;
         }
-        .equipment-card.write-off .card-checkbox {
+        .equipment-card.write-off .card-status {
             background: var(--danger);
-            border-color: var(--danger);
             color: white;
         }
         
         .card-info { flex: 1; min-width: 0; }
-        .card-top {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
-        }
         .card-inv {
             font-family: 'SF Mono', 'Fira Code', monospace;
-            font-weight: 600;
-            font-size: 0.8125rem;
-            color: var(--primary-light);
-            background: rgba(99, 102, 241, 0.15);
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--primary);
+            background: rgba(91, 95, 199, 0.1);
             padding: 2px 8px;
-            border-radius: 4px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 4px;
         }
-        .card-badges { display: flex; gap: 4px; }
+        .card-name {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .card-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
         .card-badge {
             font-size: 0.6875rem;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
-        .card-badge.no-label { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-        .card-badge.has-note { background: rgba(59, 130, 246, 0.15); color: var(--info); }
-        .card-badge.has-serial { background: rgba(34, 197, 94, 0.15); color: var(--success); }
-        .card-badge.is-new { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .card-badge.no-label { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .card-badge.has-note { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+        .card-badge.has-serial { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+        .card-badge.is-new { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
         
-        .card-name {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
         .card-meta {
             display: flex;
             gap: 12px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 4px;
+            flex-wrap: wrap;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
         }
-        .card-meta-item { display: flex; align-items: center; gap: 4px; }
+        .card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
         
+        /* Card Actions - Always visible */
         .card-actions {
             display: flex;
-            gap: 6px;
-            opacity: 0;
-            transition: opacity var(--transition);
+            gap: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-light);
         }
-        .equipment-card:hover .card-actions { opacity: 1; }
-        
         .card-action {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.875rem;
-            transition: all var(--transition);
-        }
-        .card-action.check { background: rgba(34, 197, 94, 0.15); color: var(--success); }
-        .card-action.check:hover { background: var(--success); color: white; }
-        .card-action.scrap { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-        .card-action.scrap:hover { background: var(--danger); color: white; }
-        .card-action.undo { background: rgba(148, 163, 184, 0.15); color: var(--text-secondary); }
-        .card-action.undo:hover { background: var(--text-muted); color: white; }
-
-        /* === DETAILS PANEL === */
-        .details-panel { 
-            width: 420px;
-            max-width: 100%;
-            background: var(--bg-card);
-            border-left: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
-        .details-panel.hidden { display: none; }
-        
-        .details-header { 
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-        .details-header-info { flex: 1; min-width: 0; }
-        .details-inv {
-            display: inline-block;
-            font-family: 'SF Mono', monospace;
-            font-size: 0.875rem;
-            font-weight: 700;
-            background: rgba(255,255,255,0.2);
-            padding: 4px 10px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-        }
-        .details-title { 
-            font-size: 1rem;
-            font-weight: 600;
-            line-height: 1.4;
-        }
-        .details-category {
-            font-size: 0.8125rem;
-            opacity: 0.85;
-            margin-top: 4px;
-        }
-        .details-header-actions { display: flex; gap: 6px; }
-        .header-btn { 
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
-            background: rgba(255,255,255,0.2);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.125rem;
-            transition: all var(--transition);
-        }
-        .header-btn:hover { background: rgba(255,255,255,0.3); }
-        .header-btn.danger:hover { background: var(--danger); }
-
-        .details-body { 
             flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        
-        .detail-section {
-            margin-bottom: 24px;
-        }
-        .detail-section-title {
-            font-size: 0.6875rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .detail-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        .detail-item {
-            background: var(--bg-surface);
-            padding: 12px;
+            padding: 10px;
             border-radius: var(--radius-md);
-        }
-        .detail-item.full { grid-column: 1 / -1; }
-        .detail-item-label { 
-            font-size: 0.6875rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        .detail-item-value { 
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-        }
-
-        .input-group { margin-bottom: 16px; }
-        .input-label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            border: none;
+            cursor: pointer;
             font-size: 0.8125rem;
             font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-        .input-label-icon { font-size: 1rem; }
-        
-        .input-wrapper { position: relative; }
-        
-        .input-field, .textarea-field { 
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
-            font-size: 1rem;
-            font-family: inherit;
-            background: var(--bg-surface);
-            color: var(--text-primary);
-            transition: all var(--transition);
-        }
-        .input-field::placeholder, .textarea-field::placeholder { color: var(--text-muted); }
-        .input-field:focus, .textarea-field:focus { 
-            outline: none;
-            border-color: var(--primary);
-            background: var(--bg-light);
-        }
-        .input-field.filled { border-color: var(--success); }
-        .textarea-field { min-height: 100px; resize: vertical; }
-        .textarea-field.filled { border-color: var(--info); }
-
-        /* Autocomplete */
-        .autocomplete-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lg);
-            z-index: 100;
-            max-height: 180px;
-            overflow-y: auto;
-            display: none;
-        }
-        .autocomplete-dropdown.show { display: block; }
-        .autocomplete-item {
-            padding: 12px 16px;
-            cursor: pointer;
-            font-size: 0.9375rem;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-color);
-            transition: all var(--transition);
-        }
-        .autocomplete-item:last-child { border-bottom: none; }
-        .autocomplete-item:hover {
-            background: var(--bg-surface);
-            color: var(--text-primary);
-        }
-
-        .label-buttons { 
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        .label-btn { 
-            padding: 16px;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
-            background: var(--bg-surface);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            text-align: center;
-            transition: all var(--transition);
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .label-btn:hover { border-color: var(--primary); }
-        .label-btn.yes.active { 
-            background: rgba(34, 197, 94, 0.15);
-            border-color: var(--success);
-            color: var(--success);
-        }
-        .label-btn.no.active { 
-            background: rgba(239, 68, 68, 0.15);
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-
-        /* Navigation */
-        .details-nav {
-            display: flex;
-            gap: 10px;
-            padding: 0 20px 16px;
-        }
-        .nav-btn {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-surface);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
             transition: all var(--transition);
         }
-        .nav-btn:hover { background: var(--bg-light); color: var(--text-primary); }
-        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-        .details-actions { 
-            padding: 20px;
-            background: var(--bg-surface);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .card-action.check { 
+            background: rgba(34, 197, 94, 0.1); 
+            color: var(--success); 
         }
-        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .action-btn-large { 
-            padding: 16px;
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: none;
-            color: white;
-            transition: all var(--transition);
+        .card-action.check:hover { 
+            background: var(--success); 
+            color: white; 
         }
-        .action-btn-large:active { transform: scale(0.98); }
-        .action-btn-large.success { background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%); }
-        .action-btn-large.warning { background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%); }
-        .action-btn-large.secondary { background: var(--text-muted); }
-        .action-btn-large.full { grid-column: 1 / -1; }
+        .card-action.edit { 
+            background: rgba(59, 130, 246, 0.1); 
+            color: var(--info); 
+        }
+        .card-action.edit:hover { 
+            background: var(--info); 
+            color: white; 
+        }
+        .card-action.scrap { 
+            background: rgba(239, 68, 68, 0.1); 
+            color: var(--danger); 
+        }
+        .card-action.scrap:hover { 
+            background: var(--danger); 
+            color: white; 
+        }
+        .card-action.undo { 
+            background: rgba(148, 163, 184, 0.15); 
+            color: var(--text-secondary); 
+        }
+        .card-action.undo:hover { 
+            background: var(--text-muted); 
+            color: white; 
+        }
 
-        /* === MODALS === */
+        /* === MODAL OVERLAY === */
         .modal-overlay { 
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
             z-index: 600;
             align-items: center;
             justify-content: center;
@@ -869,14 +674,13 @@
         #confirmModal { z-index: 700; }
         
         .modal { 
-            background: var(--bg-card);
+            background: white;
             border-radius: var(--radius-xl);
             padding: 28px;
             max-width: 420px;
             width: 100%;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-lg);
-            animation: modalIn 0.2s ease;
+            box-shadow: var(--shadow-xl);
+            animation: modalIn 0.25s ease;
         }
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.95) translateY(10px); }
@@ -891,7 +695,7 @@
             justify-content: center;
             font-size: 2rem;
             margin: 0 auto 20px;
-            background: rgba(99, 102, 241, 0.15);
+            background: rgba(91, 95, 199, 0.1);
         }
         .modal-title { 
             font-size: 1.25rem;
@@ -904,7 +708,7 @@
             color: var(--text-secondary);
             text-align: center;
             margin-bottom: 24px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
         .modal-input {
             width: 100%;
@@ -914,7 +718,7 @@
             font-size: 1.125rem;
             text-align: center;
             font-family: 'SF Mono', monospace;
-            background: var(--bg-surface);
+            background: var(--bg-input);
             color: var(--text-primary);
             margin-bottom: 20px;
         }
@@ -937,8 +741,244 @@
         .modal-btn:active { transform: scale(0.98); }
         .modal-btn.yes { background: var(--success); color: white; }
         .modal-btn.no { background: var(--danger); color: white; }
-        .modal-btn.cancel { background: var(--bg-surface); color: var(--text-secondary); border: 1px solid var(--border-color); }
+        .modal-btn.cancel { background: var(--bg-input); color: var(--text-secondary); border: 2px solid var(--border-color); }
         .modal-btn.primary { background: var(--primary); color: white; }
+
+        /* === DETAILS MODAL === */
+        .details-modal { 
+            max-width: 500px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .details-header { 
+            padding: 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+        .details-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .details-header-info { flex: 1; min-width: 0; }
+        .details-inv {
+            display: inline-block;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .details-name { 
+            font-size: 1.125rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .details-category {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+        .details-close { 
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            transition: all var(--transition);
+        }
+        .details-close:hover { background: rgba(255,255,255,0.3); }
+
+        .details-body { 
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .detail-section {
+            margin-bottom: 24px;
+        }
+        .detail-section:last-child { margin-bottom: 0; }
+        .detail-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .detail-item {
+            background: var(--bg-input);
+            padding: 12px;
+            border-radius: var(--radius-md);
+        }
+        .detail-item.full { grid-column: 1 / -1; }
+        .detail-item-label { 
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .detail-item-value { 
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .input-group { margin-bottom: 16px; }
+        .input-group:last-child { margin-bottom: 0; }
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .input-label-icon { font-size: 1rem; }
+        
+        .input-field, .textarea-field { 
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-family: inherit;
+            background: white;
+            color: var(--text-primary);
+            transition: all var(--transition);
+        }
+        .input-field::placeholder, .textarea-field::placeholder { color: var(--text-muted); }
+        .input-field:focus, .textarea-field:focus { 
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91, 95, 199, 0.1);
+        }
+        .input-field.filled { border-color: var(--success); background: #f0fdf4; }
+        .textarea-field { min-height: 100px; resize: vertical; }
+        .textarea-field.filled { border-color: var(--info); background: #eff6ff; }
+
+        /* Autocomplete */
+        .input-wrapper { position: relative; }
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            max-height: 180px;
+            overflow-y: auto;
+            display: none;
+        }
+        .autocomplete-dropdown.show { display: block; }
+        .autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+            transition: all var(--transition);
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+        .autocomplete-item:hover {
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+
+        .label-buttons { 
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .label-btn { 
+            padding: 14px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: white;
+            cursor: pointer;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all var(--transition);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .label-btn:hover { border-color: var(--primary-light); }
+        .label-btn.yes.active { 
+            background: #f0fdf4;
+            border-color: var(--success);
+            color: var(--success);
+        }
+        .label-btn.no.active { 
+            background: #fef2f2;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .details-actions { 
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--bg-input);
+        }
+        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .action-btn-large { 
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            color: white;
+            transition: all var(--transition);
+        }
+        .action-btn-large:active { transform: scale(0.98); }
+        .action-btn-large.success { background: var(--success); }
+        .action-btn-large.success:hover { background: var(--success-dark); }
+        .action-btn-large.warning { background: var(--warning); }
+        .action-btn-large.warning:hover { background: var(--warning-dark); }
+        .action-btn-large.secondary { background: var(--text-muted); }
+        .action-btn-large.full { grid-column: 1 / -1; }
 
         /* Edit Modal */
         .edit-modal { max-width: 500px; }
@@ -957,7 +997,7 @@
             border-radius: var(--radius-md);
             font-size: 0.9375rem;
             font-family: inherit;
-            background: var(--bg-surface);
+            background: white;
             color: var(--text-primary);
         }
         .edit-form-input:focus, .edit-form-select:focus, .edit-form-textarea:focus {
@@ -980,7 +1020,7 @@
             border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
             font-size: 1rem;
-            background: var(--bg-surface);
+            background: white;
             color: var(--text-primary);
         }
         .directory-input:focus { outline: none; border-color: var(--primary); }
@@ -996,13 +1036,13 @@
         .directory-list {
             max-height: 300px;
             overflow-y: auto;
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
             margin-bottom: 16px;
         }
         .directory-item {
             padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-light);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -1015,7 +1055,7 @@
             border: 2px solid var(--primary);
             border-radius: var(--radius-sm);
             font-size: 0.9375rem;
-            background: var(--bg-surface);
+            background: white;
             color: var(--text-primary);
         }
         .directory-item-btn {
@@ -1030,9 +1070,9 @@
             font-size: 0.9375rem;
             transition: all var(--transition);
         }
-        .directory-item-btn.edit { background: rgba(59, 130, 246, 0.15); color: var(--info); }
-        .directory-item-btn.save { background: rgba(34, 197, 94, 0.15); color: var(--success); }
-        .directory-item-btn.delete { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .directory-item-btn.edit { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+        .directory-item-btn.save { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+        .directory-item-btn.delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
         .directory-item-btn.cancel { background: rgba(148, 163, 184, 0.15); color: var(--text-secondary); }
         .directory-empty {
             padding: 40px;
@@ -1049,7 +1089,7 @@
             border-radius: var(--radius-lg);
             font-size: 1.25rem;
             font-family: 'SF Mono', monospace;
-            background: var(--bg-surface);
+            background: white;
             color: var(--text-primary);
             margin-bottom: 16px;
         }
@@ -1059,7 +1099,7 @@
             overflow-y: auto;
             margin-bottom: 16px;
             max-height: 400px;
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
         }
         .quick-search-empty {
@@ -1069,7 +1109,7 @@
         }
         .quick-search-item {
             padding: 14px 16px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-light);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -1077,18 +1117,18 @@
             transition: all var(--transition);
         }
         .quick-search-item:last-child { border-bottom: none; }
-        .quick-search-item:hover { background: var(--bg-surface); }
-        .quick-search-item.checked { background: rgba(34, 197, 94, 0.08); }
-        .quick-search-item.write-off { background: rgba(239, 68, 68, 0.08); }
+        .quick-search-item:hover { background: var(--bg-input); }
+        .quick-search-item.checked { background: #f0fdf4; }
+        .quick-search-item.write-off { background: #fef2f2; }
         .quick-search-status {
             width: 36px;
             height: 36px;
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1rem;
-            background: var(--bg-surface);
+            background: var(--bg-input);
             color: var(--text-muted);
         }
         .quick-search-item.checked .quick-search-status { background: var(--success); color: white; }
@@ -1098,7 +1138,7 @@
             font-family: 'SF Mono', monospace;
             font-weight: 600;
             font-size: 0.875rem;
-            color: var(--primary-light);
+            color: var(--primary);
             margin-bottom: 2px;
         }
         .quick-search-name {
@@ -1113,7 +1153,7 @@
             padding: 8px;
             font-size: 0.8125rem;
             color: var(--text-muted);
-            background: var(--bg-surface);
+            background: var(--bg-input);
         }
 
         /* Toast */
@@ -1122,8 +1162,8 @@
             bottom: calc(20px + var(--safe-bottom));
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--bg-card);
-            color: var(--text-primary);
+            background: var(--text-primary);
+            color: white;
             padding: 14px 24px;
             border-radius: var(--radius-lg);
             font-weight: 600;
@@ -1136,7 +1176,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            border: 1px solid var(--border-color);
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .toast-icon {
@@ -1156,7 +1195,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.5);
             z-index: 400;
         }
         .mobile-overlay.show { display: block; }
@@ -1164,25 +1203,26 @@
         .mobile-menu-btn { 
             display: none;
             position: fixed;
-            top: calc(8px + var(--safe-top));
+            top: calc(12px + var(--safe-top));
             left: 12px;
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: var(--radius-md);
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             z-index: 201;
             cursor: pointer;
+            box-shadow: var(--shadow-md);
         }
 
         .fab {
             position: fixed;
-            bottom: calc(20px + var(--safe-bottom));
-            right: 20px;
-            width: 56px;
-            height: 56px;
+            bottom: calc(24px + var(--safe-bottom));
+            right: 24px;
+            width: 60px;
+            height: 60px;
             background: var(--primary);
             color: white;
             border: none;
@@ -1200,34 +1240,9 @@
 
         /* === RESPONSIVE === */
         @media (max-width: 1024px) {
-            .details-panel { 
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-                max-height: 90vh;
-                border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-                border-left: none;
-                z-index: 450;
-                transform: translateY(100%);
-                transition: transform 0.3s ease;
+            .equipment-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
-            .details-panel:not(.hidden) { transform: translateY(0); }
-            .details-panel.hidden { display: flex; }
-            
-            .details-header::before {
-                content: '';
-                position: absolute;
-                top: 8px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 40px;
-                height: 4px;
-                background: rgba(255,255,255,0.3);
-                border-radius: 2px;
-            }
-            .details-header { position: relative; padding-top: 24px; }
         }
 
         @media (max-width: 768px) {
@@ -1246,19 +1261,20 @@
             .sidebar.open { transform: translateX(0); }
             .sidebar .logo-section { padding-top: 20px; }
             
-            .header { padding: 12px 16px; padding-left: 68px; }
+            .header { padding: 16px; padding-left: 72px; }
             .search-box { max-width: none; }
             .btn .btn-text { display: none; }
             
-            .list-section { padding: 12px 16px 100px; }
-            .card-meta { display: none; }
+            .content-area { padding: 16px 16px 100px; }
             
-            .fab { bottom: calc(16px + var(--safe-bottom)); right: 16px; }
+            .equipment-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .fab { bottom: calc(20px + var(--safe-bottom)); right: 20px; }
             
             .toast { left: 16px; right: 16px; transform: translateX(0) translateY(100px); }
             .toast.show { transform: translateX(0) translateY(0); }
-            
-            .edit-form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1268,11 +1284,11 @@
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 
-    <!-- SVG Gradient for Progress Circle -->
+    <!-- SVG Gradient -->
     <svg style="position:absolute;width:0;height:0">
         <defs>
             <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#6366f1"/>
+                <stop offset="0%" style="stop-color:#5B5FC7"/>
                 <stop offset="100%" style="stop-color:#22c55e"/>
             </linearGradient>
         </defs>
@@ -1316,6 +1332,88 @@
             <div class="modal-buttons" style="flex-direction: row; gap: 10px;">
                 <button class="modal-btn cancel" id="confirmCancel" style="flex:1">Отмена</button>
                 <button class="modal-btn primary" id="confirmOk" style="flex:1">Да</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div class="modal-overlay" id="detailsModal">
+        <div class="modal details-modal">
+            <div class="details-header">
+                <div class="details-header-top">
+                    <div class="details-header-info">
+                        <span class="details-inv" id="detailsInv">-</span>
+                        <div class="details-name" id="detailsName">-</div>
+                        <div class="details-category" id="detailsCategory">📁 -</div>
+                    </div>
+                    <button class="details-close" id="closeDetails">✕</button>
+                </div>
+            </div>
+            
+            <div class="details-body">
+                <div class="detail-section">
+                    <div class="detail-section-title">📋 Информация</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-item-label">Дата ввода</div>
+                            <div class="detail-item-value" id="detailsDate">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-item-label">Статус</div>
+                            <div class="detail-item-value" id="detailsStatus">-</div>
+                        </div>
+                        <div class="detail-item full">
+                            <div class="detail-item-label">Примечание</div>
+                            <div class="detail-item-value" id="detailsNote">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-section-title">🏷️ Наличие бирки</div>
+                    <div class="label-buttons">
+                        <button class="label-btn yes" data-value="true">✓ Есть</button>
+                        <button class="label-btn no" data-value="false">✗ Нет</button>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-section-title">📝 Данные инвентаризации</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label"><span class="input-label-icon">🔢</span> Серийный номер</label>
+                        <input type="text" class="input-field" id="detailsSerial" placeholder="Введите S/N">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label"><span class="input-label-icon">📍</span> Локация</label>
+                        <div class="input-wrapper">
+                            <input type="text" class="input-field" id="detailsLocation" placeholder="Кабинет">
+                            <div class="autocomplete-dropdown" id="locationDropdown"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label"><span class="input-label-icon">👤</span> Ответственный</label>
+                        <div class="input-wrapper">
+                            <input type="text" class="input-field" id="detailsResponsible" placeholder="ФИО">
+                            <div class="autocomplete-dropdown" id="responsibleDropdown"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label"><span class="input-label-icon">💬</span> Заметки</label>
+                        <textarea class="textarea-field" id="detailsInventoryNote" placeholder="Примечания по проверке..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="details-actions">
+                <div class="action-row" id="actionsMain">
+                    <button class="action-btn-large success" id="btnCheck">✅ Проверено</button>
+                    <button class="action-btn-large warning" id="btnScrap">📝 Списание</button>
+                </div>
+                <button class="action-btn-large secondary full" id="btnUndo" style="display:none">↩️ Снять отметку</button>
             </div>
         </div>
     </div>
@@ -1403,19 +1501,21 @@
             </div>
             
             <div class="progress-section">
-                <div class="progress-circle">
-                    <svg viewBox="0 0 36 36">
-                        <circle class="progress-circle-bg" cx="18" cy="18" r="15"/>
-                        <circle class="progress-circle-fill" id="progressCircle" cx="18" cy="18" r="15" 
-                            stroke-dasharray="94.2" stroke-dashoffset="94.2"/>
-                    </svg>
-                    <div class="progress-circle-text" id="progressPercent">0%</div>
-                </div>
-                <div class="progress-info">
-                    <div class="progress-label">Прогресс</div>
-                    <div class="progress-stats">
-                        <div class="progress-stat"><span>Проверено</span><span id="statChecked">0</span></div>
-                        <div class="progress-stat"><span>Осталось</span><span id="statPending">0</span></div>
+                <div class="progress-circle-container">
+                    <div class="progress-circle">
+                        <svg viewBox="0 0 36 36">
+                            <circle class="progress-circle-bg" cx="18" cy="18" r="15"/>
+                            <circle class="progress-circle-fill" id="progressCircle" cx="18" cy="18" r="15" 
+                                stroke-dasharray="94.2" stroke-dashoffset="94.2"/>
+                        </svg>
+                        <div class="progress-circle-text" id="progressPercent">0%</div>
+                    </div>
+                    <div class="progress-info">
+                        <div class="progress-label">Прогресс</div>
+                        <div class="progress-stats">
+                            <div class="progress-stat"><span>Проверено</span><span id="statChecked">0</span></div>
+                            <div class="progress-stat"><span>Осталось</span><span id="statPending">0</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1490,95 +1590,7 @@
                 </div>
             </header>
 
-            <div class="content-area">
-                <section class="list-section" id="listSection"></section>
-                
-                <aside class="details-panel hidden" id="detailsPanel">
-                    <div class="details-header">
-                        <div class="details-header-info">
-                            <span class="details-inv" id="detailsInv">-</span>
-                            <div class="details-title" id="detailsName">-</div>
-                            <div class="details-category" id="detailsCategory">📁 -</div>
-                        </div>
-                        <div class="details-header-actions">
-                            <button class="header-btn" id="editEquipment" title="Редактировать">✏️</button>
-                            <button class="header-btn danger" id="deleteEquipment" title="Удалить">🗑️</button>
-                            <button class="header-btn" id="closeDetails" title="Закрыть">✕</button>
-                        </div>
-                    </div>
-                    
-                    <div class="details-body">
-                        <div class="detail-section">
-                            <div class="detail-section-title">📋 Информация</div>
-                            <div class="detail-grid">
-                                <div class="detail-item">
-                                    <div class="detail-item-label">Дата ввода</div>
-                                    <div class="detail-item-value" id="detailsDate">-</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-item-label">Статус</div>
-                                    <div class="detail-item-value" id="detailsStatus">-</div>
-                                </div>
-                                <div class="detail-item full">
-                                    <div class="detail-item-label">Примечание</div>
-                                    <div class="detail-item-value" id="detailsNote">-</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="detail-section">
-                            <div class="detail-section-title">🏷️ Наличие бирки</div>
-                            <div class="label-buttons">
-                                <button class="label-btn yes" data-value="true">✓ Есть</button>
-                                <button class="label-btn no" data-value="false">✗ Нет</button>
-                            </div>
-                        </div>
-                        
-                        <div class="detail-section">
-                            <div class="detail-section-title">📝 Данные инвентаризации</div>
-                            
-                            <div class="input-group">
-                                <label class="input-label"><span class="input-label-icon">🔢</span> Серийный номер</label>
-                                <input type="text" class="input-field" id="detailsSerial" placeholder="Введите S/N">
-                            </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label"><span class="input-label-icon">📍</span> Локация</label>
-                                <div class="input-wrapper">
-                                    <input type="text" class="input-field" id="detailsLocation" placeholder="Кабинет">
-                                    <div class="autocomplete-dropdown" id="locationDropdown"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label"><span class="input-label-icon">👤</span> Ответственный</label>
-                                <div class="input-wrapper">
-                                    <input type="text" class="input-field" id="detailsResponsible" placeholder="ФИО">
-                                    <div class="autocomplete-dropdown" id="responsibleDropdown"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label"><span class="input-label-icon">💬</span> Заметки</label>
-                                <textarea class="textarea-field" id="detailsInventoryNote" placeholder="Примечания по проверке..."></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="details-nav">
-                        <button class="nav-btn" id="prevItem">← Пред.</button>
-                        <button class="nav-btn" id="nextItem">След. →</button>
-                    </div>
-                    
-                    <div class="details-actions">
-                        <div class="action-row" id="actionsMain">
-                            <button class="action-btn-large success" id="btnCheck">✅ Проверено</button>
-                            <button class="action-btn-large warning" id="btnScrap">📝 Списание</button>
-                        </div>
-                        <button class="action-btn-large secondary full" id="btnUndo" style="display:none">↩️ Снять отметку</button>
-                    </div>
-                </aside>
-            </div>
+            <div class="content-area" id="contentArea"></div>
         </main>
     </div>
 
@@ -2094,7 +2106,7 @@ function init() {
 
 function loadData() {
     try {
-        const saved = JSON.parse(localStorage.getItem('inv_102_v12') || '[]');
+        const saved = JSON.parse(localStorage.getItem('inv_102_v13') || '[]');
         const addedItems = JSON.parse(localStorage.getItem('inv_102_added') || '[]');
         
         addedItems.forEach(item => {
@@ -2122,27 +2134,13 @@ function loadData() {
 
 function saveData() {
     const data = equipmentData.map(i => ({
-        id: i.id,
-        name: i.name,
-        invNumber: i.invNumber,
-        date: i.date,
-        category: i.category,
-        note: i.note,
-        checked: i.checked,
-        writeOff: i.writeOff,
-        hasLabel: i.hasLabel,
-        serialNumber: i.serialNumber,
-        location: i.location,
-        responsible: i.responsible,
-        inventoryNote: i.inventoryNote,
-        checkedAt: i.checkedAt,
-        isUserAdded: i.isUserAdded
+        id: i.id, name: i.name, invNumber: i.invNumber, date: i.date, category: i.category, note: i.note,
+        checked: i.checked, writeOff: i.writeOff, hasLabel: i.hasLabel, serialNumber: i.serialNumber,
+        location: i.location, responsible: i.responsible, inventoryNote: i.inventoryNote,
+        checkedAt: i.checkedAt, isUserAdded: i.isUserAdded
     }));
-    localStorage.setItem('inv_102_v12', JSON.stringify(data));
-    
-    const addedItems = equipmentData.filter(i => i.isUserAdded);
-    localStorage.setItem('inv_102_added', JSON.stringify(addedItems));
-    
+    localStorage.setItem('inv_102_v13', JSON.stringify(data));
+    localStorage.setItem('inv_102_added', JSON.stringify(equipmentData.filter(i => i.isUserAdded)));
     updateStats();
 }
 
@@ -2156,103 +2154,6 @@ function loadDirectories() {
 
 function saveDirectories() {
     localStorage.setItem('inv_102_dirs', JSON.stringify(directories));
-}
-
-// ==================== EQUIPMENT CRUD ====================
-function openAddModal() {
-    state.editingItemId = null;
-    $('#editModalTitle').textContent = '➕ Добавить оборудование';
-    $('#editName').value = '';
-    $('#editInvNumber').value = '';
-    $('#editDate').value = new Date().toLocaleDateString('ru-RU');
-    $('#editCategory').value = '';
-    $('#editNewCategory').value = '';
-    $('#editNote').value = '';
-    populateCategorySelect();
-    $('#editModal').classList.add('show');
-    setTimeout(() => $('#editName').focus(), 100);
-}
-
-function openEditModal(id) {
-    const item = equipmentData.find(i => i.id === id);
-    if (!item) return;
-    
-    state.editingItemId = id;
-    $('#editModalTitle').textContent = '✏️ Редактировать';
-    $('#editName').value = item.name || '';
-    $('#editInvNumber').value = item.invNumber || '';
-    $('#editDate').value = item.date || '';
-    $('#editNewCategory').value = '';
-    $('#editNote').value = item.note || '';
-    populateCategorySelect();
-    $('#editCategory').value = item.category || '';
-    $('#editModal').classList.add('show');
-}
-
-function populateCategorySelect() {
-    const categories = [...new Set(equipmentData.map(i => i.category || 'Прочее'))].sort();
-    const select = $('#editCategory');
-    select.innerHTML = '<option value="">Выберите...</option>' + 
-        categories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');
-}
-
-function saveEquipment() {
-    const name = $('#editName').value.trim();
-    const invNumber = $('#editInvNumber').value.trim();
-    const date = $('#editDate').value.trim();
-    let category = $('#editCategory').value.trim();
-    const newCategory = $('#editNewCategory').value.trim();
-    const note = $('#editNote').value.trim();
-    
-    if (!name) { showToast('Введите название', true); return; }
-    if (!invNumber) { showToast('Введите инв. номер', true); return; }
-    
-    if (newCategory) category = newCategory;
-    if (!category) { showToast('Выберите категорию', true); return; }
-    
-    const duplicate = equipmentData.find(i => i.invNumber === invNumber && i.id !== state.editingItemId);
-    if (duplicate) { showToast('Инв. номер существует', true); return; }
-    
-    if (state.editingItemId) {
-        const item = equipmentData.find(i => i.id === state.editingItemId);
-        if (item) {
-            item.name = name;
-            item.invNumber = invNumber;
-            item.date = date;
-            item.category = category;
-            item.note = note;
-            showToast('✏️ Изменения сохранены');
-        }
-    } else {
-        equipmentData.push({
-            id: generateId(),
-            name, invNumber, date, category, note,
-            checked: false, writeOff: false, hasLabel: null,
-            serialNumber: '', location: '', responsible: '',
-            inventoryNote: '', checkedAt: null, isUserAdded: true
-        });
-        showToast('➕ Оборудование добавлено');
-    }
-    
-    saveData();
-    buildSidebar();
-    render();
-    $('#editModal').classList.remove('show');
-    if (state.editingItemId) openDetails(state.editingItemId);
-}
-
-function deleteEquipment(id) {
-    const item = equipmentData.find(i => i.id === id);
-    if (!item) return;
-    
-    showConfirm('Удалить?', `${item.name} (${item.invNumber})`, () => {
-        equipmentData = equipmentData.filter(i => i.id !== id);
-        saveData();
-        buildSidebar();
-        render();
-        closeDetails();
-        showToast('🗑️ Удалено');
-    }, '🗑️');
 }
 
 // ==================== SIDEBAR ====================
@@ -2281,7 +2182,6 @@ function buildSidebar() {
     });
 
     container.innerHTML = html;
-
     container.querySelectorAll('.category-item').forEach(btn => {
         btn.addEventListener('click', () => {
             $$('.category-item').forEach(b => b.classList.remove('active'));
@@ -2313,8 +2213,7 @@ function updateStats() {
     
     $('#progressPercent').textContent = `${percent}%`;
     const circumference = 2 * Math.PI * 15;
-    const offset = circumference - (percent / 100) * circumference;
-    $('#progressCircle').style.strokeDashoffset = offset;
+    $('#progressCircle').style.strokeDashoffset = circumference - (percent / 100) * circumference;
 
     $('#filterChecked').textContent = checked;
     $('#filterPending').textContent = pending;
@@ -2328,8 +2227,7 @@ function updateStats() {
     const catStats = {};
     equipmentData.forEach(i => {
         const c = i.category || 'Прочее';
-        if (!catStats[c]) catStats[c] = 0;
-        catStats[c]++;
+        catStats[c] = (catStats[c] || 0) + 1;
     });
     Object.entries(catStats).forEach(([cat, count]) => {
         const el = $(`[data-cat="${CSS.escape(cat)}"]`);
@@ -2339,7 +2237,7 @@ function updateStats() {
 
 // ==================== RENDER ====================
 function render() {
-    const section = $('#listSection');
+    const section = $('#contentArea');
     const search = state.search.toLowerCase().trim();
 
     const filtered = equipmentData.filter(item => {
@@ -2388,9 +2286,9 @@ function render() {
         const icon = categoryIcons[cat] || '📦';
         
         html += `
-            <div class="list-category-header">
-                <div class="list-category-title"><span>${icon}</span> ${escapeHtml(cat)}</div>
-                <div class="list-category-stats">${checkedInCat}/${items.length}</div>
+            <div class="category-header">
+                <div class="category-header-title"><span>${icon}</span> ${escapeHtml(cat)}</div>
+                <div class="category-header-stats">${checkedInCat}/${items.length}</div>
             </div>
             <div class="equipment-grid">
         `;
@@ -2400,36 +2298,41 @@ function render() {
             const cardClasses = ['equipment-card', isChecked ? 'checked' : '', item.writeOff ? 'write-off' : ''].filter(Boolean).join(' ');
             
             const badges = [];
-            if (item.isUserAdded) badges.push('<span class="card-badge is-new">🆕</span>');
-            if (item.hasLabel === false) badges.push('<span class="card-badge no-label">🏷️</span>');
-            if (item.inventoryNote?.trim()) badges.push('<span class="card-badge has-note">💬</span>');
-            if (item.serialNumber?.trim()) badges.push('<span class="card-badge has-serial">🔢</span>');
+            if (item.isUserAdded) badges.push('<span class="card-badge is-new">🆕 Новое</span>');
+            if (item.hasLabel === false) badges.push('<span class="card-badge no-label">🏷️ Без бирки</span>');
+            if (item.inventoryNote?.trim()) badges.push('<span class="card-badge has-note">💬 Заметка</span>');
+            if (item.serialNumber?.trim()) badges.push('<span class="card-badge has-serial">🔢 S/N</span>');
+
+            const meta = [];
+            if (item.location) meta.push(`<span class="card-meta-item">📍 ${escapeHtml(item.location)}</span>`);
+            if (item.responsible) meta.push(`<span class="card-meta-item">👤 ${escapeHtml(item.responsible)}</span>`);
+            if (item.serialNumber) meta.push(`<span class="card-meta-item">🔢 ${escapeHtml(item.serialNumber)}</span>`);
 
             let actionsHtml = '';
             if (isChecked) {
-                actionsHtml = `<button class="card-action undo" data-action="undo" title="Снять">↩️</button>`;
+                actionsHtml = `
+                    <button class="card-action undo" data-action="undo">↩️ Снять</button>
+                    <button class="card-action edit" data-action="edit">✏️ Ред.</button>
+                `;
             } else {
                 actionsHtml = `
-                    <button class="card-action check" data-action="check" title="Проверено">✓</button>
-                    <button class="card-action scrap" data-action="scrap" title="Списание">📝</button>
+                    <button class="card-action check" data-action="check">✓ Проверено</button>
+                    <button class="card-action edit" data-action="edit">✏️</button>
+                    <button class="card-action scrap" data-action="scrap">📝</button>
                 `;
             }
 
             html += `
                 <div class="${cardClasses}" data-id="${item.id}">
-                    <div class="card-checkbox">${isChecked ? '✓' : ''}</div>
-                    <div class="card-info">
-                        <div class="card-top">
+                    <div class="card-header">
+                        <div class="card-status">${isChecked ? (item.writeOff ? '📝' : '✓') : '⏳'}</div>
+                        <div class="card-info">
                             <span class="card-inv">${escapeHtml(item.invNumber)}</span>
-                            <div class="card-badges">${badges.join('')}</div>
-                        </div>
-                        <div class="card-name">${escapeHtml(item.name)}</div>
-                        <div class="card-meta">
-                            ${item.location ? `<span class="card-meta-item">📍 ${escapeHtml(item.location)}</span>` : ''}
-                            ${item.responsible ? `<span class="card-meta-item">👤 ${escapeHtml(item.responsible)}</span>` : ''}
-                            ${item.serialNumber ? `<span class="card-meta-item">🔢 ${escapeHtml(item.serialNumber)}</span>` : ''}
+                            <div class="card-name">${escapeHtml(item.name)}</div>
                         </div>
                     </div>
+                    ${badges.length ? `<div class="card-badges">${badges.join('')}</div>` : ''}
+                    ${meta.length ? `<div class="card-meta">${meta.join('')}</div>` : ''}
                     <div class="card-actions">${actionsHtml}</div>
                 </div>
             `;
@@ -2439,7 +2342,6 @@ function render() {
     });
     
     section.innerHTML = html;
-    updateNavButtons();
 }
 
 // ==================== DIRECTORIES ====================
@@ -2641,34 +2543,13 @@ function openDetails(id) {
     $('#actionsMain').style.display = isChecked ? 'none' : 'grid';
     $('#btnUndo').style.display = isChecked ? 'flex' : 'none';
 
-    $('#detailsPanel').classList.remove('hidden');
-    updateNavButtons();
-    
-    if (window.innerWidth <= 1024) {
-        $('#mobileOverlay').classList.add('show');
-    }
+    $('#detailsModal').classList.add('show');
 }
 
 function closeDetails() {
     if (state.selectedId) saveFields();
-    $('#detailsPanel').classList.add('hidden');
-    $('#mobileOverlay').classList.remove('show');
+    $('#detailsModal').classList.remove('show');
     state.selectedId = null;
-}
-
-function updateNavButtons() {
-    const idx = state.filteredItems.findIndex(i => i.id === state.selectedId);
-    $('#prevItem').disabled = idx <= 0;
-    $('#nextItem').disabled = idx >= state.filteredItems.length - 1 || idx === -1;
-}
-
-function navigateItem(dir) {
-    const idx = state.filteredItems.findIndex(i => i.id === state.selectedId);
-    const newIdx = idx + dir;
-    if (newIdx >= 0 && newIdx < state.filteredItems.length) {
-        saveFields();
-        openDetails(state.filteredItems[newIdx].id);
-    }
 }
 
 function saveFields() {
@@ -2701,6 +2582,101 @@ function saveFields() {
     }
     
     if (changed) { saveData(); render(); }
+}
+
+// ==================== CRUD ====================
+function openAddModal() {
+    state.editingItemId = null;
+    $('#editModalTitle').textContent = '➕ Добавить оборудование';
+    $('#editName').value = '';
+    $('#editInvNumber').value = '';
+    $('#editDate').value = new Date().toLocaleDateString('ru-RU');
+    $('#editCategory').value = '';
+    $('#editNewCategory').value = '';
+    $('#editNote').value = '';
+    populateCategorySelect();
+    $('#editModal').classList.add('show');
+    setTimeout(() => $('#editName').focus(), 100);
+}
+
+function openEditModal(id) {
+    const item = equipmentData.find(i => i.id === id);
+    if (!item) return;
+    
+    state.editingItemId = id;
+    $('#editModalTitle').textContent = '✏️ Редактировать';
+    $('#editName').value = item.name || '';
+    $('#editInvNumber').value = item.invNumber || '';
+    $('#editDate').value = item.date || '';
+    $('#editNewCategory').value = '';
+    $('#editNote').value = item.note || '';
+    populateCategorySelect();
+    $('#editCategory').value = item.category || '';
+    $('#editModal').classList.add('show');
+}
+
+function populateCategorySelect() {
+    const categories = [...new Set(equipmentData.map(i => i.category || 'Прочее'))].sort();
+    $('#editCategory').innerHTML = '<option value="">Выберите...</option>' + 
+        categories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');
+}
+
+function saveEquipment() {
+    const name = $('#editName').value.trim();
+    const invNumber = $('#editInvNumber').value.trim();
+    const date = $('#editDate').value.trim();
+    let category = $('#editCategory').value.trim();
+    const newCategory = $('#editNewCategory').value.trim();
+    const note = $('#editNote').value.trim();
+    
+    if (!name) { showToast('Введите название', true); return; }
+    if (!invNumber) { showToast('Введите инв. номер', true); return; }
+    
+    if (newCategory) category = newCategory;
+    if (!category) { showToast('Выберите категорию', true); return; }
+    
+    const duplicate = equipmentData.find(i => i.invNumber === invNumber && i.id !== state.editingItemId);
+    if (duplicate) { showToast('Инв. номер существует', true); return; }
+    
+    if (state.editingItemId) {
+        const item = equipmentData.find(i => i.id === state.editingItemId);
+        if (item) {
+            item.name = name;
+            item.invNumber = invNumber;
+            item.date = date;
+            item.category = category;
+            item.note = note;
+            showToast('✏️ Изменения сохранены');
+        }
+    } else {
+        equipmentData.push({
+            id: generateId(),
+            name, invNumber, date, category, note,
+            checked: false, writeOff: false, hasLabel: null,
+            serialNumber: '', location: '', responsible: '',
+            inventoryNote: '', checkedAt: null, isUserAdded: true
+        });
+        showToast('➕ Оборудование добавлено');
+    }
+    
+    saveData();
+    buildSidebar();
+    render();
+    $('#editModal').classList.remove('show');
+}
+
+function deleteEquipment(id) {
+    const item = equipmentData.find(i => i.id === id);
+    if (!item) return;
+    
+    showConfirm('Удалить?', `${item.name} (${item.invNumber})`, () => {
+        equipmentData = equipmentData.filter(i => i.id !== id);
+        saveData();
+        buildSidebar();
+        render();
+        closeDetails();
+        showToast('🗑️ Удалено');
+    }, '🗑️');
 }
 
 // ==================== ACTIONS ====================
@@ -2738,13 +2714,7 @@ function finishCheck(item) {
     saveData();
     render();
     showToast('✅ Проверено');
-    
-    const next = state.filteredItems.find(i => !i.checked && !i.writeOff && i.id !== item.id);
-    if (next) {
-        setTimeout(() => openDetails(next.id), 300);
-    } else {
-        openDetails(item.id);
-    }
+    closeDetails();
 }
 
 function handleCheck() {
@@ -2766,7 +2736,7 @@ function handleScrap() {
         if (item.hasLabel === null) item.hasLabel = true;
         saveData();
         render();
-        openDetails(item.id);
+        closeDetails();
         showToast('📝 На списание');
     }, '📝');
 }
@@ -2792,7 +2762,9 @@ function quickAction(id, action, e) {
     const item = equipmentData.find(i => i.id === id);
     if (!item) return;
     
-    if (action === 'undo') {
+    if (action === 'edit') {
+        openDetails(id);
+    } else if (action === 'undo') {
         showConfirm('Снять отметку', 'Вернуть в "Ожидает"?', () => {
             item.checked = false;
             item.writeOff = false;
@@ -2824,9 +2796,7 @@ function openSidebar() {
 
 function closeSidebar() {
     $('#sidebar').classList.remove('open');
-    if ($('#detailsPanel').classList.contains('hidden')) {
-        $('#mobileOverlay').classList.remove('show');
-    }
+    $('#mobileOverlay').classList.remove('show');
 }
 
 // ==================== EXPORT / IMPORT ====================
@@ -2939,7 +2909,6 @@ function clearAllData() {
         });
         saveData();
         render();
-        closeDetails();
         showToast('🗑️ Сброшено');
     }, '🗑️');
 }
@@ -3008,8 +2977,8 @@ function attachEvents() {
         });
     });
 
-    // List clicks
-    $('#listSection').addEventListener('click', (e) => {
+    // Card clicks
+    $('#contentArea').addEventListener('click', (e) => {
         const actionBtn = e.target.closest('[data-action]');
         if (actionBtn) {
             const card = actionBtn.closest('.equipment-card');
@@ -3020,15 +2989,11 @@ function attachEvents() {
         if (card) openDetails(card.dataset.id);
     });
 
-    // Details panel
+    // Details modal
     $('#closeDetails').addEventListener('click', closeDetails);
-    $('#editEquipment').addEventListener('click', () => { if (state.selectedId) openEditModal(state.selectedId); });
-    $('#deleteEquipment').addEventListener('click', () => { if (state.selectedId) deleteEquipment(state.selectedId); });
     $('#btnCheck').addEventListener('click', handleCheck);
     $('#btnScrap').addEventListener('click', handleScrap);
     $('#btnUndo').addEventListener('click', handleUndo);
-    $('#prevItem').addEventListener('click', () => navigateItem(-1));
-    $('#nextItem').addEventListener('click', () => navigateItem(1));
 
     // Label buttons
     $$('.label-btn').forEach(btn => {
@@ -3115,7 +3080,7 @@ function attachEvents() {
 
     // Mobile
     $('#mobileMenuBtn').addEventListener('click', openSidebar);
-    $('#mobileOverlay').addEventListener('click', () => { closeSidebar(); closeDetails(); });
+    $('#mobileOverlay').addEventListener('click', closeSidebar);
 
     // Keyboard
     document.addEventListener('keydown', (e) => {
@@ -3127,19 +3092,13 @@ function attachEvents() {
             else if ($('#quickSearchModal').classList.contains('show')) $('#quickSearchModal').classList.remove('show');
             else if ($('#roomsModal').classList.contains('show')) $('#roomsModal').classList.remove('show');
             else if ($('#peopleModal').classList.contains('show')) $('#peopleModal').classList.remove('show');
-            else if (!$('#detailsPanel').classList.contains('hidden')) closeDetails();
+            else if ($('#detailsModal').classList.contains('show')) closeDetails();
             else if ($('#sidebar').classList.contains('open')) closeSidebar();
         }
         
         if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveData(); showToast('💾 Сохранено'); }
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); openQuickSearch(); }
         if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); openAddModal(); }
-        
-        if (!$('#detailsPanel').classList.contains('hidden') && !e.target.matches('input, textarea, select')) {
-            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); navigateItem(-1); }
-            else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); navigateItem(1); }
-            else if (e.key === 'Enter') { e.preventDefault(); handleCheck(); }
-        }
     });
 
     // iOS double-tap fix
