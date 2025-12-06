@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#1F2937">
+    <meta name="theme-color" content="#1a1a2e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Инвентаризация">
@@ -11,31 +11,37 @@
     
     <style>
         :root {
-            --primary: #4F46E5;
-            --primary-dark: #4338CA;
-            --primary-light: #818CF8;
-            --success: #10B981;
-            --success-dark: #059669;
-            --danger: #EF4444;
-            --danger-dark: #DC2626;
-            --warning: #F59E0B;
-            --warning-dark: #D97706;
-            --info: #3B82F6;
-            --gray-50: #F9FAFB;
-            --gray-100: #F3F4F6;
-            --gray-200: #E5E7EB;
-            --gray-300: #D1D5DB;
-            --gray-400: #9CA3AF;
-            --gray-500: #6B7280;
-            --gray-600: #4B5563;
-            --gray-700: #374151;
-            --gray-800: #1F2937;
-            --gray-900: #111827;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #a5b4fc;
+            --success: #22c55e;
+            --success-dark: #16a34a;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --warning: #f59e0b;
+            --warning-dark: #d97706;
+            --info: #3b82f6;
+            
+            --bg-dark: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-light: #0f3460;
+            --bg-surface: #1e3a5f;
+            
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --border-color: rgba(255,255,255,0.1);
+            --border-light: rgba(255,255,255,0.05);
             
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 24px;
+            
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.5);
             
             --transition: 0.2s ease;
             
@@ -53,19 +59,19 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-            background: var(--gray-100);
-            color: var(--gray-900);
+            background: var(--bg-dark);
+            color: var(--text-primary);
             line-height: 1.5;
             overflow: hidden;
             min-height: 100vh;
             min-height: 100dvh;
         }
 
-        /* === STATUS BAR SPACER === */
+        /* === STATUS BAR === */
         .status-bar-spacer {
             height: var(--safe-top);
             min-height: 20px;
-            background: var(--gray-900);
+            background: #0d0d1a;
             position: fixed;
             top: 0;
             left: 0;
@@ -83,9 +89,9 @@
 
         /* === SIDEBAR === */
         .sidebar {
-            width: 300px;
-            background: white;
-            border-right: 1px solid var(--gray-200);
+            width: 280px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
@@ -95,221 +101,190 @@
         .logo-section { 
             padding: 24px 20px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
         }
         .logo-title { 
-            font-size: 1.25rem; 
-            font-weight: 800; 
+            font-size: 1.125rem; 
+            font-weight: 800;
+            letter-spacing: 0.5px;
         }
         .logo-subtitle { 
-            font-size: 0.875rem; 
-            opacity: 0.9;
+            font-size: 0.8125rem; 
+            opacity: 0.85;
             margin-top: 2px;
         }
+
+        /* Progress Circle */
+        .progress-section {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .progress-circle {
+            width: 64px;
+            height: 64px;
+            position: relative;
+        }
+        .progress-circle svg {
+            transform: rotate(-90deg);
+            width: 64px;
+            height: 64px;
+        }
+        .progress-circle-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 6;
+        }
+        .progress-circle-fill {
+            fill: none;
+            stroke: url(#progressGradient);
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        .progress-circle-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .progress-info { flex: 1; }
+        .progress-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .progress-stats { margin-top: 4px; }
+        .progress-stat { font-size: 0.8125rem; color: var(--text-secondary); display: flex; justify-content: space-between; }
+        .progress-stat span:last-child { font-weight: 600; color: var(--text-primary); }
 
         /* Quick Stats */
         .quick-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            padding: 16px;
-            background: var(--gray-50);
-            border-bottom: 1px solid var(--gray-200);
+            gap: 8px;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
         }
-        
         .quick-stat {
-            background: white;
-            padding: 14px;
+            background: var(--bg-surface);
+            padding: 12px;
             border-radius: var(--radius-md);
             text-align: center;
-            border: 2px solid var(--gray-200);
             cursor: pointer;
             transition: all var(--transition);
+            border: 1px solid transparent;
         }
         .quick-stat:hover {
             border-color: var(--primary);
-        }
-        .quick-stat:active {
-            transform: scale(0.98);
+            transform: translateY(-1px);
         }
         .quick-stat-value {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 800;
             line-height: 1;
         }
-        .quick-stat-value.primary { color: var(--primary); }
         .quick-stat-value.success { color: var(--success); }
         .quick-stat-value.warning { color: var(--warning); }
         .quick-stat-value.danger { color: var(--danger); }
+        .quick-stat-value.info { color: var(--info); }
         .quick-stat-label {
-            font-size: 0.6875rem;
-            color: var(--gray-500);
+            font-size: 0.625rem;
+            color: var(--text-muted);
             text-transform: uppercase;
-            font-weight: 700;
             margin-top: 4px;
             letter-spacing: 0.5px;
-        }
-        
-        .progress-mini {
-            grid-column: 1 / -1;
-            background: white;
-            padding: 14px;
-            border-radius: var(--radius-md);
-            border: 2px solid var(--gray-200);
-        }
-        .progress-mini-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        .progress-mini-label {
-            font-size: 0.8125rem;
-            font-weight: 700;
-            color: var(--gray-700);
-        }
-        .progress-mini-value {
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-        .progress-mini-bar {
-            height: 10px;
-            background: var(--gray-200);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .progress-mini-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--success));
-            border-radius: 5px;
-            transition: width 0.5s ease;
         }
 
         /* Sidebar Actions */
         .sidebar-actions {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .sidebar-action-btn {
-            flex: 1;
-            min-width: calc(50% - 4px);
             padding: 12px;
-            border: 2px solid var(--gray-200);
-            background: white;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: var(--gray-700);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sidebar-btn {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
             transition: all var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
         }
-        .sidebar-action-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+        .sidebar-btn:hover {
+            background: var(--bg-light);
+            color: var(--text-primary);
         }
-        .sidebar-action-btn:active {
-            transform: scale(0.98);
-        }
-        .sidebar-action-btn.primary {
+        .sidebar-btn.primary {
             background: var(--primary);
             border-color: var(--primary);
             color: white;
         }
-        .sidebar-action-btn.primary:hover {
+        .sidebar-btn.primary:hover {
             background: var(--primary-dark);
-            border-color: var(--primary-dark);
         }
+        .sidebar-btn-icon { font-size: 1.125rem; }
 
         /* Categories */
         .categories-section { 
             flex: 1; 
             overflow-y: auto;
             padding: 8px 0;
-            -webkit-overflow-scrolling: touch;
         }
-        
         .categories-title { 
-            font-size: 0.6875rem;
-            font-weight: 800; 
-            color: var(--gray-400); 
+            font-size: 0.625rem;
+            font-weight: 700; 
+            color: var(--text-muted); 
             text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            padding: 10px 20px;
+            letter-spacing: 1px; 
+            padding: 8px 16px;
         }
-
         .category-item {
-            padding: 14px 20px;
+            padding: 10px 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 12px;
-            transition: background var(--transition);
-            font-size: 0.9375rem;
-            color: var(--gray-700);
+            gap: 10px;
+            transition: all var(--transition);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
             border: none;
             background: none;
             width: 100%;
             text-align: left;
-            border-left: 4px solid transparent;
+            border-left: 3px solid transparent;
         }
         .category-item:hover { 
-            background: var(--gray-50); 
-        }
-        .category-item:active { 
-            background: var(--gray-100); 
+            background: var(--bg-surface);
+            color: var(--text-primary);
         }
         .category-item.active { 
-            background: rgba(79, 70, 229, 0.08); 
-            color: var(--primary); 
-            font-weight: 700; 
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary-light);
+            font-weight: 600;
             border-left-color: var(--primary);
         }
-        .category-icon { 
-            font-size: 1.25rem; 
-            width: 28px; 
-            text-align: center; 
-        }
-        .category-name {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .category-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .category-icon { font-size: 1rem; width: 24px; text-align: center; }
+        .category-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .category-count { 
-            font-size: 0.8125rem; 
-            font-weight: 700;
-            color: var(--gray-500); 
-            background: var(--gray-100); 
-            padding: 3px 10px; 
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--bg-surface);
+            padding: 2px 8px;
             border-radius: 10px;
         }
         .category-item.active .category-count {
-            background: rgba(79, 70, 229, 0.15);
-            color: var(--primary);
-        }
-        .category-progress {
-            width: 40px;
-            height: 5px;
-            background: var(--gray-200);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .category-progress-fill {
-            height: 100%;
-            background: var(--success);
-            transition: width var(--transition);
+            background: rgba(99, 102, 241, 0.3);
+            color: var(--primary-light);
         }
 
         /* === MAIN CONTENT === */
@@ -323,13 +298,13 @@
 
         /* === HEADER === */
         .header { 
-            background: white; 
+            background: var(--bg-card);
             padding: 16px 24px;
-            border-bottom: 1px solid var(--gray-200); 
+            border-bottom: 1px solid var(--border-color);
             flex-shrink: 0;
         }
 
-        .search-row {
+        .header-row {
             display: flex;
             gap: 12px;
             align-items: center;
@@ -338,401 +313,334 @@
         .search-box { 
             position: relative; 
             flex: 1;
-            max-width: 500px;
+            max-width: 400px;
         }
         .search-icon { 
             position: absolute; 
-            left: 16px; 
+            left: 14px; 
             top: 50%; 
             transform: translateY(-50%); 
-            color: var(--gray-400); 
-            font-size: 1.125rem;
+            color: var(--text-muted);
+            font-size: 1rem;
             pointer-events: none;
         }
         .search-box input { 
             width: 100%; 
-            padding: 14px 50px 14px 48px; 
-            border: 2px solid var(--gray-200); 
+            padding: 12px 44px 12px 42px; 
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-lg); 
-            font-size: 1rem; 
-            background: var(--gray-50); 
+            font-size: 0.9375rem; 
+            background: var(--bg-surface);
+            color: var(--text-primary);
             transition: all var(--transition);
         }
+        .search-box input::placeholder { color: var(--text-muted); }
         .search-box input:focus { 
             outline: none; 
-            border-color: var(--primary); 
-            background: white;
+            border-color: var(--primary);
+            background: var(--bg-light);
         }
-        
         .search-clear {
             position: absolute;
-            right: 12px;
+            right: 8px;
             top: 50%;
             transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
-            border-radius: var(--radius-sm);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             border: none;
-            background: var(--gray-200);
-            color: var(--gray-600);
+            background: var(--bg-light);
+            color: var(--text-muted);
             cursor: pointer;
             display: none;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
         }
         .search-clear.show { display: flex; }
-        .search-clear:hover { background: var(--gray-300); }
 
         .header-actions { 
             display: flex; 
             gap: 8px;
         }
-
         .btn { 
-            padding: 14px 18px; 
+            padding: 10px 14px; 
             border-radius: var(--radius-md); 
-            font-weight: 700; 
-            font-size: 0.9375rem; 
+            font-weight: 600; 
+            font-size: 0.8125rem; 
             cursor: pointer; 
             display: inline-flex; 
             align-items: center; 
-            gap: 8px; 
-            border: none; 
-            transition: all var(--transition); 
-            white-space: nowrap;
+            gap: 6px; 
+            border: 1px solid var(--border-color);
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            transition: all var(--transition);
         }
+        .btn:hover { background: var(--bg-light); color: var(--text-primary); }
         .btn:active { transform: scale(0.97); }
-        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary { background: var(--primary); border-color: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-dark); }
-        .btn-success { background: var(--success); color: white; }
+        .btn-success { background: var(--success); border-color: var(--success); color: white; }
         .btn-success:hover { background: var(--success-dark); }
-        .btn-secondary { 
-            background: var(--gray-100); 
-            color: var(--gray-700); 
-        }
-        .btn-secondary:hover { background: var(--gray-200); }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { background: var(--danger-dark); }
-        .btn-icon { font-size: 1.125rem; }
+        .btn-icon { font-size: 1rem; }
 
         /* Filters */
         .filters-row {
             display: flex;
             gap: 8px;
-            margin-top: 16px;
+            margin-top: 12px;
             overflow-x: auto;
             padding-bottom: 4px;
-            -webkit-overflow-scrolling: touch;
         }
         .filters-row::-webkit-scrollbar { display: none; }
         
         .filter-chip { 
-            padding: 10px 16px; 
-            border: 2px solid var(--gray-200); 
-            background: white; 
+            padding: 8px 14px; 
+            border: 1px solid var(--border-color);
+            background: var(--bg-surface);
             border-radius: 20px; 
             cursor: pointer; 
-            font-size: 0.875rem; 
-            font-weight: 700; 
-            color: var(--gray-600);
+            font-size: 0.8125rem; 
+            font-weight: 600;
+            color: var(--text-secondary);
             transition: all var(--transition);
             flex-shrink: 0;
             display: flex;
             align-items: center;
             gap: 6px;
         }
-        .filter-chip:hover { 
-            border-color: var(--gray-300);
-        }
-        .filter-chip:active {
-            transform: scale(0.97);
-        }
+        .filter-chip:hover { background: var(--bg-light); color: var(--text-primary); }
         .filter-chip.active { 
-            background: var(--primary); 
-            border-color: var(--primary); 
+            background: var(--primary);
+            border-color: var(--primary);
             color: white;
         }
         .filter-chip-count {
-            background: var(--gray-100);
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.8125rem;
-        }
-        .filter-chip.active .filter-chip-count {
-            background: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.15);
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.75rem;
         }
 
-        /* === CONTENT AREA === */
+        /* === CONTENT === */
         .content-area { 
             flex: 1; 
             display: flex; 
             overflow: hidden;
         }
         
-        /* List Section */
         .list-section { 
             flex: 1; 
             overflow-y: auto; 
             padding: 16px 24px 100px;
             -webkit-overflow-scrolling: touch;
-            transform: translateZ(0);
-            will-change: scroll-position;
         }
 
         .empty-state { 
             text-align: center; 
-            padding: 80px 20px;
-            color: var(--gray-400);
+            padding: 60px 20px;
+            color: var(--text-muted);
         }
-        .empty-state-icon { 
-            font-size: 4rem; 
-            margin-bottom: 16px;
-        }
-        .empty-state-text { 
-            font-size: 1.125rem; 
-            font-weight: 700;
-            color: var(--gray-600);
-        }
-        .empty-state-hint {
-            font-size: 0.9375rem;
-            margin-top: 8px;
-        }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 12px; }
+        .empty-state-text { font-size: 1rem; font-weight: 600; color: var(--text-secondary); }
 
         /* Category Header */
         .list-category-header { 
-            background: var(--primary);
-            color: white; 
-            padding: 14px 18px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 12px 16px;
             border-radius: var(--radius-md); 
-            margin: 20px 0 14px;
+            margin: 16px 0 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .list-category-header:first-child { margin-top: 0; }
         .list-category-title { 
-            font-size: 1rem; 
+            font-size: 0.9375rem; 
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         .list-category-stats { 
-            font-size: 0.875rem;
-            font-weight: 700;
+            font-size: 0.8125rem;
             background: rgba(255,255,255,0.2);
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 4px 10px;
+            border-radius: 10px;
         }
 
         /* Equipment Cards */
-        .equipment-list {
+        .equipment-grid {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
         
         .equipment-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: var(--radius-md);
-            padding: 16px;
-            border: 2px solid var(--gray-200);
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 14px;
-            position: relative;
-            transition: border-color var(--transition), background var(--transition);
+            gap: 12px;
+            transition: all var(--transition);
         }
-        .equipment-card:active {
-            background: var(--gray-50);
+        .equipment-card:hover {
+            background: var(--bg-surface);
+            border-color: var(--primary);
         }
         .equipment-card.checked {
-            background: rgba(16, 185, 129, 0.05);
-            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.08);
+            border-color: rgba(34, 197, 94, 0.3);
         }
         .equipment-card.write-off {
-            background: rgba(239, 68, 68, 0.05);
-            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.3);
         }
         
-        .card-status {
-            width: 48px;
-            height: 48px;
+        .card-checkbox {
+            width: 36px;
+            height: 36px;
             border-radius: var(--radius-sm);
-            border: 3px solid var(--gray-300);
+            border: 2px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1rem;
             flex-shrink: 0;
-            background: white;
+            background: var(--bg-surface);
+            color: transparent;
+            transition: all var(--transition);
         }
-        .equipment-card.checked .card-status {
+        .equipment-card.checked .card-checkbox {
             background: var(--success);
             border-color: var(--success);
             color: white;
         }
-        .equipment-card.write-off .card-status {
+        .equipment-card.write-off .card-checkbox {
             background: var(--danger);
             border-color: var(--danger);
             color: white;
         }
         
-        .card-content {
-            flex: 1;
-            min-width: 0;
-        }
-        .card-header {
+        .card-info { flex: 1; min-width: 0; }
+        .card-top {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 4px;
         }
         .card-inv {
             font-family: 'SF Mono', 'Fira Code', monospace;
-            font-weight: 700;
-            font-size: 0.875rem;
-            color: var(--gray-500);
-            background: var(--gray-100);
-            padding: 2px 10px;
-            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            color: var(--primary-light);
+            background: rgba(99, 102, 241, 0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
         }
-        .card-badges {
-            display: flex;
-            gap: 6px;
-        }
+        .card-badges { display: flex; gap: 4px; }
         .card-badge {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.6875rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
         }
-        .card-badge.no-label { background: rgba(239, 68, 68, 0.1); }
-        .card-badge.has-note { background: rgba(59, 130, 246, 0.1); }
-        .card-badge.has-serial { background: rgba(16, 185, 129, 0.1); }
-        .card-badge.is-new { background: rgba(245, 158, 11, 0.1); }
+        .card-badge.no-label { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .card-badge.has-note { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+        .card-badge.has-serial { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .card-badge.is-new { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
         
         .card-name {
-            font-size: 0.9375rem;
-            font-weight: 600;
-            color: var(--gray-800);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .card-meta {
             display: flex;
-            gap: 16px;
-            font-size: 0.8125rem;
-            color: var(--gray-500);
-            margin-top: 6px;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
-        .card-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .card-meta-item { display: flex; align-items: center; gap: 4px; }
         
         .card-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity var(--transition);
         }
+        .equipment-card:hover .card-actions { opacity: 1; }
         
-        .card-action-btn {
-            width: 44px;
-            height: 44px;
+        .card-action {
+            width: 36px;
+            height: 36px;
             border-radius: var(--radius-sm);
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.125rem;
+            font-size: 0.875rem;
             transition: all var(--transition);
         }
-        .card-action-btn.check {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-        .card-action-btn.check:hover {
-            background: var(--success);
-            color: white;
-        }
-        .card-action-btn.scrap {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-        .card-action-btn.scrap:hover {
-            background: var(--danger);
-            color: white;
-        }
-        .card-action-btn.undo {
-            background: rgba(107, 114, 128, 0.1);
-            color: var(--gray-600);
-        }
-        .card-action-btn.undo:hover {
-            background: var(--gray-600);
-            color: white;
-        }
+        .card-action.check { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .card-action.check:hover { background: var(--success); color: white; }
+        .card-action.scrap { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .card-action.scrap:hover { background: var(--danger); color: white; }
+        .card-action.undo { background: rgba(148, 163, 184, 0.15); color: var(--text-secondary); }
+        .card-action.undo:hover { background: var(--text-muted); color: white; }
 
         /* === DETAILS PANEL === */
         .details-panel { 
-            width: 480px;
-            background: white;
-            border-left: 1px solid var(--gray-200);
+            width: 420px;
+            max-width: 100%;
+            background: var(--bg-card);
+            border-left: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
         }
-        .details-panel.hidden { 
-            display: none;
-        }
+        .details-panel.hidden { display: none; }
         
         .details-header { 
-            padding: 24px;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
+            padding: 20px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
         }
         .details-header-info { flex: 1; min-width: 0; }
         .details-inv {
+            display: inline-block;
             font-family: 'SF Mono', monospace;
-            font-size: 1rem;
+            font-size: 0.875rem;
             font-weight: 700;
             background: rgba(255,255,255,0.2);
-            padding: 6px 14px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-bottom: 10px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
         }
         .details-title { 
-            font-size: 1.125rem;
-            font-weight: 700;
+            font-size: 1rem;
+            font-weight: 600;
             line-height: 1.4;
         }
         .details-category {
-            font-size: 0.875rem;
-            opacity: 0.9;
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 0.8125rem;
+            opacity: 0.85;
+            margin-top: 4px;
         }
-        .details-header-actions {
-            display: flex;
-            gap: 8px;
-        }
-        .header-action-btn { 
-            width: 48px;
-            height: 48px;
+        .details-header-actions { display: flex; gap: 6px; }
+        .header-btn { 
+            width: 40px;
+            height: 40px;
             border-radius: var(--radius-md);
             background: rgba(255,255,255,0.2);
             border: none;
@@ -741,41 +649,33 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.25rem;
-            flex-shrink: 0;
+            font-size: 1.125rem;
             transition: all var(--transition);
         }
-        .header-action-btn:hover { 
-            background: rgba(255,255,255,0.3);
-        }
-        .header-action-btn.danger:hover {
-            background: var(--danger);
-        }
+        .header-btn:hover { background: rgba(255,255,255,0.3); }
+        .header-btn.danger:hover { background: var(--danger); }
 
         .details-body { 
             flex: 1;
-            padding: 24px;
+            padding: 20px;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
         
         .detail-section {
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
-        .detail-section:last-child { margin-bottom: 0; }
-        
         .detail-section-title {
-            font-size: 0.8125rem;
-            font-weight: 800;
-            color: var(--primary);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--gray-100);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .detail-grid {
@@ -784,292 +684,252 @@
             gap: 12px;
         }
         .detail-item {
-            background: var(--gray-50);
-            padding: 14px;
+            background: var(--bg-surface);
+            padding: 12px;
             border-radius: var(--radius-md);
-            border: 1px solid var(--gray-200);
         }
         .detail-item.full { grid-column: 1 / -1; }
         .detail-item-label { 
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--gray-500);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
+            margin-bottom: 4px;
         }
         .detail-item-value { 
-            font-size: 1rem;
-            color: var(--gray-800);
-            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
         }
 
-        /* Input Fields */
-        .input-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .input-group:last-child { margin-bottom: 0; }
-        
+        .input-group { margin-bottom: 16px; }
         .input-label {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--gray-700);
-            margin-bottom: 12px;
+            gap: 6px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
         }
-        .input-label-icon {
-            font-size: 1.25rem;
-        }
+        .input-label-icon { font-size: 1rem; }
         
-        .input-wrapper {
-            position: relative;
-        }
+        .input-wrapper { position: relative; }
         
         .input-field, .textarea-field { 
             width: 100%;
-            padding: 18px 20px;
-            border: 3px solid var(--gray-200);
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
-            font-size: 1.125rem;
+            font-size: 1rem;
             font-family: inherit;
+            background: var(--bg-surface);
+            color: var(--text-primary);
             transition: all var(--transition);
-            background: white;
-            color: var(--gray-900);
         }
-        .input-field::placeholder, .textarea-field::placeholder {
-            color: var(--gray-400);
-        }
+        .input-field::placeholder, .textarea-field::placeholder { color: var(--text-muted); }
         .input-field:focus, .textarea-field:focus { 
             outline: none;
             border-color: var(--primary);
-            background: rgba(79, 70, 229, 0.02);
+            background: var(--bg-light);
         }
-        .input-field.filled {
-            border-color: var(--success);
-            background: rgba(16, 185, 129, 0.03);
-        }
-        .textarea-field { 
-            min-height: 140px;
-            resize: vertical;
-            line-height: 1.6;
-        }
-        .textarea-field.filled { 
-            border-color: var(--info);
-            background: rgba(59, 130, 246, 0.03);
-        }
+        .input-field.filled { border-color: var(--success); }
+        .textarea-field { min-height: 100px; resize: vertical; }
+        .textarea-field.filled { border-color: var(--info); }
 
-        /* Autocomplete Dropdown */
+        /* Autocomplete */
         .autocomplete-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            background: white;
-            border: 2px solid var(--gray-200);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-lg);
             z-index: 100;
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
             display: none;
         }
-        .autocomplete-dropdown.show {
-            display: block;
-        }
+        .autocomplete-dropdown.show { display: block; }
         .autocomplete-item {
-            padding: 14px 18px;
+            padding: 12px 16px;
             cursor: pointer;
-            font-size: 1rem;
-            border-bottom: 1px solid var(--gray-100);
-            transition: background var(--transition);
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            transition: all var(--transition);
         }
         .autocomplete-item:last-child { border-bottom: none; }
         .autocomplete-item:hover {
-            background: var(--gray-50);
+            background: var(--bg-surface);
+            color: var(--text-primary);
         }
 
         .label-buttons { 
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        .label-btn { 
-            padding: 20px;
-            border: 3px solid var(--gray-200);
-            border-radius: var(--radius-md);
-            background: white;
-            cursor: pointer;
-            font-size: 1.125rem;
-            font-weight: 700;
-            text-align: center;
-            transition: all var(--transition);
-            color: var(--gray-600);
-            display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 10px;
         }
-        .label-btn:active { transform: scale(0.98); }
-        .label-btn.yes.active { 
-            background: rgba(16, 185, 129, 0.1);
-            border-color: var(--success);
-            color: var(--success-dark);
-        }
-        .label-btn.no.active { 
-            background: rgba(239, 68, 68, 0.1);
-            border-color: var(--danger);
-            color: var(--danger-dark);
-        }
-        
-        /* Navigation */
-        .details-nav {
-            display: flex;
-            gap: 12px;
-            padding: 16px 24px;
-            border-top: 1px solid var(--gray-200);
-            background: white;
-        }
-        .nav-btn {
-            flex: 1;
+        .label-btn { 
             padding: 16px;
-            border: 2px solid var(--gray-200);
-            background: white;
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
+            background: var(--bg-surface);
             cursor: pointer;
             font-size: 1rem;
-            font-weight: 700;
-            color: var(--gray-600);
+            font-weight: 600;
+            text-align: center;
+            transition: all var(--transition);
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all var(--transition);
         }
-        .nav-btn:hover {
-            background: var(--gray-50);
-            border-color: var(--gray-300);
+        .label-btn:hover { border-color: var(--primary); }
+        .label-btn.yes.active { 
+            background: rgba(34, 197, 94, 0.15);
+            border-color: var(--success);
+            color: var(--success);
         }
-        .nav-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
+        .label-btn.no.active { 
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--danger);
+            color: var(--danger);
         }
 
+        /* Navigation */
+        .details-nav {
+            display: flex;
+            gap: 10px;
+            padding: 0 20px 16px;
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-surface);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all var(--transition);
+        }
+        .nav-btn:hover { background: var(--bg-light); color: var(--text-primary); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
         .details-actions { 
-            padding: 24px;
-            border-top: 1px solid var(--gray-200);
+            padding: 20px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            background: var(--gray-50);
+            gap: 10px;
         }
-        .actions-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .action-btn-large { 
-            padding: 22px;
-            border-radius: var(--radius-lg);
-            font-weight: 800;
-            font-size: 1.125rem;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 8px;
             border: none;
             color: white;
             transition: all var(--transition);
         }
         .action-btn-large:active { transform: scale(0.98); }
-        .action-btn-large.success { 
-            background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
-        }
-        .action-btn-large.warning { 
-            background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%);
-        }
-        .action-btn-large.secondary {
-            background: var(--gray-400);
-        }
-        .action-btn-large.full {
-            grid-column: 1 / -1;
-        }
+        .action-btn-large.success { background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%); }
+        .action-btn-large.warning { background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%); }
+        .action-btn-large.secondary { background: var(--text-muted); }
+        .action-btn-large.full { grid-column: 1 / -1; }
 
         /* === MODALS === */
         .modal-overlay { 
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.7);
             z-index: 600;
             align-items: center;
             justify-content: center;
             padding: 20px;
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
         }
         .modal-overlay.show { display: flex; }
-        
         #confirmModal { z-index: 700; }
         
         .modal { 
-            background: white;
+            background: var(--bg-card);
             border-radius: var(--radius-xl);
-            padding: 32px;
-            max-width: 500px;
+            padding: 28px;
+            max-width: 420px;
             width: 100%;
-            animation: modalIn 0.25s ease;
-            max-height: 90vh;
-            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            animation: modalIn 0.2s ease;
         }
         @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
         .modal-icon {
-            width: 80px;
-            height: 80px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            margin: 0 auto 24px;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+            background: rgba(99, 102, 241, 0.15);
         }
-        .modal-icon.question { background: rgba(79, 70, 229, 0.1); }
-        .modal-icon.warning { background: rgba(245, 158, 11, 0.1); }
-        .modal-icon.danger { background: rgba(239, 68, 68, 0.1); }
-        .modal-icon.success { background: rgba(16, 185, 129, 0.1); }
-        
         .modal-title { 
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
             text-align: center;
         }
         .modal-text { 
-            font-size: 1.0625rem;
-            color: var(--gray-600);
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             line-height: 1.5;
         }
+        .modal-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1.125rem;
+            text-align: center;
+            font-family: 'SF Mono', monospace;
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+        .modal-input:focus { outline: none; border-color: var(--primary); }
+        
         .modal-buttons { 
             display: flex;
-            gap: 12px;
-        }
-        .modal-buttons.vertical {
             flex-direction: column;
+            gap: 10px;
         }
         .modal-btn { 
-            flex: 1;
-            padding: 18px;
+            padding: 14px;
             border-radius: var(--radius-md);
-            font-weight: 800;
-            font-size: 1.0625rem;
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
             border: none;
             transition: all var(--transition);
@@ -1077,277 +937,217 @@
         .modal-btn:active { transform: scale(0.98); }
         .modal-btn.yes { background: var(--success); color: white; }
         .modal-btn.no { background: var(--danger); color: white; }
-        .modal-btn.cancel { background: var(--gray-200); color: var(--gray-700); }
+        .modal-btn.cancel { background: var(--bg-surface); color: var(--text-secondary); border: 1px solid var(--border-color); }
         .modal-btn.primary { background: var(--primary); color: white; }
 
-        /* Equipment Edit Modal */
-        .edit-modal {
-            max-width: 600px;
-        }
-        .edit-modal .modal-title {
-            text-align: left;
-            margin-bottom: 24px;
-        }
-        .edit-form-group {
-            margin-bottom: 20px;
-        }
+        /* Edit Modal */
+        .edit-modal { max-width: 500px; }
+        .edit-form-group { margin-bottom: 16px; }
         .edit-form-label {
             display: block;
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: var(--gray-700);
-            margin-bottom: 8px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
         }
         .edit-form-input, .edit-form-select, .edit-form-textarea {
             width: 100%;
-            padding: 16px;
-            border: 2px solid var(--gray-200);
+            padding: 12px;
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
-            font-size: 1rem;
+            font-size: 0.9375rem;
             font-family: inherit;
-            transition: all var(--transition);
+            background: var(--bg-surface);
+            color: var(--text-primary);
         }
         .edit-form-input:focus, .edit-form-select:focus, .edit-form-textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
-        .edit-form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        .edit-form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
+        .edit-form-textarea { min-height: 80px; resize: vertical; }
+        .edit-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         /* Directory Modal */
-        .directory-modal {
-            max-width: 600px;
-        }
+        .directory-modal { max-width: 500px; }
         .directory-header {
             display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
-        .directory-add-input {
+        .directory-input {
             flex: 1;
-            padding: 16px 20px;
-            border: 3px solid var(--gray-200);
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
-            font-size: 1.125rem;
-            font-family: inherit;
+            font-size: 1rem;
+            background: var(--bg-surface);
+            color: var(--text-primary);
         }
-        .directory-add-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
+        .directory-input:focus { outline: none; border-color: var(--primary); }
         .directory-add-btn {
-            padding: 16px 24px;
+            padding: 12px 20px;
             background: var(--success);
             color: white;
             border: none;
             border-radius: var(--radius-md);
             font-size: 1.25rem;
             cursor: pointer;
-            transition: all var(--transition);
         }
-        
         .directory-list {
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
-            border: 2px solid var(--gray-200);
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         .directory-item {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--gray-100);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .directory-item:last-child { border-bottom: none; }
-        .directory-item-text {
-            flex: 1;
-            font-size: 1.0625rem;
-            font-weight: 500;
-        }
+        .directory-item-text { flex: 1; font-size: 0.9375rem; }
         .directory-item-edit {
             flex: 1;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border: 2px solid var(--primary);
             border-radius: var(--radius-sm);
-            font-size: 1rem;
-            font-family: inherit;
+            font-size: 0.9375rem;
+            background: var(--bg-surface);
+            color: var(--text-primary);
         }
         .directory-item-btn {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: var(--radius-sm);
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 0.9375rem;
             transition: all var(--transition);
         }
-        .directory-item-btn.edit { background: rgba(59, 130, 246, 0.1); color: var(--info); }
-        .directory-item-btn.save { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .directory-item-btn.delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-        .directory-item-btn.cancel { background: rgba(107, 114, 128, 0.1); color: var(--gray-600); }
+        .directory-item-btn.edit { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+        .directory-item-btn.save { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .directory-item-btn.delete { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .directory-item-btn.cancel { background: rgba(148, 163, 184, 0.15); color: var(--text-secondary); }
         .directory-empty {
             padding: 40px;
             text-align: center;
-            color: var(--gray-400);
-        }
-
-        /* Modal Input */
-        .modal-input {
-            width: 100%;
-            padding: 20px;
-            border: 3px solid var(--gray-200);
-            border-radius: var(--radius-md);
-            font-size: 1.25rem;
-            text-align: center;
-            font-family: 'SF Mono', monospace;
-            font-weight: 600;
-            margin-bottom: 24px;
-        }
-        .modal-input:focus {
-            outline: none;
-            border-color: var(--primary);
+            color: var(--text-muted);
         }
 
         /* Quick Search Modal */
-        .quick-search-modal {
-            max-width: 600px;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .quick-search-modal { max-width: 560px; max-height: 80vh; display: flex; flex-direction: column; }
         .quick-search-input {
             width: 100%;
-            padding: 22px 28px;
-            border: 3px solid var(--gray-200);
+            padding: 18px 24px;
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-lg);
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-family: 'SF Mono', monospace;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            margin-bottom: 16px;
         }
-        .quick-search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
+        .quick-search-input:focus { outline: none; border-color: var(--primary); }
         .quick-search-results {
             flex: 1;
             overflow-y: auto;
-            margin-bottom: 20px;
-            max-height: 450px;
-            min-height: 120px;
-            border: 2px solid var(--gray-200);
+            margin-bottom: 16px;
+            max-height: 400px;
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
         }
         .quick-search-empty {
-            padding: 50px;
+            padding: 40px;
             text-align: center;
-            color: var(--gray-400);
+            color: var(--text-muted);
         }
         .quick-search-item {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--gray-100);
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 16px;
-            transition: background var(--transition);
+            gap: 12px;
+            transition: all var(--transition);
         }
         .quick-search-item:last-child { border-bottom: none; }
-        .quick-search-item:hover { background: var(--gray-50); }
-        .quick-search-item.checked { background: rgba(16, 185, 129, 0.05); }
-        .quick-search-item.write-off { background: rgba(239, 68, 68, 0.05); }
-        
+        .quick-search-item:hover { background: var(--bg-surface); }
+        .quick-search-item.checked { background: rgba(34, 197, 94, 0.08); }
+        .quick-search-item.write-off { background: rgba(239, 68, 68, 0.08); }
         .quick-search-status {
-            width: 44px;
-            height: 44px;
+            width: 36px;
+            height: 36px;
             border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            background: var(--gray-100);
-            color: var(--gray-500);
+            font-size: 1rem;
+            background: var(--bg-surface);
+            color: var(--text-muted);
         }
-        .quick-search-item.checked .quick-search-status {
-            background: var(--success);
-            color: white;
-        }
-        .quick-search-item.write-off .quick-search-status {
-            background: var(--danger);
-            color: white;
-        }
-        
+        .quick-search-item.checked .quick-search-status { background: var(--success); color: white; }
+        .quick-search-item.write-off .quick-search-status { background: var(--danger); color: white; }
         .quick-search-info { flex: 1; min-width: 0; }
         .quick-search-inv {
             font-family: 'SF Mono', monospace;
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--primary);
-            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--primary-light);
+            margin-bottom: 2px;
         }
         .quick-search-name {
-            font-size: 0.9375rem;
-            color: var(--gray-700);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .quick-search-count {
             text-align: center;
-            padding: 10px;
-            font-size: 0.875rem;
-            color: var(--gray-500);
-            background: var(--gray-50);
-            border-top: 1px solid var(--gray-200);
+            padding: 8px;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            background: var(--bg-surface);
         }
 
         /* Toast */
         .toast { 
             position: fixed;
-            bottom: calc(24px + var(--safe-bottom));
+            bottom: calc(20px + var(--safe-bottom));
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--gray-900);
-            color: white;
-            padding: 18px 32px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 14px 24px;
             border-radius: var(--radius-lg);
-            font-weight: 700;
-            font-size: 1.0625rem;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            box-shadow: var(--shadow-lg);
             opacity: 0;
             pointer-events: none;
             transition: all 0.3s ease;
             z-index: 1000;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            border: 1px solid var(--border-color);
         }
-        .toast.show { 
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .toast-icon {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             background: var(--success);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
         }
         .toast.error .toast-icon { background: var(--danger); }
 
@@ -1356,58 +1156,47 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             z-index: 400;
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
-        .mobile-overlay.show { 
-            display: block;
-            opacity: 1;
-        }
+        .mobile-overlay.show { display: block; }
 
         .mobile-menu-btn { 
             display: none;
             position: fixed;
             top: calc(8px + var(--safe-top));
             left: 12px;
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: var(--radius-md);
-            font-size: 1.375rem;
+            font-size: 1.25rem;
             z-index: 201;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
         }
 
-        /* FAB */
         .fab {
             position: fixed;
-            bottom: calc(24px + var(--safe-bottom));
-            right: 24px;
-            width: 68px;
-            height: 68px;
+            bottom: calc(20px + var(--safe-bottom));
+            right: 20px;
+            width: 56px;
+            height: 56px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 50%;
-            font-size: 1.875rem;
+            font-size: 1.5rem;
             cursor: pointer;
             z-index: 100;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: var(--shadow-lg);
             transition: all var(--transition);
-            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
         }
-        .fab:hover {
-            transform: scale(1.08);
-            background: var(--primary-dark);
-        }
+        .fab:hover { transform: scale(1.05); background: var(--primary-dark); }
 
         /* === RESPONSIVE === */
         @media (max-width: 1024px) {
@@ -1417,35 +1206,28 @@
                 left: 0;
                 right: 0;
                 width: 100%;
-                max-height: 92vh;
+                max-height: 90vh;
                 border-radius: var(--radius-xl) var(--radius-xl) 0 0;
                 border-left: none;
                 z-index: 450;
                 transform: translateY(100%);
                 transition: transform 0.3s ease;
             }
-            .details-panel:not(.hidden) { 
-                transform: translateY(0);
-            }
-            .details-panel.hidden {
-                display: flex;
-            }
+            .details-panel:not(.hidden) { transform: translateY(0); }
+            .details-panel.hidden { display: flex; }
             
             .details-header::before {
                 content: '';
                 position: absolute;
-                top: 10px;
+                top: 8px;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 48px;
-                height: 5px;
-                background: rgba(255,255,255,0.4);
-                border-radius: 3px;
+                width: 40px;
+                height: 4px;
+                background: rgba(255,255,255,0.3);
+                border-radius: 2px;
             }
-            .details-header {
-                position: relative;
-                padding-top: 28px;
-            }
+            .details-header { position: relative; padding-top: 24px; }
         }
 
         @media (max-width: 768px) {
@@ -1461,84 +1243,22 @@
                 transition: transform 0.3s ease;
                 padding-top: var(--safe-top);
             }
-            .sidebar.open { 
-                transform: translateX(0);
-            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar .logo-section { padding-top: 20px; }
             
-            .sidebar .logo-section {
-                padding-top: 24px;
-            }
-            
-            .header { 
-                padding: 16px;
-                padding-left: 72px;
-            }
-            
+            .header { padding: 12px 16px; padding-left: 68px; }
             .search-box { max-width: none; }
-            
             .btn .btn-text { display: none; }
-            .btn { padding: 14px; }
             
-            .list-section { 
-                padding: 12px 16px 100px;
-            }
-            
-            .equipment-card {
-                padding: 14px;
-            }
+            .list-section { padding: 12px 16px 100px; }
             .card-meta { display: none; }
             
-            .fab {
-                bottom: calc(16px + var(--safe-bottom));
-                right: 16px;
-                width: 60px;
-                height: 60px;
-                font-size: 1.625rem;
-            }
+            .fab { bottom: calc(16px + var(--safe-bottom)); right: 16px; }
             
-            .toast { 
-                left: 16px;
-                right: 16px;
-                transform: translateX(0) translateY(100px);
-            }
-            .toast.show {
-                transform: translateX(0) translateY(0);
-            }
+            .toast { left: 16px; right: 16px; transform: translateX(0) translateY(100px); }
+            .toast.show { transform: translateX(0) translateY(0); }
             
-            .sidebar-actions {
-                flex-direction: column;
-            }
-            
-            .edit-form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .sidebar { width: 340px; }
-            .details-panel { width: 100%; }
-            
-            .input-field, .textarea-field {
-                font-size: 1.25rem;
-                padding: 22px 24px;
-            }
-            
-            .label-btn {
-                padding: 24px;
-                font-size: 1.25rem;
-            }
-            
-            .action-btn-large {
-                padding: 26px;
-                font-size: 1.25rem;
-            }
-        }
-
-        @media (max-width: 768px) and (orientation: portrait) {
-            .header {
-                padding-top: 16px;
-                padding-left: 72px;
-            }
+            .edit-form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1548,13 +1268,23 @@
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 
-    <!-- Label Check Modal -->
+    <!-- SVG Gradient for Progress Circle -->
+    <svg style="position:absolute;width:0;height:0">
+        <defs>
+            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#6366f1"/>
+                <stop offset="100%" style="stop-color:#22c55e"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Label Modal -->
     <div class="modal-overlay" id="labelModal">
         <div class="modal">
-            <div class="modal-icon question">🏷️</div>
+            <div class="modal-icon">🏷️</div>
             <div class="modal-title">Проверка бирки</div>
-            <div class="modal-text">Инвентарный номер присутствует на оборудовании?</div>
-            <div class="modal-buttons vertical">
+            <div class="modal-text">Инвентарный номер (бирка) присутствует на оборудовании?</div>
+            <div class="modal-buttons">
                 <button class="modal-btn yes" id="labelYes">✓ Есть бирка</button>
                 <button class="modal-btn no" id="labelNo">✗ Нет бирки</button>
                 <button class="modal-btn cancel" id="labelCancel">Отмена</button>
@@ -1562,14 +1292,14 @@
         </div>
     </div>
 
-    <!-- Serial Number Modal -->
+    <!-- Serial Modal -->
     <div class="modal-overlay" id="serialModal">
         <div class="modal">
-            <div class="modal-icon question">🔢</div>
+            <div class="modal-icon">🔢</div>
             <div class="modal-title">Серийный номер</div>
             <div class="modal-text">Введите серийный номер оборудования (если есть)</div>
-            <input type="text" class="modal-input" id="serialInput" placeholder="S/N" autocomplete="off">
-            <div class="modal-buttons vertical">
+            <input type="text" class="modal-input" id="serialInput" placeholder="S/N">
+            <div class="modal-buttons">
                 <button class="modal-btn yes" id="serialSave">💾 Сохранить</button>
                 <button class="modal-btn primary" id="serialSkip">Пропустить →</button>
                 <button class="modal-btn cancel" id="serialCancel">Отмена</button>
@@ -1580,57 +1310,49 @@
     <!-- Confirm Modal -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal">
-            <div class="modal-icon warning" id="confirmIcon">⚠️</div>
+            <div class="modal-icon" id="confirmIcon">⚠️</div>
             <div class="modal-title" id="confirmTitle">Подтверждение</div>
             <div class="modal-text" id="confirmText">Вы уверены?</div>
-            <div class="modal-buttons">
-                <button class="modal-btn cancel" id="confirmCancel">Отмена</button>
-                <button class="modal-btn primary" id="confirmOk">Да</button>
+            <div class="modal-buttons" style="flex-direction: row; gap: 10px;">
+                <button class="modal-btn cancel" id="confirmCancel" style="flex:1">Отмена</button>
+                <button class="modal-btn primary" id="confirmOk" style="flex:1">Да</button>
             </div>
         </div>
     </div>
 
-    <!-- Equipment Edit Modal -->
+    <!-- Edit Modal -->
     <div class="modal-overlay" id="editModal">
         <div class="modal edit-modal">
             <div class="modal-title" id="editModalTitle">➕ Добавить оборудование</div>
-            
             <div class="edit-form-group">
-                <label class="edit-form-label">Название оборудования *</label>
-                <input type="text" class="edit-form-input" id="editName" placeholder="Введите название..." autocomplete="off">
+                <label class="edit-form-label">Название *</label>
+                <input type="text" class="edit-form-input" id="editName" placeholder="Название оборудования">
             </div>
-            
             <div class="edit-form-row">
                 <div class="edit-form-group">
-                    <label class="edit-form-label">Инвентарный номер *</label>
-                    <input type="text" class="edit-form-input" id="editInvNumber" placeholder="Инв. №" autocomplete="off">
+                    <label class="edit-form-label">Инв. номер *</label>
+                    <input type="text" class="edit-form-input" id="editInvNumber" placeholder="Инв. №">
                 </div>
                 <div class="edit-form-group">
-                    <label class="edit-form-label">Дата ввода</label>
-                    <input type="text" class="edit-form-input" id="editDate" placeholder="ДД.ММ.ГГГГ" autocomplete="off">
+                    <label class="edit-form-label">Дата</label>
+                    <input type="text" class="edit-form-input" id="editDate" placeholder="ДД.ММ.ГГГГ">
                 </div>
             </div>
-            
             <div class="edit-form-group">
                 <label class="edit-form-label">Категория *</label>
-                <select class="edit-form-select" id="editCategory">
-                    <option value="">Выберите категорию...</option>
-                </select>
+                <select class="edit-form-select" id="editCategory"></select>
             </div>
-            
             <div class="edit-form-group">
-                <label class="edit-form-label">Новая категория (если нет в списке)</label>
-                <input type="text" class="edit-form-input" id="editNewCategory" placeholder="Введите новую категорию..." autocomplete="off">
+                <label class="edit-form-label">Новая категория</label>
+                <input type="text" class="edit-form-input" id="editNewCategory" placeholder="Или введите новую">
             </div>
-            
             <div class="edit-form-group">
                 <label class="edit-form-label">Примечание</label>
-                <textarea class="edit-form-textarea" id="editNote" placeholder="Примечание..."></textarea>
+                <textarea class="edit-form-textarea" id="editNote" placeholder="Примечание"></textarea>
             </div>
-            
-            <div class="modal-buttons">
-                <button class="modal-btn cancel" id="editCancel">Отмена</button>
-                <button class="modal-btn primary" id="editSave">💾 Сохранить</button>
+            <div class="modal-buttons" style="flex-direction: row; gap: 10px;">
+                <button class="modal-btn cancel" id="editCancel" style="flex:1">Отмена</button>
+                <button class="modal-btn primary" id="editSave" style="flex:1">💾 Сохранить</button>
             </div>
         </div>
     </div>
@@ -1639,46 +1361,37 @@
     <div class="modal-overlay" id="quickSearchModal">
         <div class="modal quick-search-modal">
             <div class="modal-title">🔍 Быстрый поиск</div>
-            <input type="text" class="quick-search-input" id="quickSearchInput" placeholder="Инв. номер или название..." autocomplete="off">
+            <input type="text" class="quick-search-input" id="quickSearchInput" placeholder="Инв. номер или название...">
             <div class="quick-search-results" id="quickSearchResults">
-                <div class="quick-search-empty">
-                    <div class="quick-search-empty-icon">🔍</div>
-                    <div>Начните вводить для поиска</div>
-                </div>
+                <div class="quick-search-empty">Начните вводить для поиска</div>
             </div>
-            <div class="modal-buttons">
-                <button class="modal-btn cancel" id="quickSearchClose">Закрыть</button>
-            </div>
+            <button class="modal-btn cancel" id="quickSearchClose">Закрыть</button>
         </div>
     </div>
 
-    <!-- Directory Modal - Rooms -->
+    <!-- Rooms Directory Modal -->
     <div class="modal-overlay" id="roomsModal">
         <div class="modal directory-modal">
             <div class="modal-title">🚪 Справочник кабинетов</div>
             <div class="directory-header">
-                <input type="text" class="directory-add-input" id="roomAddInput" placeholder="Новый кабинет..." autocomplete="off">
+                <input type="text" class="directory-input" id="roomAddInput" placeholder="Новый кабинет...">
                 <button class="directory-add-btn" id="roomAddBtn">+</button>
             </div>
             <div class="directory-list" id="roomsList"></div>
-            <div class="modal-buttons">
-                <button class="modal-btn cancel" id="roomsClose">Закрыть</button>
-            </div>
+            <button class="modal-btn cancel" id="roomsClose">Закрыть</button>
         </div>
     </div>
 
-    <!-- Directory Modal - People -->
+    <!-- People Directory Modal -->
     <div class="modal-overlay" id="peopleModal">
         <div class="modal directory-modal">
             <div class="modal-title">👥 Справочник ФИО</div>
             <div class="directory-header">
-                <input type="text" class="directory-add-input" id="personAddInput" placeholder="Новое ФИО..." autocomplete="off">
+                <input type="text" class="directory-input" id="personAddInput" placeholder="Новое ФИО...">
                 <button class="directory-add-btn" id="personAddBtn">+</button>
             </div>
             <div class="directory-list" id="peopleList"></div>
-            <div class="modal-buttons">
-                <button class="modal-btn cancel" id="peopleClose">Закрыть</button>
-            </div>
+            <button class="modal-btn cancel" id="peopleClose">Закрыть</button>
         </div>
     </div>
 
@@ -1689,38 +1402,56 @@
                 <div class="logo-subtitle">ГКОУ СКОШИ №102</div>
             </div>
             
-            <div class="quick-stats">
-                <div class="quick-stat" data-filter="all">
-                    <div class="quick-stat-value primary" id="statTotal">0</div>
-                    <div class="quick-stat-label">Всего</div>
+            <div class="progress-section">
+                <div class="progress-circle">
+                    <svg viewBox="0 0 36 36">
+                        <circle class="progress-circle-bg" cx="18" cy="18" r="15"/>
+                        <circle class="progress-circle-fill" id="progressCircle" cx="18" cy="18" r="15" 
+                            stroke-dasharray="94.2" stroke-dashoffset="94.2"/>
+                    </svg>
+                    <div class="progress-circle-text" id="progressPercent">0%</div>
                 </div>
-                <div class="quick-stat" data-filter="checked">
-                    <div class="quick-stat-value success" id="statChecked">0</div>
-                    <div class="quick-stat-label">Проверено</div>
-                </div>
-                <div class="quick-stat" data-filter="unchecked">
-                    <div class="quick-stat-value warning" id="statPending">0</div>
-                    <div class="quick-stat-label">Ожидает</div>
-                </div>
-                <div class="quick-stat" data-filter="write-off">
-                    <div class="quick-stat-value danger" id="statWriteoff">0</div>
-                    <div class="quick-stat-label">Списание</div>
-                </div>
-                <div class="progress-mini">
-                    <div class="progress-mini-header">
-                        <span class="progress-mini-label">Общий прогресс</span>
-                        <span class="progress-mini-value" id="progressValue">0%</span>
-                    </div>
-                    <div class="progress-mini-bar">
-                        <div class="progress-mini-fill" id="progressFill"></div>
+                <div class="progress-info">
+                    <div class="progress-label">Прогресс</div>
+                    <div class="progress-stats">
+                        <div class="progress-stat"><span>Проверено</span><span id="statChecked">0</span></div>
+                        <div class="progress-stat"><span>Осталось</span><span id="statPending">0</span></div>
                     </div>
                 </div>
             </div>
             
+            <div class="quick-stats">
+                <div class="quick-stat" data-filter="write-off">
+                    <div class="quick-stat-value danger" id="statWriteOff">0</div>
+                    <div class="quick-stat-label">Списание</div>
+                </div>
+                <div class="quick-stat" data-filter="no-label">
+                    <div class="quick-stat-value warning" id="statNoLabel">0</div>
+                    <div class="quick-stat-label">Без бирки</div>
+                </div>
+                <div class="quick-stat" data-filter="has-serial">
+                    <div class="quick-stat-value success" id="statSerial">0</div>
+                    <div class="quick-stat-label">С серийником</div>
+                </div>
+                <div class="quick-stat" data-filter="new">
+                    <div class="quick-stat-value info" id="statNew">0</div>
+                    <div class="quick-stat-label">Новые</div>
+                </div>
+            </div>
+            
             <div class="sidebar-actions">
-                <button class="sidebar-action-btn primary" id="btnAddEquipment">➕ Добавить</button>
-                <button class="sidebar-action-btn" id="btnRooms">🚪 Кабинеты</button>
-                <button class="sidebar-action-btn" id="btnPeople">👥 ФИО</button>
+                <button class="sidebar-btn primary" id="btnAddEquipment">
+                    <span class="sidebar-btn-icon">➕</span>
+                    Добавить
+                </button>
+                <button class="sidebar-btn" id="btnRooms">
+                    <span class="sidebar-btn-icon">🚪</span>
+                    Кабинеты
+                </button>
+                <button class="sidebar-btn" id="btnPeople">
+                    <span class="sidebar-btn-icon">👥</span>
+                    ФИО
+                </button>
             </div>
             
             <div class="categories-section" id="categoriesContainer"></div>
@@ -1728,13 +1459,12 @@
 
         <main class="main-content">
             <header class="header">
-                <div class="search-row">
+                <div class="header-row">
                     <div class="search-box">
                         <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" placeholder="Поиск по номеру, названию, S/N..." autocomplete="off">
+                        <input type="text" id="searchInput" placeholder="Поиск по номеру, названию, S/N...">
                         <button class="search-clear" id="clearSearch">✕</button>
                     </div>
-                    
                     <div class="header-actions">
                         <button class="btn btn-success" id="btnSave" title="Сохранить">
                             <span class="btn-icon">💾</span>
@@ -1744,44 +1474,19 @@
                             <span class="btn-icon">📊</span>
                             <span class="btn-text">Excel</span>
                         </button>
-                        <button class="btn btn-secondary" id="btnExport" title="Экспорт">
-                            <span class="btn-icon">📤</span>
-                        </button>
-                        <button class="btn btn-secondary" id="btnImport" title="Импорт">
-                            <span class="btn-icon">📥</span>
-                        </button>
-                        <button class="btn btn-secondary" id="btnClear" title="Сброс">
-                            <span class="btn-icon">🗑️</span>
-                        </button>
+                        <button class="btn" id="btnExport" title="Экспорт"><span class="btn-icon">📤</span></button>
+                        <button class="btn" id="btnImport" title="Импорт"><span class="btn-icon">📥</span></button>
+                        <button class="btn" id="btnClear" title="Сброс"><span class="btn-icon">🗑️</span></button>
                     </div>
                 </div>
-
                 <div class="filters-row">
                     <button class="filter-chip active" data-filter="all">📋 Все</button>
-                    <button class="filter-chip" data-filter="unchecked">
-                        ⏳ Ожидает
-                        <span class="filter-chip-count" id="filterUnchecked">0</span>
-                    </button>
-                    <button class="filter-chip" data-filter="checked">
-                        ✅ Проверено
-                        <span class="filter-chip-count" id="filterChecked">0</span>
-                    </button>
-                    <button class="filter-chip" data-filter="write-off">
-                        📝 Списание
-                        <span class="filter-chip-count" id="filterWriteoff">0</span>
-                    </button>
-                    <button class="filter-chip" data-filter="no-label">
-                        🏷️ Без бирки
-                        <span class="filter-chip-count" id="filterNolabel">0</span>
-                    </button>
-                    <button class="filter-chip" data-filter="has-serial">
-                        🔢 С S/N
-                        <span class="filter-chip-count" id="filterSerial">0</span>
-                    </button>
-                    <button class="filter-chip" data-filter="new">
-                        🆕 Новые
-                        <span class="filter-chip-count" id="filterNew">0</span>
-                    </button>
+                    <button class="filter-chip" data-filter="unchecked">⏳ Ожидает <span class="filter-chip-count" id="filterPending">0</span></button>
+                    <button class="filter-chip" data-filter="checked">✅ Проверено <span class="filter-chip-count" id="filterChecked">0</span></button>
+                    <button class="filter-chip" data-filter="write-off">📝 Списание <span class="filter-chip-count" id="filterWriteOff">0</span></button>
+                    <button class="filter-chip" data-filter="no-label">🏷️ Без бирки <span class="filter-chip-count" id="filterNoLabel">0</span></button>
+                    <button class="filter-chip" data-filter="has-serial">🔢 С S/N <span class="filter-chip-count" id="filterSerial">0</span></button>
+                    <button class="filter-chip" data-filter="new">🆕 Новые <span class="filter-chip-count" id="filterNew">0</span></button>
                 </div>
             </header>
 
@@ -1796,9 +1501,9 @@
                             <div class="details-category" id="detailsCategory">📁 -</div>
                         </div>
                         <div class="details-header-actions">
-                            <button class="header-action-btn" id="editEquipment" title="Редактировать">✏️</button>
-                            <button class="header-action-btn danger" id="deleteEquipment" title="Удалить">🗑️</button>
-                            <button class="header-action-btn" id="closeDetails" title="Закрыть">✕</button>
+                            <button class="header-btn" id="editEquipment" title="Редактировать">✏️</button>
+                            <button class="header-btn danger" id="deleteEquipment" title="Удалить">🗑️</button>
+                            <button class="header-btn" id="closeDetails" title="Закрыть">✕</button>
                         </div>
                     </div>
                     
@@ -1815,7 +1520,7 @@
                                     <div class="detail-item-value" id="detailsStatus">-</div>
                                 </div>
                                 <div class="detail-item full">
-                                    <div class="detail-item-label">Примечание БД</div>
+                                    <div class="detail-item-label">Примечание</div>
                                     <div class="detail-item-value" id="detailsNote">-</div>
                                 </div>
                             </div>
@@ -1833,41 +1538,29 @@
                             <div class="detail-section-title">📝 Данные инвентаризации</div>
                             
                             <div class="input-group">
-                                <label class="input-label">
-                                    <span class="input-label-icon">🔢</span>
-                                    Серийный номер
-                                </label>
-                                <input type="text" class="input-field" id="detailsSerial" placeholder="Введите S/N оборудования">
+                                <label class="input-label"><span class="input-label-icon">🔢</span> Серийный номер</label>
+                                <input type="text" class="input-field" id="detailsSerial" placeholder="Введите S/N">
                             </div>
                             
                             <div class="input-group">
-                                <label class="input-label">
-                                    <span class="input-label-icon">📍</span>
-                                    Локация
-                                </label>
+                                <label class="input-label"><span class="input-label-icon">📍</span> Локация</label>
                                 <div class="input-wrapper">
-                                    <input type="text" class="input-field" id="detailsLocation" placeholder="Кабинет / помещение" autocomplete="off">
+                                    <input type="text" class="input-field" id="detailsLocation" placeholder="Кабинет">
                                     <div class="autocomplete-dropdown" id="locationDropdown"></div>
                                 </div>
                             </div>
                             
                             <div class="input-group">
-                                <label class="input-label">
-                                    <span class="input-label-icon">👤</span>
-                                    Ответственный
-                                </label>
+                                <label class="input-label"><span class="input-label-icon">👤</span> Ответственный</label>
                                 <div class="input-wrapper">
-                                    <input type="text" class="input-field" id="detailsResponsible" placeholder="ФИО ответственного" autocomplete="off">
+                                    <input type="text" class="input-field" id="detailsResponsible" placeholder="ФИО">
                                     <div class="autocomplete-dropdown" id="responsibleDropdown"></div>
                                 </div>
                             </div>
                             
                             <div class="input-group">
-                                <label class="input-label">
-                                    <span class="input-label-icon">💬</span>
-                                    Заметки
-                                </label>
-                                <textarea class="textarea-field" id="detailsInventoryNote" placeholder="Примечания по результатам проверки..."></textarea>
+                                <label class="input-label"><span class="input-label-icon">💬</span> Заметки</label>
+                                <textarea class="textarea-field" id="detailsInventoryNote" placeholder="Примечания по проверке..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -1878,7 +1571,7 @@
                     </div>
                     
                     <div class="details-actions">
-                        <div class="actions-row" id="actionsMain">
+                        <div class="action-row" id="actionsMain">
                             <button class="action-btn-large success" id="btnCheck">✅ Проверено</button>
                             <button class="action-btn-large warning" id="btnScrap">📝 Списание</button>
                         </div>
@@ -2401,10 +2094,9 @@ function init() {
 
 function loadData() {
     try {
-        const saved = JSON.parse(localStorage.getItem('inv_102_v11') || '[]');
+        const saved = JSON.parse(localStorage.getItem('inv_102_v12') || '[]');
         const addedItems = JSON.parse(localStorage.getItem('inv_102_added') || '[]');
         
-        // Add user-created items
         addedItems.forEach(item => {
             if (!equipmentData.find(e => e.id === item.id)) {
                 equipmentData.push(item);
@@ -2446,9 +2138,8 @@ function saveData() {
         checkedAt: i.checkedAt,
         isUserAdded: i.isUserAdded
     }));
-    localStorage.setItem('inv_102_v11', JSON.stringify(data));
+    localStorage.setItem('inv_102_v12', JSON.stringify(data));
     
-    // Save user-added items separately
     const addedItems = equipmentData.filter(i => i.isUserAdded);
     localStorage.setItem('inv_102_added', JSON.stringify(addedItems));
     
@@ -2468,7 +2159,7 @@ function saveDirectories() {
 }
 
 // ==================== EQUIPMENT CRUD ====================
-function openAddEquipmentModal() {
+function openAddModal() {
     state.editingItemId = null;
     $('#editModalTitle').textContent = '➕ Добавить оборудование';
     $('#editName').value = '';
@@ -2477,36 +2168,31 @@ function openAddEquipmentModal() {
     $('#editCategory').value = '';
     $('#editNewCategory').value = '';
     $('#editNote').value = '';
-    
     populateCategorySelect();
     $('#editModal').classList.add('show');
     setTimeout(() => $('#editName').focus(), 100);
 }
 
-function openEditEquipmentModal(id) {
+function openEditModal(id) {
     const item = equipmentData.find(i => i.id === id);
     if (!item) return;
     
     state.editingItemId = id;
-    $('#editModalTitle').textContent = '✏️ Редактировать оборудование';
+    $('#editModalTitle').textContent = '✏️ Редактировать';
     $('#editName').value = item.name || '';
     $('#editInvNumber').value = item.invNumber || '';
     $('#editDate').value = item.date || '';
     $('#editNewCategory').value = '';
     $('#editNote').value = item.note || '';
-    
     populateCategorySelect();
     $('#editCategory').value = item.category || '';
-    
     $('#editModal').classList.add('show');
-    setTimeout(() => $('#editName').focus(), 100);
 }
 
 function populateCategorySelect() {
     const categories = [...new Set(equipmentData.map(i => i.category || 'Прочее'))].sort();
     const select = $('#editCategory');
-    
-    select.innerHTML = '<option value="">Выберите категорию...</option>' + 
+    select.innerHTML = '<option value="">Выберите...</option>' + 
         categories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');
 }
 
@@ -2518,38 +2204,16 @@ function saveEquipment() {
     const newCategory = $('#editNewCategory').value.trim();
     const note = $('#editNote').value.trim();
     
-    if (!name) {
-        showToast('Введите название', true);
-        $('#editName').focus();
-        return;
-    }
+    if (!name) { showToast('Введите название', true); return; }
+    if (!invNumber) { showToast('Введите инв. номер', true); return; }
     
-    if (!invNumber) {
-        showToast('Введите инв. номер', true);
-        $('#editInvNumber').focus();
-        return;
-    }
+    if (newCategory) category = newCategory;
+    if (!category) { showToast('Выберите категорию', true); return; }
     
-    if (newCategory) {
-        category = newCategory;
-    }
-    
-    if (!category) {
-        showToast('Выберите или введите категорию', true);
-        return;
-    }
-    
-    // Check for duplicate inv number
-    const duplicate = equipmentData.find(i => 
-        i.invNumber === invNumber && i.id !== state.editingItemId
-    );
-    if (duplicate) {
-        showToast('Инв. номер уже существует!', true);
-        return;
-    }
+    const duplicate = equipmentData.find(i => i.invNumber === invNumber && i.id !== state.editingItemId);
+    if (duplicate) { showToast('Инв. номер существует', true); return; }
     
     if (state.editingItemId) {
-        // Edit existing
         const item = equipmentData.find(i => i.id === state.editingItemId);
         if (item) {
             item.name = name;
@@ -2560,25 +2224,13 @@ function saveEquipment() {
             showToast('✏️ Изменения сохранены');
         }
     } else {
-        // Add new
-        const newItem = {
+        equipmentData.push({
             id: generateId(),
-            name: name,
-            invNumber: invNumber,
-            date: date,
-            category: category,
-            note: note,
-            checked: false,
-            writeOff: false,
-            hasLabel: null,
-            serialNumber: '',
-            location: '',
-            responsible: '',
-            inventoryNote: '',
-            checkedAt: null,
-            isUserAdded: true
-        };
-        equipmentData.push(newItem);
+            name, invNumber, date, category, note,
+            checked: false, writeOff: false, hasLabel: null,
+            serialNumber: '', location: '', responsible: '',
+            inventoryNote: '', checkedAt: null, isUserAdded: true
+        });
         showToast('➕ Оборудование добавлено');
     }
     
@@ -2586,29 +2238,21 @@ function saveEquipment() {
     buildSidebar();
     render();
     $('#editModal').classList.remove('show');
-    
-    if (state.editingItemId) {
-        openDetails(state.editingItemId);
-    }
+    if (state.editingItemId) openDetails(state.editingItemId);
 }
 
 function deleteEquipment(id) {
     const item = equipmentData.find(i => i.id === id);
     if (!item) return;
     
-    showConfirm(
-        'Удалить оборудование?',
-        `Удалить "${item.name}" (${item.invNumber})? Это действие нельзя отменить.`,
-        () => {
-            equipmentData = equipmentData.filter(i => i.id !== id);
-            saveData();
-            buildSidebar();
-            render();
-            closeDetails();
-            showToast('🗑️ Оборудование удалено');
-        },
-        '🗑️'
-    );
+    showConfirm('Удалить?', `${item.name} (${item.invNumber})`, () => {
+        equipmentData = equipmentData.filter(i => i.id !== id);
+        saveData();
+        buildSidebar();
+        render();
+        closeDetails();
+        showToast('🗑️ Удалено');
+    }, '🗑️');
 }
 
 // ==================== SIDEBAR ====================
@@ -2631,12 +2275,7 @@ function buildSidebar() {
             <button class="category-item" data-category="${escapeHtml(cat)}">
                 <span class="category-icon">${icon}</span>
                 <span class="category-name">${escapeHtml(cat)}</span>
-                <div class="category-badge">
-                    <div class="category-progress">
-                        <div class="category-progress-fill" data-cat-progress="${escapeHtml(cat)}"></div>
-                    </div>
-                    <span class="category-count" data-cat="${escapeHtml(cat)}">0</span>
-                </div>
+                <span class="category-count" data-cat="${escapeHtml(cat)}">0</span>
             </button>
         `;
     });
@@ -2665,18 +2304,22 @@ function updateStats() {
     const userAdded = equipmentData.filter(i => i.isUserAdded).length;
     const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
 
-    $('#statTotal').textContent = total;
     $('#statChecked').textContent = checked;
     $('#statPending').textContent = pending;
-    $('#statWriteoff').textContent = writeOff;
+    $('#statWriteOff').textContent = writeOff;
+    $('#statNoLabel').textContent = noLabel;
+    $('#statSerial').textContent = serial;
+    $('#statNew').textContent = userAdded;
     
-    $('#progressValue').textContent = `${percent}%`;
-    $('#progressFill').style.width = `${percent}%`;
+    $('#progressPercent').textContent = `${percent}%`;
+    const circumference = 2 * Math.PI * 15;
+    const offset = circumference - (percent / 100) * circumference;
+    $('#progressCircle').style.strokeDashoffset = offset;
 
     $('#filterChecked').textContent = checked;
-    $('#filterUnchecked').textContent = pending;
-    $('#filterWriteoff').textContent = writeOff;
-    $('#filterNolabel').textContent = noLabel;
+    $('#filterPending').textContent = pending;
+    $('#filterWriteOff').textContent = writeOff;
+    $('#filterNoLabel').textContent = noLabel;
     $('#filterSerial').textContent = serial;
     $('#filterNew').textContent = userAdded;
 
@@ -2685,18 +2328,12 @@ function updateStats() {
     const catStats = {};
     equipmentData.forEach(i => {
         const c = i.category || 'Прочее';
-        if (!catStats[c]) catStats[c] = { total: 0, checked: 0 };
-        catStats[c].total++;
-        if (i.checked || i.writeOff) catStats[c].checked++;
+        if (!catStats[c]) catStats[c] = 0;
+        catStats[c]++;
     });
-
-    Object.entries(catStats).forEach(([cat, s]) => {
-        const countEl = $(`[data-cat="${CSS.escape(cat)}"]`);
-        const progressEl = $(`[data-cat-progress="${CSS.escape(cat)}"]`);
-        if (countEl) countEl.textContent = s.total;
-        if (progressEl) {
-            progressEl.style.width = `${s.total > 0 ? (s.checked / s.total) * 100 : 0}%`;
-        }
+    Object.entries(catStats).forEach(([cat, count]) => {
+        const el = $(`[data-cat="${CSS.escape(cat)}"]`);
+        if (el) el.textContent = count;
     });
 }
 
@@ -2732,7 +2369,6 @@ function render() {
             <div class="empty-state">
                 <div class="empty-state-icon">📭</div>
                 <div class="empty-state-text">Ничего не найдено</div>
-                <div class="empty-state-hint">Измените фильтры или добавьте оборудование</div>
             </div>
         `;
         return;
@@ -2753,44 +2389,37 @@ function render() {
         
         html += `
             <div class="list-category-header">
-                <div class="list-category-title">
-                    <span>${icon}</span>
-                    ${escapeHtml(cat)}
-                </div>
-                <div class="list-category-stats">${checkedInCat} / ${items.length}</div>
+                <div class="list-category-title"><span>${icon}</span> ${escapeHtml(cat)}</div>
+                <div class="list-category-stats">${checkedInCat}/${items.length}</div>
             </div>
-            <div class="equipment-list">
+            <div class="equipment-grid">
         `;
         
         items.forEach(item => {
             const isChecked = item.checked || item.writeOff;
-            const cardClasses = [
-                'equipment-card',
-                isChecked ? 'checked' : '',
-                item.writeOff ? 'write-off' : ''
-            ].filter(Boolean).join(' ');
+            const cardClasses = ['equipment-card', isChecked ? 'checked' : '', item.writeOff ? 'write-off' : ''].filter(Boolean).join(' ');
             
             const badges = [];
-            if (item.isUserAdded) badges.push('<span class="card-badge is-new" title="Добавлено">🆕</span>');
-            if (item.hasLabel === false) badges.push('<span class="card-badge no-label" title="Без бирки">🏷️</span>');
-            if (item.inventoryNote?.trim()) badges.push('<span class="card-badge has-note" title="Заметка">💬</span>');
-            if (item.serialNumber?.trim()) badges.push('<span class="card-badge has-serial" title="S/N">🔢</span>');
+            if (item.isUserAdded) badges.push('<span class="card-badge is-new">🆕</span>');
+            if (item.hasLabel === false) badges.push('<span class="card-badge no-label">🏷️</span>');
+            if (item.inventoryNote?.trim()) badges.push('<span class="card-badge has-note">💬</span>');
+            if (item.serialNumber?.trim()) badges.push('<span class="card-badge has-serial">🔢</span>');
 
             let actionsHtml = '';
             if (isChecked) {
-                actionsHtml = `<button class="card-action-btn undo" data-action="undo" title="Снять отметку">↩️</button>`;
+                actionsHtml = `<button class="card-action undo" data-action="undo" title="Снять">↩️</button>`;
             } else {
                 actionsHtml = `
-                    <button class="card-action-btn check" data-action="check" title="Проверено">✓</button>
-                    <button class="card-action-btn scrap" data-action="scrap" title="Списание">📝</button>
+                    <button class="card-action check" data-action="check" title="Проверено">✓</button>
+                    <button class="card-action scrap" data-action="scrap" title="Списание">📝</button>
                 `;
             }
 
             html += `
                 <div class="${cardClasses}" data-id="${item.id}">
-                    <div class="card-status">${isChecked ? '✓' : ''}</div>
-                    <div class="card-content">
-                        <div class="card-header">
+                    <div class="card-checkbox">${isChecked ? '✓' : ''}</div>
+                    <div class="card-info">
+                        <div class="card-top">
                             <span class="card-inv">${escapeHtml(item.invNumber)}</span>
                             <div class="card-badges">${badges.join('')}</div>
                         </div>
@@ -2814,12 +2443,12 @@ function render() {
 }
 
 // ==================== DIRECTORIES ====================
-function renderDirectoryList(type) {
+function renderDirectory(type) {
     const list = type === 'rooms' ? directories.rooms : directories.people;
     const container = type === 'rooms' ? $('#roomsList') : $('#peopleList');
     
     if (list.length === 0) {
-        container.innerHTML = `<div class="directory-empty"><div class="directory-empty-icon">${type === 'rooms' ? '🚪' : '👤'}</div><div>Список пуст</div></div>`;
+        container.innerHTML = `<div class="directory-empty">${type === 'rooms' ? '🚪' : '👤'} Пусто</div>`;
         return;
     }
     
@@ -2835,20 +2464,20 @@ function renderDirectoryList(type) {
         btn.addEventListener('click', () => {
             const idx = parseInt(btn.closest('.directory-item').dataset.idx);
             if (btn.dataset.action === 'delete') {
-                showConfirm('Удалить?', `Удалить "${list[idx]}"?`, () => {
+                showConfirm('Удалить?', `"${list[idx]}"`, () => {
                     list.splice(idx, 1);
                     saveDirectories();
-                    renderDirectoryList(type);
+                    renderDirectory(type);
                     showToast('Удалено');
                 }, '🗑️');
             } else if (btn.dataset.action === 'edit') {
-                startEditDirectoryItem(type, idx);
+                startEditDirectory(type, idx);
             }
         });
     });
 }
 
-function startEditDirectoryItem(type, idx) {
+function startEditDirectory(type, idx) {
     const list = type === 'rooms' ? directories.rooms : directories.people;
     const container = type === 'rooms' ? $('#roomsList') : $('#peopleList');
     const item = container.querySelector(`[data-idx="${idx}"]`);
@@ -2866,29 +2495,29 @@ function startEditDirectoryItem(type, idx) {
     const save = () => {
         const v = input.value.trim();
         if (v) { list[idx] = v; saveDirectories(); showToast('Сохранено'); }
-        renderDirectoryList(type);
+        renderDirectory(type);
     };
     
     item.querySelector('[data-action="save"]').addEventListener('click', save);
-    item.querySelector('[data-action="cancel"]').addEventListener('click', () => renderDirectoryList(type));
+    item.querySelector('[data-action="cancel"]').addEventListener('click', () => renderDirectory(type));
     input.addEventListener('keydown', e => {
         if (e.key === 'Enter') save();
-        if (e.key === 'Escape') renderDirectoryList(type);
+        if (e.key === 'Escape') renderDirectory(type);
     });
 }
 
-function addDirectoryItem(type) {
+function addDirectory(type) {
     const input = type === 'rooms' ? $('#roomAddInput') : $('#personAddInput');
     const value = input.value.trim();
     if (!value) return;
     
     const list = type === 'rooms' ? directories.rooms : directories.people;
-    if (list.includes(value)) { showToast('Уже существует', true); return; }
+    if (list.includes(value)) { showToast('Уже есть', true); return; }
     
     list.push(value);
     list.sort((a, b) => a.localeCompare(b, 'ru'));
     saveDirectories();
-    renderDirectoryList(type);
+    renderDirectory(type);
     input.value = '';
     showToast('Добавлено');
 }
@@ -2926,16 +2555,16 @@ function hideAutocomplete(dropdownId) {
 function openQuickSearch() {
     $('#quickSearchModal').classList.add('show');
     $('#quickSearchInput').value = '';
-    renderQuickSearchResults('');
+    renderQuickSearch('');
     setTimeout(() => $('#quickSearchInput').focus(), 100);
 }
 
-function renderQuickSearchResults(query) {
+function renderQuickSearch(query) {
     const container = $('#quickSearchResults');
     const q = query.toLowerCase().trim();
     
     if (!q) {
-        container.innerHTML = `<div class="quick-search-empty"><div class="quick-search-empty-icon">🔍</div><div>Начните вводить для поиска</div></div>`;
+        container.innerHTML = `<div class="quick-search-empty">Начните вводить для поиска</div>`;
         return;
     }
     
@@ -2945,20 +2574,20 @@ function renderQuickSearchResults(query) {
     }).slice(0, 50);
     
     if (results.length === 0) {
-        container.innerHTML = `<div class="quick-search-empty"><div class="quick-search-empty-icon">😕</div><div>Ничего не найдено</div></div>`;
+        container.innerHTML = `<div class="quick-search-empty">Ничего не найдено</div>`;
         return;
     }
     
     let html = results.map(item => {
         const isChecked = item.checked || item.writeOff;
         const classes = ['quick-search-item', isChecked ? 'checked' : '', item.writeOff ? 'write-off' : ''].filter(Boolean).join(' ');
-        let statusIcon = '⏳';
-        if (item.writeOff) statusIcon = '📝';
-        else if (item.checked) statusIcon = '✓';
+        let icon = '⏳';
+        if (item.writeOff) icon = '📝';
+        else if (item.checked) icon = '✓';
         
         return `
             <div class="${classes}" data-id="${item.id}">
-                <div class="quick-search-status">${statusIcon}</div>
+                <div class="quick-search-status">${icon}</div>
                 <div class="quick-search-info">
                     <div class="quick-search-inv">${escapeHtml(item.invNumber)}</div>
                     <div class="quick-search-name">${escapeHtml(item.name)}</div>
@@ -3058,6 +2687,18 @@ function saveFields() {
     Object.entries(fields).forEach(([k, v]) => {
         if (item[k] !== v) { item[k] = v; changed = true; }
     });
+    
+    // Add to directories only if exact match doesn't exist
+    if (fields.location && !directories.rooms.includes(fields.location)) {
+        directories.rooms.push(fields.location);
+        directories.rooms.sort((a, b) => a.localeCompare(b, 'ru'));
+        saveDirectories();
+    }
+    if (fields.responsible && !directories.people.includes(fields.responsible)) {
+        directories.people.push(fields.responsible);
+        directories.people.sort((a, b) => a.localeCompare(b, 'ru'));
+        saveDirectories();
+    }
     
     if (changed) { saveData(); render(); }
 }
@@ -3192,7 +2833,7 @@ function closeSidebar() {
 function exportExcel() {
     showConfirm('Экспорт Excel', 'Скачать CSV?', () => {
         const BOM = '\uFEFF';
-        const headers = ['Инв.Номер', 'S/N', 'Название', 'Категория', 'Локация', 'Ответственный', 'Статус', 'Бирка', 'Заметка', 'Дата проверки'];
+        const headers = ['Инв.№', 'S/N', 'Название', 'Категория', 'Локация', 'Ответственный', 'Статус', 'Бирка', 'Заметка', 'Дата'];
         let csv = BOM + headers.join(';') + '\n';
         
         equipmentData.forEach(item => {
@@ -3204,9 +2845,9 @@ function exportExcel() {
             if (item.hasLabel === true) label = 'Есть';
             if (item.hasLabel === false) label = 'НЕТ';
             
-            const checkedDate = item.checkedAt ? new Date(item.checkedAt).toLocaleDateString('ru-RU') : '-';
+            const date = item.checkedAt ? new Date(item.checkedAt).toLocaleDateString('ru-RU') : '-';
             
-            const row = [item.invNumber, item.serialNumber, item.name, item.category, item.location, item.responsible, status, label, item.inventoryNote, checkedDate]
+            const row = [item.invNumber, item.serialNumber, item.name, item.category, item.location, item.responsible, status, label, item.inventoryNote, date]
                 .map(f => `"${String(f || '').replace(/"/g, '""')}"`).join(';');
             csv += row + '\n';
         });
@@ -3216,7 +2857,7 @@ function exportExcel() {
         link.href = URL.createObjectURL(blob);
         link.download = `Инвентаризация_${new Date().toISOString().slice(0, 10)}.csv`;
         link.click();
-        showToast('📊 Excel скачан');
+        showToast('📊 Скачано');
     }, '📊');
 }
 
@@ -3228,7 +2869,7 @@ function exportJSON() {
         link.href = URL.createObjectURL(blob);
         link.download = `inventory_${new Date().toISOString().slice(0, 10)}.json`;
         link.click();
-        showToast('📤 JSON экспортирован');
+        showToast('📤 Экспортировано');
     }, '📤');
 }
 
@@ -3240,38 +2881,35 @@ function importJSON(e) {
     reader.onload = (event) => {
         try {
             const json = JSON.parse(event.target.result);
-            const importEquipment = json.equipment || (Array.isArray(json) ? json : null);
-            const importDirs = json.directories || null;
+            const imp = json.equipment || (Array.isArray(json) ? json : null);
+            const impDirs = json.directories || null;
             
-            if (!importEquipment) throw new Error('Неверный формат');
+            if (!imp) throw new Error('Неверный формат');
             
             let count = 0;
-            importEquipment.forEach(imp => {
-                const existing = equipmentData.find(e => e.id === imp.id);
+            imp.forEach(impItem => {
+                const existing = equipmentData.find(e => e.id === impItem.id);
                 if (existing) {
                     Object.assign(existing, {
-                        name: imp.name || existing.name,
-                        invNumber: imp.invNumber || existing.invNumber,
-                        category: imp.category || existing.category,
-                        checked: imp.checked ?? existing.checked,
-                        writeOff: imp.writeOff ?? existing.writeOff,
-                        hasLabel: imp.hasLabel ?? existing.hasLabel,
-                        serialNumber: imp.serialNumber || existing.serialNumber,
-                        location: imp.location || existing.location,
-                        responsible: imp.responsible || existing.responsible,
-                        inventoryNote: imp.inventoryNote || existing.inventoryNote,
-                        checkedAt: imp.checkedAt || existing.checkedAt
+                        checked: impItem.checked ?? existing.checked,
+                        writeOff: impItem.writeOff ?? existing.writeOff,
+                        hasLabel: impItem.hasLabel ?? existing.hasLabel,
+                        serialNumber: impItem.serialNumber || existing.serialNumber,
+                        location: impItem.location || existing.location,
+                        responsible: impItem.responsible || existing.responsible,
+                        inventoryNote: impItem.inventoryNote || existing.inventoryNote,
+                        checkedAt: impItem.checkedAt || existing.checkedAt
                     });
                     count++;
-                } else if (imp.isUserAdded) {
-                    equipmentData.push(imp);
+                } else if (impItem.isUserAdded) {
+                    equipmentData.push(impItem);
                     count++;
                 }
             });
             
-            if (importDirs) {
-                if (importDirs.rooms) directories.rooms = [...new Set([...directories.rooms, ...importDirs.rooms])].sort((a, b) => a.localeCompare(b, 'ru'));
-                if (importDirs.people) directories.people = [...new Set([...directories.people, ...importDirs.people])].sort((a, b) => a.localeCompare(b, 'ru'));
+            if (impDirs) {
+                if (impDirs.rooms) directories.rooms = [...new Set([...directories.rooms, ...impDirs.rooms])].sort((a, b) => a.localeCompare(b, 'ru'));
+                if (impDirs.people) directories.people = [...new Set([...directories.people, ...impDirs.people])].sort((a, b) => a.localeCompare(b, 'ru'));
                 saveDirectories();
             }
             
@@ -3288,7 +2926,7 @@ function importJSON(e) {
 }
 
 function clearAllData() {
-    showConfirm('Сброс данных', 'Удалить ВСЕ данные? Нельзя отменить!', () => {
+    showConfirm('Сброс', 'Удалить ВСЕ данные?', () => {
         equipmentData.forEach(item => {
             item.checked = false;
             item.writeOff = false;
@@ -3302,7 +2940,7 @@ function clearAllData() {
         saveData();
         render();
         closeDetails();
-        showToast('🗑️ Данные сброшены');
+        showToast('🗑️ Сброшено');
     }, '🗑️');
 }
 
@@ -3326,7 +2964,7 @@ function attachEvents() {
     });
     
     // Header buttons
-    $('#btnSave').addEventListener('click', () => showConfirm('Сохранение', 'Сохранить все данные?', () => { saveData(); showToast('💾 Сохранено'); }, '💾'));
+    $('#btnSave').addEventListener('click', () => showConfirm('Сохранить?', 'Сохранить все данные?', () => { saveData(); showToast('💾 Сохранено'); }, '💾'));
     $('#btnExcel').addEventListener('click', exportExcel);
     $('#btnExport').addEventListener('click', exportJSON);
     $('#btnImport').addEventListener('click', () => showConfirm('Импорт', 'Загрузить JSON?', () => $('#fileInput').click(), '📥'));
@@ -3334,21 +2972,21 @@ function attachEvents() {
     $('#btnClear').addEventListener('click', clearAllData);
 
     // Add Equipment
-    $('#btnAddEquipment').addEventListener('click', () => { openAddEquipmentModal(); closeSidebar(); });
+    $('#btnAddEquipment').addEventListener('click', () => { openAddModal(); closeSidebar(); });
     
     // Edit modal
     $('#editCancel').addEventListener('click', () => $('#editModal').classList.remove('show'));
     $('#editSave').addEventListener('click', saveEquipment);
 
     // Directories
-    $('#btnRooms').addEventListener('click', () => { renderDirectoryList('rooms'); $('#roomsModal').classList.add('show'); });
-    $('#btnPeople').addEventListener('click', () => { renderDirectoryList('people'); $('#peopleModal').classList.add('show'); });
+    $('#btnRooms').addEventListener('click', () => { renderDirectory('rooms'); $('#roomsModal').classList.add('show'); });
+    $('#btnPeople').addEventListener('click', () => { renderDirectory('people'); $('#peopleModal').classList.add('show'); });
     $('#roomsClose').addEventListener('click', () => $('#roomsModal').classList.remove('show'));
     $('#peopleClose').addEventListener('click', () => $('#peopleModal').classList.remove('show'));
-    $('#roomAddBtn').addEventListener('click', () => addDirectoryItem('rooms'));
-    $('#personAddBtn').addEventListener('click', () => addDirectoryItem('people'));
-    $('#roomAddInput').addEventListener('keydown', e => { if (e.key === 'Enter') addDirectoryItem('rooms'); });
-    $('#personAddInput').addEventListener('keydown', e => { if (e.key === 'Enter') addDirectoryItem('people'); });
+    $('#roomAddBtn').addEventListener('click', () => addDirectory('rooms'));
+    $('#personAddBtn').addEventListener('click', () => addDirectory('people'));
+    $('#roomAddInput').addEventListener('keydown', e => { if (e.key === 'Enter') addDirectory('rooms'); });
+    $('#personAddInput').addEventListener('keydown', e => { if (e.key === 'Enter') addDirectory('people'); });
 
     // Filters
     $$('.filter-chip').forEach(btn => {
@@ -3384,7 +3022,7 @@ function attachEvents() {
 
     // Details panel
     $('#closeDetails').addEventListener('click', closeDetails);
-    $('#editEquipment').addEventListener('click', () => { if (state.selectedId) openEditEquipmentModal(state.selectedId); });
+    $('#editEquipment').addEventListener('click', () => { if (state.selectedId) openEditModal(state.selectedId); });
     $('#deleteEquipment').addEventListener('click', () => { if (state.selectedId) deleteEquipment(state.selectedId); });
     $('#btnCheck').addEventListener('click', handleCheck);
     $('#btnScrap').addEventListener('click', handleScrap);
@@ -3472,7 +3110,7 @@ function attachEvents() {
 
     // Quick Search
     $('#fabSearch').addEventListener('click', openQuickSearch);
-    $('#quickSearchInput').addEventListener('input', debounce(e => renderQuickSearchResults(e.target.value), 150));
+    $('#quickSearchInput').addEventListener('input', debounce(e => renderQuickSearch(e.target.value), 150));
     $('#quickSearchClose').addEventListener('click', () => $('#quickSearchModal').classList.remove('show'));
 
     // Mobile
@@ -3495,7 +3133,7 @@ function attachEvents() {
         
         if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveData(); showToast('💾 Сохранено'); }
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); openQuickSearch(); }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); openAddEquipmentModal(); }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); openAddModal(); }
         
         if (!$('#detailsPanel').classList.contains('hidden') && !e.target.matches('input, textarea, select')) {
             if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); navigateItem(-1); }
