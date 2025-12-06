@@ -190,10 +190,12 @@
             padding: 12px 16px;
             border-bottom: 1px solid var(--gray-200);
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
         }
         .sidebar-action-btn {
             flex: 1;
+            min-width: calc(50% - 4px);
             padding: 12px;
             border: 2px solid var(--gray-200);
             background: white;
@@ -214,6 +216,15 @@
         }
         .sidebar-action-btn:active {
             transform: scale(0.98);
+        }
+        .sidebar-action-btn.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        .sidebar-action-btn.primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
         }
 
         /* Categories */
@@ -604,6 +615,7 @@
         .card-badge.no-label { background: rgba(239, 68, 68, 0.1); }
         .card-badge.has-note { background: rgba(59, 130, 246, 0.1); }
         .card-badge.has-serial { background: rgba(16, 185, 129, 0.1); }
+        .card-badge.is-new { background: rgba(245, 158, 11, 0.1); }
         
         .card-name {
             font-size: 0.9375rem;
@@ -714,7 +726,11 @@
             align-items: center;
             gap: 6px;
         }
-        .close-btn { 
+        .details-header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .header-action-btn { 
             width: 48px;
             height: 48px;
             border-radius: var(--radius-md);
@@ -725,12 +741,15 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             flex-shrink: 0;
             transition: all var(--transition);
         }
-        .close-btn:hover { 
+        .header-action-btn:hover { 
             background: rgba(255,255,255,0.3);
+        }
+        .header-action-btn.danger:hover {
+            background: var(--danger);
         }
 
         .details-body { 
@@ -785,7 +804,7 @@
             font-weight: 600;
         }
 
-        /* Input Fields with Autocomplete */
+        /* Input Fields */
         .input-group {
             margin-bottom: 20px;
             position: relative;
@@ -870,9 +889,6 @@
         .autocomplete-item:last-child { border-bottom: none; }
         .autocomplete-item:hover {
             background: var(--gray-50);
-        }
-        .autocomplete-item:active {
-            background: var(--gray-100);
         }
 
         .label-buttons { 
@@ -972,21 +988,11 @@
         .action-btn-large.success { 
             background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
         }
-        .action-btn-large.success:hover { 
-            filter: brightness(1.05);
-        }
         .action-btn-large.warning { 
             background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%);
         }
-        .action-btn-large.warning:hover { 
-            filter: brightness(1.05);
-        }
         .action-btn-large.secondary {
             background: var(--gray-400);
-            color: white;
-        }
-        .action-btn-large.secondary:hover { 
-            background: var(--gray-500);
         }
         .action-btn-large.full {
             grid-column: 1 / -1;
@@ -1007,10 +1013,7 @@
         }
         .modal-overlay.show { display: flex; }
         
-        /* Confirm modal should be on top of everything */
-        #confirmModal {
-            z-index: 700;
-        }
+        #confirmModal { z-index: 700; }
         
         .modal { 
             background: white;
@@ -1073,13 +1076,50 @@
         }
         .modal-btn:active { transform: scale(0.98); }
         .modal-btn.yes { background: var(--success); color: white; }
-        .modal-btn.yes:hover { background: var(--success-dark); }
         .modal-btn.no { background: var(--danger); color: white; }
-        .modal-btn.no:hover { background: var(--danger-dark); }
         .modal-btn.cancel { background: var(--gray-200); color: var(--gray-700); }
-        .modal-btn.cancel:hover { background: var(--gray-300); }
         .modal-btn.primary { background: var(--primary); color: white; }
-        .modal-btn.primary:hover { background: var(--primary-dark); }
+
+        /* Equipment Edit Modal */
+        .edit-modal {
+            max-width: 600px;
+        }
+        .edit-modal .modal-title {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+        .edit-form-group {
+            margin-bottom: 20px;
+        }
+        .edit-form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+        .edit-form-input, .edit-form-select, .edit-form-textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all var(--transition);
+        }
+        .edit-form-input:focus, .edit-form-select:focus, .edit-form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .edit-form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .edit-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
 
         /* Directory Modal */
         .directory-modal {
@@ -1112,12 +1152,6 @@
             cursor: pointer;
             transition: all var(--transition);
         }
-        .directory-add-btn:hover {
-            background: var(--success-dark);
-        }
-        .directory-add-btn:active {
-            transform: scale(0.97);
-        }
         
         .directory-list {
             max-height: 400px;
@@ -1147,9 +1181,6 @@
             font-size: 1rem;
             font-family: inherit;
         }
-        .directory-item-edit:focus {
-            outline: none;
-        }
         .directory-item-btn {
             width: 40px;
             height: 40px;
@@ -1162,49 +1193,17 @@
             font-size: 1rem;
             transition: all var(--transition);
         }
-        .directory-item-btn.edit {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--info);
-        }
-        .directory-item-btn.edit:hover {
-            background: var(--info);
-            color: white;
-        }
-        .directory-item-btn.save {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-        .directory-item-btn.save:hover {
-            background: var(--success);
-            color: white;
-        }
-        .directory-item-btn.delete {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-        .directory-item-btn.delete:hover {
-            background: var(--danger);
-            color: white;
-        }
-        .directory-item-btn.cancel {
-            background: rgba(107, 114, 128, 0.1);
-            color: var(--gray-600);
-        }
-        .directory-item-btn.cancel:hover {
-            background: var(--gray-600);
-            color: white;
-        }
+        .directory-item-btn.edit { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+        .directory-item-btn.save { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .directory-item-btn.delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .directory-item-btn.cancel { background: rgba(107, 114, 128, 0.1); color: var(--gray-600); }
         .directory-empty {
             padding: 40px;
             text-align: center;
             color: var(--gray-400);
         }
-        .directory-empty-icon {
-            font-size: 2.5rem;
-            margin-bottom: 12px;
-        }
 
-        /* Serial Number Modal */
+        /* Modal Input */
         .modal-input {
             width: 100%;
             padding: 20px;
@@ -1219,103 +1218,6 @@
         .modal-input:focus {
             outline: none;
             border-color: var(--primary);
-        }
-
-        /* Toast */
-        .toast { 
-            position: fixed;
-            bottom: calc(24px + var(--safe-bottom));
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--gray-900);
-            color: white;
-            padding: 18px 32px;
-            border-radius: var(--radius-lg);
-            font-weight: 700;
-            font-size: 1.0625rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .toast.show { 
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-        .toast-icon {
-            width: 28px;
-            height: 28px;
-            background: var(--success);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.875rem;
-        }
-        .toast.error .toast-icon { background: var(--danger); }
-
-        /* Mobile Overlay */
-        .mobile-overlay { 
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 400;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .mobile-overlay.show { 
-            display: block;
-            opacity: 1;
-        }
-
-        .mobile-menu-btn { 
-            display: none;
-            position: fixed;
-            top: calc(8px + var(--safe-top));
-            left: 12px;
-            width: 48px;
-            height: 48px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: 1.375rem;
-            z-index: 201;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        /* FAB - Quick Search */
-        .fab {
-            position: fixed;
-            bottom: calc(24px + var(--safe-bottom));
-            right: 24px;
-            width: 68px;
-            height: 68px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 1.875rem;
-            cursor: pointer;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition);
-            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
-        }
-        .fab:hover {
-            transform: scale(1.08);
-            background: var(--primary-dark);
-        }
-        .fab:active {
-            transform: scale(0.95);
         }
 
         /* Quick Search Modal */
@@ -1348,16 +1250,11 @@
             min-height: 120px;
             border: 2px solid var(--gray-200);
             border-radius: var(--radius-md);
-            -webkit-overflow-scrolling: touch;
         }
         .quick-search-empty {
             padding: 50px;
             text-align: center;
             color: var(--gray-400);
-        }
-        .quick-search-empty-icon {
-            font-size: 3rem;
-            margin-bottom: 12px;
         }
         .quick-search-item {
             padding: 16px 20px;
@@ -1370,7 +1267,6 @@
         }
         .quick-search-item:last-child { border-bottom: none; }
         .quick-search-item:hover { background: var(--gray-50); }
-        .quick-search-item:active { background: var(--gray-100); }
         .quick-search-item.checked { background: rgba(16, 185, 129, 0.05); }
         .quick-search-item.write-off { background: rgba(239, 68, 68, 0.05); }
         
@@ -1417,7 +1313,100 @@
             color: var(--gray-500);
             background: var(--gray-50);
             border-top: 1px solid var(--gray-200);
-            font-weight: 600;
+        }
+
+        /* Toast */
+        .toast { 
+            position: fixed;
+            bottom: calc(24px + var(--safe-bottom));
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--gray-900);
+            color: white;
+            padding: 18px 32px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1.0625rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toast.show { 
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+        .toast.error .toast-icon { background: var(--danger); }
+
+        /* Mobile */
+        .mobile-overlay { 
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 400;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-overlay.show { 
+            display: block;
+            opacity: 1;
+        }
+
+        .mobile-menu-btn { 
+            display: none;
+            position: fixed;
+            top: calc(8px + var(--safe-top));
+            left: 12px;
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1.375rem;
+            z-index: 201;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: calc(24px + var(--safe-bottom));
+            right: 24px;
+            width: 68px;
+            height: 68px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.875rem;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+        }
+        .fab:hover {
+            transform: scale(1.08);
+            background: var(--primary-dark);
         }
 
         /* === RESPONSIVE === */
@@ -1519,9 +1508,12 @@
             .sidebar-actions {
                 flex-direction: column;
             }
+            
+            .edit-form-row {
+                grid-template-columns: 1fr;
+            }
         }
 
-        /* iPad Pro specific */
         @media (min-width: 768px) and (max-width: 1024px) {
             .sidebar { width: 340px; }
             .details-panel { width: 100%; }
@@ -1540,22 +1532,9 @@
                 padding: 26px;
                 font-size: 1.25rem;
             }
-            
-            .detail-section-title {
-                font-size: 0.875rem;
-            }
-            
-            .input-label {
-                font-size: 1.0625rem;
-            }
         }
 
-        /* Portrait mode fix */
         @media (max-width: 768px) and (orientation: portrait) {
-            .app {
-                flex-direction: column;
-            }
-            
             .header {
                 padding-top: 16px;
                 padding-left: 72px;
@@ -1607,6 +1586,51 @@
             <div class="modal-buttons">
                 <button class="modal-btn cancel" id="confirmCancel">Отмена</button>
                 <button class="modal-btn primary" id="confirmOk">Да</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Equipment Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal edit-modal">
+            <div class="modal-title" id="editModalTitle">➕ Добавить оборудование</div>
+            
+            <div class="edit-form-group">
+                <label class="edit-form-label">Название оборудования *</label>
+                <input type="text" class="edit-form-input" id="editName" placeholder="Введите название..." autocomplete="off">
+            </div>
+            
+            <div class="edit-form-row">
+                <div class="edit-form-group">
+                    <label class="edit-form-label">Инвентарный номер *</label>
+                    <input type="text" class="edit-form-input" id="editInvNumber" placeholder="Инв. №" autocomplete="off">
+                </div>
+                <div class="edit-form-group">
+                    <label class="edit-form-label">Дата ввода</label>
+                    <input type="text" class="edit-form-input" id="editDate" placeholder="ДД.ММ.ГГГГ" autocomplete="off">
+                </div>
+            </div>
+            
+            <div class="edit-form-group">
+                <label class="edit-form-label">Категория *</label>
+                <select class="edit-form-select" id="editCategory">
+                    <option value="">Выберите категорию...</option>
+                </select>
+            </div>
+            
+            <div class="edit-form-group">
+                <label class="edit-form-label">Новая категория (если нет в списке)</label>
+                <input type="text" class="edit-form-input" id="editNewCategory" placeholder="Введите новую категорию..." autocomplete="off">
+            </div>
+            
+            <div class="edit-form-group">
+                <label class="edit-form-label">Примечание</label>
+                <textarea class="edit-form-textarea" id="editNote" placeholder="Примечание..."></textarea>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="editCancel">Отмена</button>
+                <button class="modal-btn primary" id="editSave">💾 Сохранить</button>
             </div>
         </div>
     </div>
@@ -1694,6 +1718,7 @@
             </div>
             
             <div class="sidebar-actions">
+                <button class="sidebar-action-btn primary" id="btnAddEquipment">➕ Добавить</button>
                 <button class="sidebar-action-btn" id="btnRooms">🚪 Кабинеты</button>
                 <button class="sidebar-action-btn" id="btnPeople">👥 ФИО</button>
             </div>
@@ -1753,6 +1778,10 @@
                         🔢 С S/N
                         <span class="filter-chip-count" id="filterSerial">0</span>
                     </button>
+                    <button class="filter-chip" data-filter="new">
+                        🆕 Новые
+                        <span class="filter-chip-count" id="filterNew">0</span>
+                    </button>
                 </div>
             </header>
 
@@ -1766,7 +1795,11 @@
                             <div class="details-title" id="detailsName">-</div>
                             <div class="details-category" id="detailsCategory">📁 -</div>
                         </div>
-                        <button class="close-btn" id="closeDetails">✕</button>
+                        <div class="details-header-actions">
+                            <button class="header-action-btn" id="editEquipment" title="Редактировать">✏️</button>
+                            <button class="header-action-btn danger" id="deleteEquipment" title="Удалить">🗑️</button>
+                            <button class="header-action-btn" id="closeDetails" title="Закрыть">✕</button>
+                        </div>
                     </div>
                     
                     <div class="details-body">
@@ -2293,13 +2326,8 @@ let equipmentData = [
 {"id":"item_422","name":"Интерактивная панель ICL InfoRay IR38604 с встроенным компьютером OPS ThinRay T106G1","invNumber":"БД-57","date":"03.10.2022","category":"Интерактивное оборудование"}
 ];
 
-// ==================== DIRECTORIES ====================
-let directories = {
-    rooms: [],
-    people: []
-};
+let directories = { rooms: [], people: [] };
 
-// ==================== STATE ====================
 let state = {
     filter: 'all',
     category: '',
@@ -2308,7 +2336,7 @@ let state = {
     pendingAction: null,
     filteredItems: [],
     confirmCallback: null,
-    editingDirItem: null
+    editingItemId: null
 };
 
 // ==================== UTILITIES ====================
@@ -2342,6 +2370,8 @@ const showConfirm = (title, text, callback, icon = '⚠️') => {
     $('#confirmModal').classList.add('show');
 };
 
+const generateId = () => 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
 // ==================== ICONS ====================
 const categoryIcons = {
     "Компьютеры и моноблоки": "🖥️",
@@ -2371,7 +2401,16 @@ function init() {
 
 function loadData() {
     try {
-        const saved = JSON.parse(localStorage.getItem('inv_102_v10') || '[]');
+        const saved = JSON.parse(localStorage.getItem('inv_102_v11') || '[]');
+        const addedItems = JSON.parse(localStorage.getItem('inv_102_added') || '[]');
+        
+        // Add user-created items
+        addedItems.forEach(item => {
+            if (!equipmentData.find(e => e.id === item.id)) {
+                equipmentData.push(item);
+            }
+        });
+        
         equipmentData.forEach(item => {
             item.hasLabel = item.hasLabel ?? null;
             item.serialNumber = item.serialNumber || '';
@@ -2381,6 +2420,7 @@ function loadData() {
             item.checked = item.checked || false;
             item.writeOff = item.writeOff || false;
             item.checkedAt = item.checkedAt || null;
+            item.isUserAdded = item.isUserAdded || false;
             
             const s = saved.find(i => i.id === item.id);
             if (s) Object.assign(item, s);
@@ -2391,6 +2431,11 @@ function loadData() {
 function saveData() {
     const data = equipmentData.map(i => ({
         id: i.id,
+        name: i.name,
+        invNumber: i.invNumber,
+        date: i.date,
+        category: i.category,
+        note: i.note,
         checked: i.checked,
         writeOff: i.writeOff,
         hasLabel: i.hasLabel,
@@ -2398,9 +2443,15 @@ function saveData() {
         location: i.location,
         responsible: i.responsible,
         inventoryNote: i.inventoryNote,
-        checkedAt: i.checkedAt
+        checkedAt: i.checkedAt,
+        isUserAdded: i.isUserAdded
     }));
-    localStorage.setItem('inv_102_v10', JSON.stringify(data));
+    localStorage.setItem('inv_102_v11', JSON.stringify(data));
+    
+    // Save user-added items separately
+    const addedItems = equipmentData.filter(i => i.isUserAdded);
+    localStorage.setItem('inv_102_added', JSON.stringify(addedItems));
+    
     updateStats();
 }
 
@@ -2414,6 +2465,150 @@ function loadDirectories() {
 
 function saveDirectories() {
     localStorage.setItem('inv_102_dirs', JSON.stringify(directories));
+}
+
+// ==================== EQUIPMENT CRUD ====================
+function openAddEquipmentModal() {
+    state.editingItemId = null;
+    $('#editModalTitle').textContent = '➕ Добавить оборудование';
+    $('#editName').value = '';
+    $('#editInvNumber').value = '';
+    $('#editDate').value = new Date().toLocaleDateString('ru-RU');
+    $('#editCategory').value = '';
+    $('#editNewCategory').value = '';
+    $('#editNote').value = '';
+    
+    populateCategorySelect();
+    $('#editModal').classList.add('show');
+    setTimeout(() => $('#editName').focus(), 100);
+}
+
+function openEditEquipmentModal(id) {
+    const item = equipmentData.find(i => i.id === id);
+    if (!item) return;
+    
+    state.editingItemId = id;
+    $('#editModalTitle').textContent = '✏️ Редактировать оборудование';
+    $('#editName').value = item.name || '';
+    $('#editInvNumber').value = item.invNumber || '';
+    $('#editDate').value = item.date || '';
+    $('#editNewCategory').value = '';
+    $('#editNote').value = item.note || '';
+    
+    populateCategorySelect();
+    $('#editCategory').value = item.category || '';
+    
+    $('#editModal').classList.add('show');
+    setTimeout(() => $('#editName').focus(), 100);
+}
+
+function populateCategorySelect() {
+    const categories = [...new Set(equipmentData.map(i => i.category || 'Прочее'))].sort();
+    const select = $('#editCategory');
+    
+    select.innerHTML = '<option value="">Выберите категорию...</option>' + 
+        categories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');
+}
+
+function saveEquipment() {
+    const name = $('#editName').value.trim();
+    const invNumber = $('#editInvNumber').value.trim();
+    const date = $('#editDate').value.trim();
+    let category = $('#editCategory').value.trim();
+    const newCategory = $('#editNewCategory').value.trim();
+    const note = $('#editNote').value.trim();
+    
+    if (!name) {
+        showToast('Введите название', true);
+        $('#editName').focus();
+        return;
+    }
+    
+    if (!invNumber) {
+        showToast('Введите инв. номер', true);
+        $('#editInvNumber').focus();
+        return;
+    }
+    
+    if (newCategory) {
+        category = newCategory;
+    }
+    
+    if (!category) {
+        showToast('Выберите или введите категорию', true);
+        return;
+    }
+    
+    // Check for duplicate inv number
+    const duplicate = equipmentData.find(i => 
+        i.invNumber === invNumber && i.id !== state.editingItemId
+    );
+    if (duplicate) {
+        showToast('Инв. номер уже существует!', true);
+        return;
+    }
+    
+    if (state.editingItemId) {
+        // Edit existing
+        const item = equipmentData.find(i => i.id === state.editingItemId);
+        if (item) {
+            item.name = name;
+            item.invNumber = invNumber;
+            item.date = date;
+            item.category = category;
+            item.note = note;
+            showToast('✏️ Изменения сохранены');
+        }
+    } else {
+        // Add new
+        const newItem = {
+            id: generateId(),
+            name: name,
+            invNumber: invNumber,
+            date: date,
+            category: category,
+            note: note,
+            checked: false,
+            writeOff: false,
+            hasLabel: null,
+            serialNumber: '',
+            location: '',
+            responsible: '',
+            inventoryNote: '',
+            checkedAt: null,
+            isUserAdded: true
+        };
+        equipmentData.push(newItem);
+        showToast('➕ Оборудование добавлено');
+    }
+    
+    saveData();
+    buildSidebar();
+    render();
+    $('#editModal').classList.remove('show');
+    
+    if (state.editingItemId) {
+        openDetails(state.editingItemId);
+    }
+}
+
+function deleteEquipment(id) {
+    const item = equipmentData.find(i => i.id === id);
+    if (!item) return;
+    
+    showConfirm(
+        'Удалить оборудование?',
+        `Удалить "${item.name}" (${item.invNumber})? Это действие нельзя отменить.`,
+        () => {
+            equipmentData = equipmentData.filter(i => i.id !== id);
+            saveData();
+            buildSidebar();
+            render();
+            closeDetails();
+            showToast('🗑️ Оборудование удалено');
+        },
+        '🗑️'
+    );
 }
 
 // ==================== SIDEBAR ====================
@@ -2467,6 +2662,7 @@ function updateStats() {
     const writeOff = equipmentData.filter(i => i.writeOff).length;
     const noLabel = equipmentData.filter(i => i.hasLabel === false).length;
     const serial = equipmentData.filter(i => i.serialNumber?.trim()).length;
+    const userAdded = equipmentData.filter(i => i.isUserAdded).length;
     const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
 
     $('#statTotal').textContent = total;
@@ -2482,6 +2678,7 @@ function updateStats() {
     $('#filterWriteoff').textContent = writeOff;
     $('#filterNolabel').textContent = noLabel;
     $('#filterSerial').textContent = serial;
+    $('#filterNew').textContent = userAdded;
 
     $('#countAll').textContent = total;
     
@@ -2517,6 +2714,7 @@ function render() {
             case 'write-off': if (!item.writeOff) return false; break;
             case 'no-label': if (item.hasLabel !== false) return false; break;
             case 'has-serial': if (!item.serialNumber?.trim()) return false; break;
+            case 'new': if (!item.isUserAdded) return false; break;
         }
         
         if (search) {
@@ -2534,7 +2732,7 @@ function render() {
             <div class="empty-state">
                 <div class="empty-state-icon">📭</div>
                 <div class="empty-state-text">Ничего не найдено</div>
-                <div class="empty-state-hint">Измените фильтры или поисковый запрос</div>
+                <div class="empty-state-hint">Измените фильтры или добавьте оборудование</div>
             </div>
         `;
         return;
@@ -2573,6 +2771,7 @@ function render() {
             ].filter(Boolean).join(' ');
             
             const badges = [];
+            if (item.isUserAdded) badges.push('<span class="card-badge is-new" title="Добавлено">🆕</span>');
             if (item.hasLabel === false) badges.push('<span class="card-badge no-label" title="Без бирки">🏷️</span>');
             if (item.inventoryNote?.trim()) badges.push('<span class="card-badge has-note" title="Заметка">💬</span>');
             if (item.serialNumber?.trim()) badges.push('<span class="card-badge has-serial" title="S/N">🔢</span>');
@@ -2614,42 +2813,35 @@ function render() {
     updateNavButtons();
 }
 
-// ==================== DIRECTORIES UI ====================
+// ==================== DIRECTORIES ====================
 function renderDirectoryList(type) {
     const list = type === 'rooms' ? directories.rooms : directories.people;
     const container = type === 'rooms' ? $('#roomsList') : $('#peopleList');
     
     if (list.length === 0) {
-        container.innerHTML = `
-            <div class="directory-empty">
-                <div class="directory-empty-icon">${type === 'rooms' ? '🚪' : '👤'}</div>
-                <div>Список пуст</div>
-            </div>
-        `;
+        container.innerHTML = `<div class="directory-empty"><div class="directory-empty-icon">${type === 'rooms' ? '🚪' : '👤'}</div><div>Список пуст</div></div>`;
         return;
     }
     
     container.innerHTML = list.map((item, idx) => `
         <div class="directory-item" data-idx="${idx}">
             <span class="directory-item-text">${escapeHtml(item)}</span>
-            <button class="directory-item-btn edit" data-action="edit" title="Редактировать">✏️</button>
-            <button class="directory-item-btn delete" data-action="delete" title="Удалить">🗑️</button>
+            <button class="directory-item-btn edit" data-action="edit">✏️</button>
+            <button class="directory-item-btn delete" data-action="delete">🗑️</button>
         </div>
     `).join('');
     
     container.querySelectorAll('.directory-item-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', () => {
             const idx = parseInt(btn.closest('.directory-item').dataset.idx);
-            const action = btn.dataset.action;
-            
-            if (action === 'delete') {
-                showConfirm('Удалить?', `Удалить "${list[idx]}" из справочника?`, () => {
+            if (btn.dataset.action === 'delete') {
+                showConfirm('Удалить?', `Удалить "${list[idx]}"?`, () => {
                     list.splice(idx, 1);
                     saveDirectories();
                     renderDirectoryList(type);
                     showToast('Удалено');
                 }, '🗑️');
-            } else if (action === 'edit') {
+            } else if (btn.dataset.action === 'edit') {
                 startEditDirectoryItem(type, idx);
             }
         });
@@ -2663,55 +2855,35 @@ function startEditDirectoryItem(type, idx) {
     
     item.innerHTML = `
         <input type="text" class="directory-item-edit" value="${escapeHtml(list[idx])}">
-        <button class="directory-item-btn save" data-action="save" title="Сохранить">✓</button>
-        <button class="directory-item-btn cancel" data-action="cancel-edit" title="Отмена">✕</button>
+        <button class="directory-item-btn save" data-action="save">✓</button>
+        <button class="directory-item-btn cancel" data-action="cancel">✕</button>
     `;
     
     const input = item.querySelector('input');
     input.focus();
     input.select();
     
-    item.querySelector('[data-action="save"]').addEventListener('click', () => {
-        const newValue = input.value.trim();
-        if (newValue) {
-            list[idx] = newValue;
-            saveDirectories();
-            showToast('Сохранено');
-        }
+    const save = () => {
+        const v = input.value.trim();
+        if (v) { list[idx] = v; saveDirectories(); showToast('Сохранено'); }
         renderDirectoryList(type);
-    });
+    };
     
-    item.querySelector('[data-action="cancel-edit"]').addEventListener('click', () => {
-        renderDirectoryList(type);
-    });
-    
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const newValue = input.value.trim();
-            if (newValue) {
-                list[idx] = newValue;
-                saveDirectories();
-                showToast('Сохранено');
-            }
-            renderDirectoryList(type);
-        } else if (e.key === 'Escape') {
-            renderDirectoryList(type);
-        }
+    item.querySelector('[data-action="save"]').addEventListener('click', save);
+    item.querySelector('[data-action="cancel"]').addEventListener('click', () => renderDirectoryList(type));
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') save();
+        if (e.key === 'Escape') renderDirectoryList(type);
     });
 }
 
 function addDirectoryItem(type) {
     const input = type === 'rooms' ? $('#roomAddInput') : $('#personAddInput');
     const value = input.value.trim();
-    
     if (!value) return;
     
     const list = type === 'rooms' ? directories.rooms : directories.people;
-    
-    if (list.includes(value)) {
-        showToast('Уже существует', true);
-        return;
-    }
+    if (list.includes(value)) { showToast('Уже существует', true); return; }
     
     list.push(value);
     list.sort((a, b) => a.localeCompare(b, 'ru'));
@@ -2727,23 +2899,12 @@ function showAutocomplete(inputId, dropdownId, list) {
     const dropdown = $(`#${dropdownId}`);
     const value = input.value.toLowerCase().trim();
     
-    if (!value) {
-        dropdown.classList.remove('show');
-        return;
-    }
+    if (!value) { dropdown.classList.remove('show'); return; }
     
-    const filtered = list.filter(item => 
-        item.toLowerCase().includes(value)
-    ).slice(0, 8);
+    const filtered = list.filter(item => item.toLowerCase().includes(value)).slice(0, 8);
+    if (filtered.length === 0) { dropdown.classList.remove('show'); return; }
     
-    if (filtered.length === 0) {
-        dropdown.classList.remove('show');
-        return;
-    }
-    
-    dropdown.innerHTML = filtered.map(item => `
-        <div class="autocomplete-item">${escapeHtml(item)}</div>
-    `).join('');
+    dropdown.innerHTML = filtered.map(item => `<div class="autocomplete-item">${escapeHtml(item)}</div>`).join('');
     
     dropdown.querySelectorAll('.autocomplete-item').forEach(el => {
         el.addEventListener('click', () => {
@@ -2758,9 +2919,7 @@ function showAutocomplete(inputId, dropdownId, list) {
 }
 
 function hideAutocomplete(dropdownId) {
-    setTimeout(() => {
-        $(`#${dropdownId}`).classList.remove('show');
-    }, 200);
+    setTimeout(() => $(`#${dropdownId}`).classList.remove('show'), 200);
 }
 
 // ==================== QUICK SEARCH ====================
@@ -2776,12 +2935,7 @@ function renderQuickSearchResults(query) {
     const q = query.toLowerCase().trim();
     
     if (!q) {
-        container.innerHTML = `
-            <div class="quick-search-empty">
-                <div class="quick-search-empty-icon">🔍</div>
-                <div>Начните вводить для поиска</div>
-            </div>
-        `;
+        container.innerHTML = `<div class="quick-search-empty"><div class="quick-search-empty-icon">🔍</div><div>Начните вводить для поиска</div></div>`;
         return;
     }
     
@@ -2791,23 +2945,13 @@ function renderQuickSearchResults(query) {
     }).slice(0, 50);
     
     if (results.length === 0) {
-        container.innerHTML = `
-            <div class="quick-search-empty">
-                <div class="quick-search-empty-icon">😕</div>
-                <div>Ничего не найдено</div>
-            </div>
-        `;
+        container.innerHTML = `<div class="quick-search-empty"><div class="quick-search-empty-icon">😕</div><div>Ничего не найдено</div></div>`;
         return;
     }
     
     let html = results.map(item => {
         const isChecked = item.checked || item.writeOff;
-        const classes = [
-            'quick-search-item',
-            isChecked ? 'checked' : '',
-            item.writeOff ? 'write-off' : ''
-        ].filter(Boolean).join(' ');
-        
+        const classes = ['quick-search-item', isChecked ? 'checked' : '', item.writeOff ? 'write-off' : ''].filter(Boolean).join(' ');
         let statusIcon = '⏳';
         if (item.writeOff) statusIcon = '📝';
         else if (item.checked) statusIcon = '✓';
@@ -2830,11 +2974,6 @@ function renderQuickSearchResults(query) {
         el.addEventListener('click', () => {
             $('#quickSearchModal').classList.remove('show');
             openDetails(el.dataset.id);
-            
-            setTimeout(() => {
-                const card = $(`.equipment-card[data-id="${el.dataset.id}"]`);
-                if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
         });
     });
 }
@@ -2900,8 +3039,6 @@ function navigateItem(dir) {
     if (newIdx >= 0 && newIdx < state.filteredItems.length) {
         saveFields();
         openDetails(state.filteredItems[newIdx].id);
-        const card = $(`.equipment-card[data-id="${state.filteredItems[newIdx].id}"]`);
-        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
@@ -2934,13 +3071,8 @@ function cancelPendingAction() {
 
 function startCheckProcess(item) {
     saveFields();
-    
     if (item.hasLabel === null) {
-        state.pendingAction = {
-            type: 'check',
-            itemId: item.id,
-            step: 'label'
-        };
+        state.pendingAction = { type: 'check', itemId: item.id, step: 'label' };
         $('#labelModal').classList.add('show');
     } else {
         askForSerial(item);
@@ -2952,12 +3084,7 @@ function askForSerial(item) {
         finishCheck(item);
         return;
     }
-    
-    state.pendingAction = {
-        type: 'check',
-        itemId: item.id,
-        step: 'serial'
-    };
+    state.pendingAction = { type: 'check', itemId: item.id, step: 'serial' };
     $('#serialInput').value = '';
     $('#serialModal').classList.add('show');
     setTimeout(() => $('#serialInput').focus(), 100);
@@ -2982,8 +3109,7 @@ function finishCheck(item) {
 function handleCheck() {
     if (!state.selectedId) return;
     const item = equipmentData.find(i => i.id === state.selectedId);
-    if (!item) return;
-    startCheckProcess(item);
+    if (item) startCheckProcess(item);
 }
 
 function handleScrap() {
@@ -2992,8 +3118,7 @@ function handleScrap() {
     if (!item) return;
     
     saveFields();
-    
-    showConfirm('Списание', 'Отправить оборудование на списание?', () => {
+    showConfirm('Списание', 'Отправить на списание?', () => {
         item.writeOff = true;
         item.checked = false;
         item.checkedAt = new Date().toISOString();
@@ -3010,7 +3135,7 @@ function handleUndo() {
     const item = equipmentData.find(i => i.id === state.selectedId);
     if (!item) return;
     
-    showConfirm('Снять отметку', 'Вернуть оборудование в статус "Ожидает"?', () => {
+    showConfirm('Снять отметку', 'Вернуть в "Ожидает"?', () => {
         item.checked = false;
         item.writeOff = false;
         item.checkedAt = null;
@@ -3027,7 +3152,7 @@ function quickAction(id, action, e) {
     if (!item) return;
     
     if (action === 'undo') {
-        showConfirm('Снять отметку', 'Вернуть в статус "Ожидает"?', () => {
+        showConfirm('Снять отметку', 'Вернуть в "Ожидает"?', () => {
             item.checked = false;
             item.writeOff = false;
             item.checkedAt = null;
@@ -3035,10 +3160,7 @@ function quickAction(id, action, e) {
             render();
             showToast('↩️ Отметка снята');
         }, '↩️');
-        return;
-    }
-    
-    if (action === 'check') {
+    } else if (action === 'check') {
         state.selectedId = item.id;
         startCheckProcess(item);
     } else if (action === 'scrap') {
@@ -3068,9 +3190,9 @@ function closeSidebar() {
 
 // ==================== EXPORT / IMPORT ====================
 function exportExcel() {
-    showConfirm('Экспорт Excel', 'Скачать данные в формате CSV?', () => {
+    showConfirm('Экспорт Excel', 'Скачать CSV?', () => {
         const BOM = '\uFEFF';
-        const headers = ['Инв.Номер', 'Серийный номер', 'Название', 'Категория', 'Локация', 'Ответственный', 'Статус', 'Бирка', 'Заметка', 'Дата проверки'];
+        const headers = ['Инв.Номер', 'S/N', 'Название', 'Категория', 'Локация', 'Ответственный', 'Статус', 'Бирка', 'Заметка', 'Дата проверки'];
         let csv = BOM + headers.join(';') + '\n';
         
         equipmentData.forEach(item => {
@@ -3084,10 +3206,8 @@ function exportExcel() {
             
             const checkedDate = item.checkedAt ? new Date(item.checkedAt).toLocaleDateString('ru-RU') : '-';
             
-            const row = [
-                item.invNumber, item.serialNumber, item.name, item.category,
-                item.location, item.responsible, status, label, item.inventoryNote, checkedDate
-            ].map(f => `"${String(f || '').replace(/"/g, '""')}"`).join(';');
+            const row = [item.invNumber, item.serialNumber, item.name, item.category, item.location, item.responsible, status, label, item.inventoryNote, checkedDate]
+                .map(f => `"${String(f || '').replace(/"/g, '""')}"`).join(';');
             csv += row + '\n';
         });
         
@@ -3101,12 +3221,8 @@ function exportExcel() {
 }
 
 function exportJSON() {
-    showConfirm('Экспорт JSON', 'Скачать резервную копию данных?', () => {
-        const exportData = {
-            equipment: equipmentData,
-            directories: directories
-        };
-        const data = JSON.stringify(exportData, null, 2);
+    showConfirm('Экспорт JSON', 'Скачать резервную копию?', () => {
+        const data = JSON.stringify({ equipment: equipmentData, directories }, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -3124,8 +3240,6 @@ function importJSON(e) {
     reader.onload = (event) => {
         try {
             const json = JSON.parse(event.target.result);
-            
-            // Support both old and new format
             const importEquipment = json.equipment || (Array.isArray(json) ? json : null);
             const importDirs = json.directories || null;
             
@@ -3136,6 +3250,9 @@ function importJSON(e) {
                 const existing = equipmentData.find(e => e.id === imp.id);
                 if (existing) {
                     Object.assign(existing, {
+                        name: imp.name || existing.name,
+                        invNumber: imp.invNumber || existing.invNumber,
+                        category: imp.category || existing.category,
                         checked: imp.checked ?? existing.checked,
                         writeOff: imp.writeOff ?? existing.writeOff,
                         hasLabel: imp.hasLabel ?? existing.hasLabel,
@@ -3145,6 +3262,9 @@ function importJSON(e) {
                         inventoryNote: imp.inventoryNote || existing.inventoryNote,
                         checkedAt: imp.checkedAt || existing.checkedAt
                     });
+                    count++;
+                } else if (imp.isUserAdded) {
+                    equipmentData.push(imp);
                     count++;
                 }
             });
@@ -3156,6 +3276,7 @@ function importJSON(e) {
             }
             
             saveData();
+            buildSidebar();
             render();
             showToast(`📥 Импортировано: ${count}`);
         } catch (err) {
@@ -3167,7 +3288,7 @@ function importJSON(e) {
 }
 
 function clearAllData() {
-    showConfirm('Сброс данных', 'Удалить ВСЕ данные инвентаризации? Это действие нельзя отменить!', () => {
+    showConfirm('Сброс данных', 'Удалить ВСЕ данные? Нельзя отменить!', () => {
         equipmentData.forEach(item => {
             item.checked = false;
             item.writeOff = false;
@@ -3204,44 +3325,30 @@ function attachEvents() {
         render();
     });
     
-    // Buttons
-    $('#btnSave').addEventListener('click', () => {
-        showConfirm('Сохранение', 'Сохранить все данные?', () => {
-            saveData();
-            showToast('💾 Сохранено');
-        }, '💾');
-    });
+    // Header buttons
+    $('#btnSave').addEventListener('click', () => showConfirm('Сохранение', 'Сохранить все данные?', () => { saveData(); showToast('💾 Сохранено'); }, '💾'));
     $('#btnExcel').addEventListener('click', exportExcel);
     $('#btnExport').addEventListener('click', exportJSON);
-    $('#btnImport').addEventListener('click', () => {
-        showConfirm('Импорт данных', 'Загрузить данные из JSON файла?', () => {
-            $('#fileInput').click();
-        }, '📥');
-    });
+    $('#btnImport').addEventListener('click', () => showConfirm('Импорт', 'Загрузить JSON?', () => $('#fileInput').click(), '📥'));
     $('#fileInput').addEventListener('change', importJSON);
     $('#btnClear').addEventListener('click', clearAllData);
 
+    // Add Equipment
+    $('#btnAddEquipment').addEventListener('click', () => { openAddEquipmentModal(); closeSidebar(); });
+    
+    // Edit modal
+    $('#editCancel').addEventListener('click', () => $('#editModal').classList.remove('show'));
+    $('#editSave').addEventListener('click', saveEquipment);
+
     // Directories
-    $('#btnRooms').addEventListener('click', () => {
-        renderDirectoryList('rooms');
-        $('#roomsModal').classList.add('show');
-    });
-    $('#btnPeople').addEventListener('click', () => {
-        renderDirectoryList('people');
-        $('#peopleModal').classList.add('show');
-    });
+    $('#btnRooms').addEventListener('click', () => { renderDirectoryList('rooms'); $('#roomsModal').classList.add('show'); });
+    $('#btnPeople').addEventListener('click', () => { renderDirectoryList('people'); $('#peopleModal').classList.add('show'); });
     $('#roomsClose').addEventListener('click', () => $('#roomsModal').classList.remove('show'));
     $('#peopleClose').addEventListener('click', () => $('#peopleModal').classList.remove('show'));
-    
     $('#roomAddBtn').addEventListener('click', () => addDirectoryItem('rooms'));
     $('#personAddBtn').addEventListener('click', () => addDirectoryItem('people'));
-    
-    $('#roomAddInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') addDirectoryItem('rooms');
-    });
-    $('#personAddInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') addDirectoryItem('people');
-    });
+    $('#roomAddInput').addEventListener('keydown', e => { if (e.key === 'Enter') addDirectoryItem('rooms'); });
+    $('#personAddInput').addEventListener('keydown', e => { if (e.key === 'Enter') addDirectoryItem('people'); });
 
     // Filters
     $$('.filter-chip').forEach(btn => {
@@ -3256,9 +3363,8 @@ function attachEvents() {
     // Quick stats
     $$('.quick-stat[data-filter]').forEach(el => {
         el.addEventListener('click', () => {
-            const filter = el.dataset.filter;
-            $$('.filter-chip').forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
-            state.filter = filter;
+            $$('.filter-chip').forEach(b => b.classList.toggle('active', b.dataset.filter === el.dataset.filter));
+            state.filter = el.dataset.filter;
             render();
             closeSidebar();
         });
@@ -3272,27 +3378,27 @@ function attachEvents() {
             quickAction(card.dataset.id, actionBtn.dataset.action, e);
             return;
         }
-        
         const card = e.target.closest('.equipment-card');
         if (card) openDetails(card.dataset.id);
     });
 
     // Details panel
     $('#closeDetails').addEventListener('click', closeDetails);
+    $('#editEquipment').addEventListener('click', () => { if (state.selectedId) openEditEquipmentModal(state.selectedId); });
+    $('#deleteEquipment').addEventListener('click', () => { if (state.selectedId) deleteEquipment(state.selectedId); });
     $('#btnCheck').addEventListener('click', handleCheck);
     $('#btnScrap').addEventListener('click', handleScrap);
     $('#btnUndo').addEventListener('click', handleUndo);
     $('#prevItem').addEventListener('click', () => navigateItem(-1));
     $('#nextItem').addEventListener('click', () => navigateItem(1));
 
-    // Label buttons in details
+    // Label buttons
     $$('.label-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             if (!state.selectedId) return;
-            const value = btn.dataset.value === 'true';
             const item = equipmentData.find(i => i.id === state.selectedId);
             if (item) {
-                item.hasLabel = value;
+                item.hasLabel = btn.dataset.value === 'true';
                 saveData();
                 render();
                 openDetails(state.selectedId);
@@ -3300,56 +3406,25 @@ function attachEvents() {
         });
     });
 
-    // Auto-save inputs with autocomplete
+    // Auto-save inputs
     const debouncedSave = debounce(saveFields, 600);
     
-    $('#detailsSerial').addEventListener('input', function() {
-        debouncedSave();
-        this.classList.toggle('filled', !!this.value.trim());
-    });
+    $('#detailsSerial').addEventListener('input', function() { debouncedSave(); this.classList.toggle('filled', !!this.value.trim()); });
     
-    $('#detailsLocation').addEventListener('input', function() {
-        debouncedSave();
-        this.classList.toggle('filled', !!this.value.trim());
-        showAutocomplete('detailsLocation', 'locationDropdown', directories.rooms);
-    });
-    $('#detailsLocation').addEventListener('blur', function() {
-        hideAutocomplete('locationDropdown');
-    });
-    $('#detailsLocation').addEventListener('focus', function() {
-        if (this.value.trim()) {
-            showAutocomplete('detailsLocation', 'locationDropdown', directories.rooms);
-        }
-    });
+    $('#detailsLocation').addEventListener('input', function() { debouncedSave(); this.classList.toggle('filled', !!this.value.trim()); showAutocomplete('detailsLocation', 'locationDropdown', directories.rooms); });
+    $('#detailsLocation').addEventListener('blur', () => hideAutocomplete('locationDropdown'));
     
-    $('#detailsResponsible').addEventListener('input', function() {
-        debouncedSave();
-        this.classList.toggle('filled', !!this.value.trim());
-        showAutocomplete('detailsResponsible', 'responsibleDropdown', directories.people);
-    });
-    $('#detailsResponsible').addEventListener('blur', function() {
-        hideAutocomplete('responsibleDropdown');
-    });
-    $('#detailsResponsible').addEventListener('focus', function() {
-        if (this.value.trim()) {
-            showAutocomplete('detailsResponsible', 'responsibleDropdown', directories.people);
-        }
-    });
+    $('#detailsResponsible').addEventListener('input', function() { debouncedSave(); this.classList.toggle('filled', !!this.value.trim()); showAutocomplete('detailsResponsible', 'responsibleDropdown', directories.people); });
+    $('#detailsResponsible').addEventListener('blur', () => hideAutocomplete('responsibleDropdown'));
     
-    $('#detailsInventoryNote').addEventListener('input', function() {
-        debouncedSave();
-        this.classList.toggle('filled', !!this.value.trim());
-    });
+    $('#detailsInventoryNote').addEventListener('input', function() { debouncedSave(); this.classList.toggle('filled', !!this.value.trim()); });
 
-    // Label Modal
+    // Modals
     $('#labelYes').addEventListener('click', () => {
         $('#labelModal').classList.remove('show');
         if (state.pendingAction?.step === 'label') {
             const item = equipmentData.find(i => i.id === state.pendingAction.itemId);
-            if (item) {
-                item.hasLabel = true;
-                askForSerial(item);
-            }
+            if (item) { item.hasLabel = true; askForSerial(item); }
         }
     });
     
@@ -3357,25 +3432,18 @@ function attachEvents() {
         $('#labelModal').classList.remove('show');
         if (state.pendingAction?.step === 'label') {
             const item = equipmentData.find(i => i.id === state.pendingAction.itemId);
-            if (item) {
-                item.hasLabel = false;
-                askForSerial(item);
-            }
+            if (item) { item.hasLabel = false; askForSerial(item); }
         }
     });
     
     $('#labelCancel').addEventListener('click', cancelPendingAction);
 
-    // Serial Modal
     $('#serialSave').addEventListener('click', () => {
         const serial = $('#serialInput').value.trim();
         $('#serialModal').classList.remove('show');
         if (state.pendingAction?.step === 'serial') {
             const item = equipmentData.find(i => i.id === state.pendingAction.itemId);
-            if (item) {
-                if (serial) item.serialNumber = serial;
-                finishCheck(item);
-            }
+            if (item) { if (serial) item.serialNumber = serial; finishCheck(item); }
         }
         state.pendingAction = null;
     });
@@ -3391,7 +3459,6 @@ function attachEvents() {
     
     $('#serialCancel').addEventListener('click', cancelPendingAction);
 
-    // Confirm Modal
     $('#confirmOk').addEventListener('click', () => {
         if (state.confirmCallback) state.confirmCallback();
         $('#confirmModal').classList.remove('show');
@@ -3405,69 +3472,39 @@ function attachEvents() {
 
     // Quick Search
     $('#fabSearch').addEventListener('click', openQuickSearch);
-    $('#quickSearchInput').addEventListener('input', debounce((e) => {
-        renderQuickSearchResults(e.target.value);
-    }, 150));
-    $('#quickSearchClose').addEventListener('click', () => {
-        $('#quickSearchModal').classList.remove('show');
-    });
+    $('#quickSearchInput').addEventListener('input', debounce(e => renderQuickSearchResults(e.target.value), 150));
+    $('#quickSearchClose').addEventListener('click', () => $('#quickSearchModal').classList.remove('show'));
 
     // Mobile
     $('#mobileMenuBtn').addEventListener('click', openSidebar);
-    $('#mobileOverlay').addEventListener('click', () => {
-        closeSidebar();
-        closeDetails();
-    });
+    $('#mobileOverlay').addEventListener('click', () => { closeSidebar(); closeDetails(); });
 
     // Keyboard
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            if ($('#labelModal').classList.contains('show')) {
-                cancelPendingAction();
-            } else if ($('#serialModal').classList.contains('show')) {
-                cancelPendingAction();
-            } else if ($('#confirmModal').classList.contains('show')) {
-                $('#confirmModal').classList.remove('show');
-                state.confirmCallback = null;
-            } else if ($('#quickSearchModal').classList.contains('show')) {
-                $('#quickSearchModal').classList.remove('show');
-            } else if ($('#roomsModal').classList.contains('show')) {
-                $('#roomsModal').classList.remove('show');
-            } else if ($('#peopleModal').classList.contains('show')) {
-                $('#peopleModal').classList.remove('show');
-            } else if (!$('#detailsPanel').classList.contains('hidden')) {
-                closeDetails();
-            } else if ($('#sidebar').classList.contains('open')) {
-                closeSidebar();
-            }
+            if ($('#editModal').classList.contains('show')) $('#editModal').classList.remove('show');
+            else if ($('#labelModal').classList.contains('show')) cancelPendingAction();
+            else if ($('#serialModal').classList.contains('show')) cancelPendingAction();
+            else if ($('#confirmModal').classList.contains('show')) { $('#confirmModal').classList.remove('show'); state.confirmCallback = null; }
+            else if ($('#quickSearchModal').classList.contains('show')) $('#quickSearchModal').classList.remove('show');
+            else if ($('#roomsModal').classList.contains('show')) $('#roomsModal').classList.remove('show');
+            else if ($('#peopleModal').classList.contains('show')) $('#peopleModal').classList.remove('show');
+            else if (!$('#detailsPanel').classList.contains('hidden')) closeDetails();
+            else if ($('#sidebar').classList.contains('open')) closeSidebar();
         }
         
-        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-            e.preventDefault();
-            saveData();
-            showToast('💾 Сохранено');
-        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveData(); showToast('💾 Сохранено'); }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); openQuickSearch(); }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); openAddEquipmentModal(); }
         
-        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-            e.preventDefault();
-            openQuickSearch();
-        }
-        
-        if (!$('#detailsPanel').classList.contains('hidden') && !e.target.matches('input, textarea')) {
-            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-                e.preventDefault();
-                navigateItem(-1);
-            } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-                e.preventDefault();
-                navigateItem(1);
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                handleCheck();
-            }
+        if (!$('#detailsPanel').classList.contains('hidden') && !e.target.matches('input, textarea, select')) {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); navigateItem(-1); }
+            else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); navigateItem(1); }
+            else if (e.key === 'Enter') { e.preventDefault(); handleCheck(); }
         }
     });
 
-    // Prevent double-tap zoom on iOS
+    // iOS double-tap fix
     let lastTap = 0;
     document.addEventListener('touchend', (e) => {
         const now = Date.now();
