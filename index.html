@@ -185,6 +185,37 @@
             transition: width 0.5s ease;
         }
 
+        /* Sidebar Actions */
+        .sidebar-actions {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            gap: 8px;
+        }
+        .sidebar-action-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--gray-200);
+            background: white;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all var(--transition);
+        }
+        .sidebar-action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .sidebar-action-btn:active {
+            transform: scale(0.98);
+        }
+
         /* Categories */
         .categories-section { 
             flex: 1; 
@@ -754,9 +785,10 @@
             font-weight: 600;
         }
 
-        /* Input Fields - IMPROVED */
+        /* Input Fields with Autocomplete */
         .input-group {
             margin-bottom: 20px;
+            position: relative;
         }
         .input-group:last-child { margin-bottom: 0; }
         
@@ -771,6 +803,10 @@
         }
         .input-label-icon {
             font-size: 1.25rem;
+        }
+        
+        .input-wrapper {
+            position: relative;
         }
         
         .input-field, .textarea-field { 
@@ -804,6 +840,39 @@
         .textarea-field.filled { 
             border-color: var(--info);
             background: rgba(59, 130, 246, 0.03);
+        }
+
+        /* Autocomplete Dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+        .autocomplete-item {
+            padding: 14px 18px;
+            cursor: pointer;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            transition: background var(--transition);
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+        .autocomplete-item:hover {
+            background: var(--gray-50);
+        }
+        .autocomplete-item:active {
+            background: var(--gray-100);
         }
 
         .label-buttons { 
@@ -938,13 +1007,20 @@
         }
         .modal-overlay.show { display: flex; }
         
+        /* Confirm modal should be on top of everything */
+        #confirmModal {
+            z-index: 700;
+        }
+        
         .modal { 
             background: white;
             border-radius: var(--radius-xl);
             padding: 32px;
-            max-width: 440px;
+            max-width: 500px;
             width: 100%;
             animation: modalIn 0.25s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.95) translateY(20px); }
@@ -1004,6 +1080,129 @@
         .modal-btn.cancel:hover { background: var(--gray-300); }
         .modal-btn.primary { background: var(--primary); color: white; }
         .modal-btn.primary:hover { background: var(--primary-dark); }
+
+        /* Directory Modal */
+        .directory-modal {
+            max-width: 600px;
+        }
+        .directory-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .directory-add-input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 3px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 1.125rem;
+            font-family: inherit;
+        }
+        .directory-add-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .directory-add-btn {
+            padding: 16px 24px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .directory-add-btn:hover {
+            background: var(--success-dark);
+        }
+        .directory-add-btn:active {
+            transform: scale(0.97);
+        }
+        
+        .directory-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+        }
+        .directory-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .directory-item:last-child { border-bottom: none; }
+        .directory-item-text {
+            flex: 1;
+            font-size: 1.0625rem;
+            font-weight: 500;
+        }
+        .directory-item-edit {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .directory-item-edit:focus {
+            outline: none;
+        }
+        .directory-item-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all var(--transition);
+        }
+        .directory-item-btn.edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+        .directory-item-btn.edit:hover {
+            background: var(--info);
+            color: white;
+        }
+        .directory-item-btn.save {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        .directory-item-btn.save:hover {
+            background: var(--success);
+            color: white;
+        }
+        .directory-item-btn.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        .directory-item-btn.delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+        .directory-item-btn.cancel {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--gray-600);
+        }
+        .directory-item-btn.cancel:hover {
+            background: var(--gray-600);
+            color: white;
+        }
+        .directory-empty {
+            padding: 40px;
+            text-align: center;
+            color: var(--gray-400);
+        }
+        .directory-empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
 
         /* Serial Number Modal */
         .modal-input {
@@ -1119,7 +1318,7 @@
             transform: scale(0.95);
         }
 
-        /* Quick Search Modal - IMPROVED */
+        /* Quick Search Modal */
         .quick-search-modal {
             max-width: 600px;
             max-height: 85vh;
@@ -1277,14 +1476,13 @@
                 transform: translateX(0);
             }
             
-            /* Logo section with safe area */
             .sidebar .logo-section {
                 padding-top: 24px;
             }
             
             .header { 
                 padding: 16px;
-                padding-left: 72px; /* Space for menu button */
+                padding-left: 72px;
             }
             
             .search-box { max-width: none; }
@@ -1316,6 +1514,10 @@
             }
             .toast.show {
                 transform: translateX(0) translateY(0);
+            }
+            
+            .sidebar-actions {
+                flex-direction: column;
             }
         }
 
@@ -1367,7 +1569,7 @@
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 
-    <!-- Label Check Modal - WITH CANCEL -->
+    <!-- Label Check Modal -->
     <div class="modal-overlay" id="labelModal">
         <div class="modal">
             <div class="modal-icon question">🏷️</div>
@@ -1381,7 +1583,7 @@
         </div>
     </div>
 
-    <!-- Serial Number Modal - WITH CANCEL -->
+    <!-- Serial Number Modal -->
     <div class="modal-overlay" id="serialModal">
         <div class="modal">
             <div class="modal-icon question">🔢</div>
@@ -1426,6 +1628,36 @@
         </div>
     </div>
 
+    <!-- Directory Modal - Rooms -->
+    <div class="modal-overlay" id="roomsModal">
+        <div class="modal directory-modal">
+            <div class="modal-title">🚪 Справочник кабинетов</div>
+            <div class="directory-header">
+                <input type="text" class="directory-add-input" id="roomAddInput" placeholder="Новый кабинет..." autocomplete="off">
+                <button class="directory-add-btn" id="roomAddBtn">+</button>
+            </div>
+            <div class="directory-list" id="roomsList"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="roomsClose">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Directory Modal - People -->
+    <div class="modal-overlay" id="peopleModal">
+        <div class="modal directory-modal">
+            <div class="modal-title">👥 Справочник ФИО</div>
+            <div class="directory-header">
+                <input type="text" class="directory-add-input" id="personAddInput" placeholder="Новое ФИО..." autocomplete="off">
+                <button class="directory-add-btn" id="personAddBtn">+</button>
+            </div>
+            <div class="directory-list" id="peopleList"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="peopleClose">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
     <div class="app">
         <nav class="sidebar" id="sidebar">
             <div class="logo-section">
@@ -1459,6 +1691,11 @@
                         <div class="progress-mini-fill" id="progressFill"></div>
                     </div>
                 </div>
+            </div>
+            
+            <div class="sidebar-actions">
+                <button class="sidebar-action-btn" id="btnRooms">🚪 Кабинеты</button>
+                <button class="sidebar-action-btn" id="btnPeople">👥 ФИО</button>
             </div>
             
             <div class="categories-section" id="categoriesContainer"></div>
@@ -1575,7 +1812,10 @@
                                     <span class="input-label-icon">📍</span>
                                     Локация
                                 </label>
-                                <input type="text" class="input-field" id="detailsLocation" placeholder="Кабинет / помещение">
+                                <div class="input-wrapper">
+                                    <input type="text" class="input-field" id="detailsLocation" placeholder="Кабинет / помещение" autocomplete="off">
+                                    <div class="autocomplete-dropdown" id="locationDropdown"></div>
+                                </div>
                             </div>
                             
                             <div class="input-group">
@@ -1583,7 +1823,10 @@
                                     <span class="input-label-icon">👤</span>
                                     Ответственный
                                 </label>
-                                <input type="text" class="input-field" id="detailsResponsible" placeholder="ФИО ответственного">
+                                <div class="input-wrapper">
+                                    <input type="text" class="input-field" id="detailsResponsible" placeholder="ФИО ответственного" autocomplete="off">
+                                    <div class="autocomplete-dropdown" id="responsibleDropdown"></div>
+                                </div>
                             </div>
                             
                             <div class="input-group">
@@ -2050,6 +2293,12 @@ let equipmentData = [
 {"id":"item_422","name":"Интерактивная панель ICL InfoRay IR38604 с встроенным компьютером OPS ThinRay T106G1","invNumber":"БД-57","date":"03.10.2022","category":"Интерактивное оборудование"}
 ];
 
+// ==================== DIRECTORIES ====================
+let directories = {
+    rooms: [],
+    people: []
+};
+
 // ==================== STATE ====================
 let state = {
     filter: 'all',
@@ -2058,7 +2307,8 @@ let state = {
     search: '',
     pendingAction: null,
     filteredItems: [],
-    confirmCallback: null
+    confirmCallback: null,
+    editingDirItem: null
 };
 
 // ==================== UTILITIES ====================
@@ -2084,7 +2334,6 @@ const debounce = (fn, wait) => {
     return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
 };
 
-// Custom confirm dialog
 const showConfirm = (title, text, callback, icon = '⚠️') => {
     $('#confirmTitle').textContent = title;
     $('#confirmText').textContent = text;
@@ -2113,6 +2362,7 @@ const categoryIcons = {
 // ==================== INIT ====================
 function init() {
     loadData();
+    loadDirectories();
     buildSidebar();
     updateStats();
     render();
@@ -2121,7 +2371,7 @@ function init() {
 
 function loadData() {
     try {
-        const saved = JSON.parse(localStorage.getItem('inv_102_v9') || '[]');
+        const saved = JSON.parse(localStorage.getItem('inv_102_v10') || '[]');
         equipmentData.forEach(item => {
             item.hasLabel = item.hasLabel ?? null;
             item.serialNumber = item.serialNumber || '';
@@ -2150,8 +2400,20 @@ function saveData() {
         inventoryNote: i.inventoryNote,
         checkedAt: i.checkedAt
     }));
-    localStorage.setItem('inv_102_v9', JSON.stringify(data));
+    localStorage.setItem('inv_102_v10', JSON.stringify(data));
     updateStats();
+}
+
+function loadDirectories() {
+    try {
+        const saved = JSON.parse(localStorage.getItem('inv_102_dirs') || '{}');
+        directories.rooms = saved.rooms || [];
+        directories.people = saved.people || [];
+    } catch(e) { console.error(e); }
+}
+
+function saveDirectories() {
+    localStorage.setItem('inv_102_dirs', JSON.stringify(directories));
 }
 
 // ==================== SIDEBAR ====================
@@ -2223,7 +2485,6 @@ function updateStats() {
 
     $('#countAll').textContent = total;
     
-    // Category stats
     const catStats = {};
     equipmentData.forEach(i => {
         const c = i.category || 'Прочее';
@@ -2350,6 +2611,155 @@ function render() {
     
     section.innerHTML = html;
     updateNavButtons();
+}
+
+// ==================== DIRECTORIES UI ====================
+function renderDirectoryList(type) {
+    const list = type === 'rooms' ? directories.rooms : directories.people;
+    const container = type === 'rooms' ? $('#roomsList') : $('#peopleList');
+    
+    if (list.length === 0) {
+        container.innerHTML = `
+            <div class="directory-empty">
+                <div class="directory-empty-icon">${type === 'rooms' ? '🚪' : '👤'}</div>
+                <div>Список пуст</div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = list.map((item, idx) => `
+        <div class="directory-item" data-idx="${idx}">
+            <span class="directory-item-text">${escapeHtml(item)}</span>
+            <button class="directory-item-btn edit" data-action="edit" title="Редактировать">✏️</button>
+            <button class="directory-item-btn delete" data-action="delete" title="Удалить">🗑️</button>
+        </div>
+    `).join('');
+    
+    container.querySelectorAll('.directory-item-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const idx = parseInt(btn.closest('.directory-item').dataset.idx);
+            const action = btn.dataset.action;
+            
+            if (action === 'delete') {
+                showConfirm('Удалить?', `Удалить "${list[idx]}" из справочника?`, () => {
+                    list.splice(idx, 1);
+                    saveDirectories();
+                    renderDirectoryList(type);
+                    showToast('Удалено');
+                }, '🗑️');
+            } else if (action === 'edit') {
+                startEditDirectoryItem(type, idx);
+            }
+        });
+    });
+}
+
+function startEditDirectoryItem(type, idx) {
+    const list = type === 'rooms' ? directories.rooms : directories.people;
+    const container = type === 'rooms' ? $('#roomsList') : $('#peopleList');
+    const item = container.querySelector(`[data-idx="${idx}"]`);
+    
+    item.innerHTML = `
+        <input type="text" class="directory-item-edit" value="${escapeHtml(list[idx])}">
+        <button class="directory-item-btn save" data-action="save" title="Сохранить">✓</button>
+        <button class="directory-item-btn cancel" data-action="cancel-edit" title="Отмена">✕</button>
+    `;
+    
+    const input = item.querySelector('input');
+    input.focus();
+    input.select();
+    
+    item.querySelector('[data-action="save"]').addEventListener('click', () => {
+        const newValue = input.value.trim();
+        if (newValue) {
+            list[idx] = newValue;
+            saveDirectories();
+            showToast('Сохранено');
+        }
+        renderDirectoryList(type);
+    });
+    
+    item.querySelector('[data-action="cancel-edit"]').addEventListener('click', () => {
+        renderDirectoryList(type);
+    });
+    
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const newValue = input.value.trim();
+            if (newValue) {
+                list[idx] = newValue;
+                saveDirectories();
+                showToast('Сохранено');
+            }
+            renderDirectoryList(type);
+        } else if (e.key === 'Escape') {
+            renderDirectoryList(type);
+        }
+    });
+}
+
+function addDirectoryItem(type) {
+    const input = type === 'rooms' ? $('#roomAddInput') : $('#personAddInput');
+    const value = input.value.trim();
+    
+    if (!value) return;
+    
+    const list = type === 'rooms' ? directories.rooms : directories.people;
+    
+    if (list.includes(value)) {
+        showToast('Уже существует', true);
+        return;
+    }
+    
+    list.push(value);
+    list.sort((a, b) => a.localeCompare(b, 'ru'));
+    saveDirectories();
+    renderDirectoryList(type);
+    input.value = '';
+    showToast('Добавлено');
+}
+
+// ==================== AUTOCOMPLETE ====================
+function showAutocomplete(inputId, dropdownId, list) {
+    const input = $(`#${inputId}`);
+    const dropdown = $(`#${dropdownId}`);
+    const value = input.value.toLowerCase().trim();
+    
+    if (!value) {
+        dropdown.classList.remove('show');
+        return;
+    }
+    
+    const filtered = list.filter(item => 
+        item.toLowerCase().includes(value)
+    ).slice(0, 8);
+    
+    if (filtered.length === 0) {
+        dropdown.classList.remove('show');
+        return;
+    }
+    
+    dropdown.innerHTML = filtered.map(item => `
+        <div class="autocomplete-item">${escapeHtml(item)}</div>
+    `).join('');
+    
+    dropdown.querySelectorAll('.autocomplete-item').forEach(el => {
+        el.addEventListener('click', () => {
+            input.value = el.textContent;
+            input.classList.toggle('filled', !!input.value.trim());
+            dropdown.classList.remove('show');
+            saveFields();
+        });
+    });
+    
+    dropdown.classList.add('show');
+}
+
+function hideAutocomplete(dropdownId) {
+    setTimeout(() => {
+        $(`#${dropdownId}`).classList.remove('show');
+    }, 200);
 }
 
 // ==================== QUICK SEARCH ====================
@@ -2505,6 +2915,18 @@ function saveFields() {
         responsible: $('#detailsResponsible').value.trim(),
         inventoryNote: $('#detailsInventoryNote').value.trim()
     };
+    
+    // Auto-add to directories
+    if (fields.location && !directories.rooms.includes(fields.location)) {
+        directories.rooms.push(fields.location);
+        directories.rooms.sort((a, b) => a.localeCompare(b, 'ru'));
+        saveDirectories();
+    }
+    if (fields.responsible && !directories.people.includes(fields.responsible)) {
+        directories.people.push(fields.responsible);
+        directories.people.sort((a, b) => a.localeCompare(b, 'ru'));
+        saveDirectories();
+    }
     
     let changed = false;
     Object.entries(fields).forEach(([k, v]) => {
@@ -2691,7 +3113,11 @@ function exportExcel() {
 
 function exportJSON() {
     showConfirm('Экспорт JSON', 'Скачать резервную копию данных?', () => {
-        const data = JSON.stringify(equipmentData, null, 2);
+        const exportData = {
+            equipment: equipmentData,
+            directories: directories
+        };
+        const data = JSON.stringify(exportData, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -2709,10 +3135,15 @@ function importJSON(e) {
     reader.onload = (event) => {
         try {
             const json = JSON.parse(event.target.result);
-            if (!Array.isArray(json)) throw new Error('Неверный формат');
+            
+            // Support both old and new format
+            const importEquipment = json.equipment || (Array.isArray(json) ? json : null);
+            const importDirs = json.directories || null;
+            
+            if (!importEquipment) throw new Error('Неверный формат');
             
             let count = 0;
-            json.forEach(imp => {
+            importEquipment.forEach(imp => {
                 const existing = equipmentData.find(e => e.id === imp.id);
                 if (existing) {
                     Object.assign(existing, {
@@ -2728,6 +3159,12 @@ function importJSON(e) {
                     count++;
                 }
             });
+            
+            if (importDirs) {
+                if (importDirs.rooms) directories.rooms = [...new Set([...directories.rooms, ...importDirs.rooms])].sort((a, b) => a.localeCompare(b, 'ru'));
+                if (importDirs.people) directories.people = [...new Set([...directories.people, ...importDirs.people])].sort((a, b) => a.localeCompare(b, 'ru'));
+                saveDirectories();
+            }
             
             saveData();
             render();
@@ -2795,6 +3232,28 @@ function attachEvents() {
     $('#fileInput').addEventListener('change', importJSON);
     $('#btnClear').addEventListener('click', clearAllData);
 
+    // Directories
+    $('#btnRooms').addEventListener('click', () => {
+        renderDirectoryList('rooms');
+        $('#roomsModal').classList.add('show');
+    });
+    $('#btnPeople').addEventListener('click', () => {
+        renderDirectoryList('people');
+        $('#peopleModal').classList.add('show');
+    });
+    $('#roomsClose').addEventListener('click', () => $('#roomsModal').classList.remove('show'));
+    $('#peopleClose').addEventListener('click', () => $('#peopleModal').classList.remove('show'));
+    
+    $('#roomAddBtn').addEventListener('click', () => addDirectoryItem('rooms'));
+    $('#personAddBtn').addEventListener('click', () => addDirectoryItem('people'));
+    
+    $('#roomAddInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') addDirectoryItem('rooms');
+    });
+    $('#personAddInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') addDirectoryItem('people');
+    });
+
     // Filters
     $$('.filter-chip').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -2852,14 +3311,41 @@ function attachEvents() {
         });
     });
 
-    // Auto-save inputs
+    // Auto-save inputs with autocomplete
     const debouncedSave = debounce(saveFields, 600);
-    ['detailsSerial', 'detailsLocation', 'detailsResponsible', 'detailsInventoryNote'].forEach(id => {
-        const el = $(`#${id}`);
-        el.addEventListener('input', function() {
-            debouncedSave();
-            this.classList.toggle('filled', !!this.value.trim());
-        });
+    
+    $('#detailsSerial').addEventListener('input', function() {
+        debouncedSave();
+        this.classList.toggle('filled', !!this.value.trim());
+    });
+    
+    $('#detailsLocation').addEventListener('input', function() {
+        debouncedSave();
+        this.classList.toggle('filled', !!this.value.trim());
+        showAutocomplete('detailsLocation', 'locationDropdown', directories.rooms);
+    });
+    $('#detailsLocation').addEventListener('blur', () => hideAutocomplete('locationDropdown'));
+    $('#detailsLocation').addEventListener('focus', function() {
+        if (this.value.trim()) {
+            showAutocomplete('detailsLocation', 'locationDropdown', directories.rooms);
+        }
+    });
+    
+    $('#detailsResponsible').addEventListener('input', function() {
+        debouncedSave();
+        this.classList.toggle('filled', !!this.value.trim());
+        showAutocomplete('detailsResponsible', 'responsibleDropdown', directories.people);
+    });
+    $('#detailsResponsible').addEventListener('blur', () => hideAutocomplete('responsibleDropdown'));
+    $('#detailsResponsible').addEventListener('focus', function() {
+        if (this.value.trim()) {
+            showAutocomplete('detailsResponsible', 'responsibleDropdown', directories.people);
+        }
+    });
+    
+    $('#detailsInventoryNote').addEventListener('input', function() {
+        debouncedSave();
+        this.classList.toggle('filled', !!this.value.trim());
     });
 
     // Label Modal
@@ -2952,6 +3438,10 @@ function attachEvents() {
                 state.confirmCallback = null;
             } else if ($('#quickSearchModal').classList.contains('show')) {
                 $('#quickSearchModal').classList.remove('show');
+            } else if ($('#roomsModal').classList.contains('show')) {
+                $('#roomsModal').classList.remove('show');
+            } else if ($('#peopleModal').classList.contains('show')) {
+                $('#peopleModal').classList.remove('show');
             } else if (!$('#detailsPanel').classList.contains('hidden')) {
                 closeDetails();
             } else if ($('#sidebar').classList.contains('open')) {
