@@ -17,7 +17,7 @@
                         sans: ['Inter', 'system-ui', 'sans-serif'],
                     },
                     fontSize: {
-                        'xxs': '0.625rem',
+                        'xxs': '0.65rem',
                     },
                     borderRadius: {
                         '2xl': '16px',
@@ -29,12 +29,12 @@
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { font-size: 15px; }
+        html { font-size: 14px; }
         body { font-family: 'Inter', sans-serif; font-weight: 400; letter-spacing: -0.01em; }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
         
         .modal-enter { animation: modalIn 0.2s ease-out; }
@@ -50,24 +50,33 @@
         }
         
         .card-shadow { 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03), 
-                        0 4px 12px rgba(0,0,0,0.04),
-                        0 8px 24px rgba(0,0,0,0.03); 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04), 
+                        0 4px 12px rgba(0,0,0,0.03); 
         }
         .card-shadow-hover { 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04), 
-                        0 8px 24px rgba(0,0,0,0.08),
-                        0 16px 32px rgba(0,0,0,0.04); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08),
+                        0 8px 24px rgba(0,0,0,0.06); 
         }
         
-        .autocomplete-dropdown { max-height: 180px; overflow-y: auto; }
+        .autocomplete-dropdown { max-height: 160px; overflow-y: auto; }
         .progress-ring { transform: rotate(-90deg); }
         
-        /* Badges inline */
-        .badges-row { display: flex; flex-direction: row; flex-wrap: wrap; gap: 6px; }
-        
-        /* Meta info inline */
-        .meta-row { display: flex; flex-direction: row; flex-wrap: wrap; gap: 12px; align-items: center; }
+        /* Status line - all inline */
+        .status-line {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .status-line .sep { 
+            width: 3px; 
+            height: 3px; 
+            background: #cbd5e1; 
+            border-radius: 50%; 
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body class="bg-slate-50">
@@ -99,6 +108,7 @@
             CheckCircle: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
             AlertCircle: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
             FileText: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+            Info: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
         };
 
         // ==================== INITIAL DATA ====================
@@ -539,7 +549,7 @@
         // ==================== COMPONENTS ====================
 
         // Progress Ring
-        const ProgressRing = ({ percent, size = 72, strokeWidth = 5 }) => {
+        const ProgressRing = ({ percent, size = 56, strokeWidth = 4 }) => {
             const radius = (size - strokeWidth) / 2;
             const circumference = 2 * Math.PI * radius;
             const offset = circumference - (percent / 100) * circumference;
@@ -547,37 +557,18 @@
             return (
                 <div className="relative" style={{ width: size, height: size }}>
                     <svg className="progress-ring" width={size} height={size}>
-                        <circle
-                            className="text-slate-100"
-                            strokeWidth={strokeWidth}
-                            stroke="currentColor"
-                            fill="transparent"
-                            r={radius}
-                            cx={size / 2}
-                            cy={size / 2}
-                        />
-                        <circle
-                            className="text-indigo-500 transition-all duration-500"
-                            strokeWidth={strokeWidth}
-                            strokeDasharray={circumference}
-                            strokeDashoffset={offset}
-                            strokeLinecap="round"
-                            stroke="currentColor"
-                            fill="transparent"
-                            r={radius}
-                            cx={size / 2}
-                            cy={size / 2}
-                        />
+                        <circle className="text-slate-100" strokeWidth={strokeWidth} stroke="currentColor" fill="transparent" r={radius} cx={size / 2} cy={size / 2} />
+                        <circle className="text-indigo-500 transition-all duration-500" strokeWidth={strokeWidth} strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" stroke="currentColor" fill="transparent" r={radius} cx={size / 2} cy={size / 2} />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-lg font-bold text-indigo-600">{percent}%</span>
+                        <span className="text-sm font-bold text-indigo-600">{percent}%</span>
                     </div>
                 </div>
             );
         };
 
         // Navigation Rail
-        const NavRail = ({ activeNav, setActiveNav, onOpenRooms, onOpenPeople, onAddEquipment }) => {
+        const NavRail = ({ activeNav, setActiveNav, onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo }) => {
             const navItems = [
                 { id: 'home', icon: Icons.Home, label: 'Главная', action: () => setActiveNav('home') },
                 { id: 'rooms', icon: Icons.Building, label: 'Кабинеты', action: onOpenRooms },
@@ -586,10 +577,15 @@
             ];
 
             return (
-                <div className="w-[72px] bg-slate-900 flex flex-col items-center py-5 flex-shrink-0">
-                    <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center mb-6">
-                        <span className="text-white font-bold text-sm">ИН</span>
-                    </div>
+                <div className="w-16 bg-slate-900 flex flex-col items-center py-4 flex-shrink-0">
+                    {/* Logo */}
+                    <button 
+                        onClick={onShowInfo}
+                        className="w-9 h-9 bg-indigo-500 hover:bg-indigo-400 rounded-lg flex items-center justify-center mb-5 transition-colors cursor-pointer"
+                        title="О программе"
+                    >
+                        <span className="text-white font-bold text-xs">ИН</span>
+                    </button>
                     
                     <div className="flex-1 flex flex-col items-center gap-1">
                         {navItems.map(item => {
@@ -599,13 +595,13 @@
                                 <button
                                     key={item.id}
                                     onClick={item.action}
-                                    className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all duration-200
+                                    className={`w-11 h-11 rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all duration-200
                                         ${item.isAdd ? 'bg-emerald-500 hover:bg-emerald-400 text-white mt-2' :
                                         isActive ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-500 hover:bg-white/5 hover:text-slate-300'}`}
                                     title={item.label}
                                 >
                                     <Icon />
-                                    <span className="text-xxs font-medium">{item.label}</span>
+                                    <span className="text-xxs font-medium leading-none">{item.label}</span>
                                 </button>
                             );
                         })}
@@ -626,27 +622,27 @@
             const percent = stats.total > 0 ? Math.round((stats.checked / stats.total) * 100) : 0;
 
             return (
-                <div className="w-[260px] bg-white border-r border-slate-100 flex flex-col flex-shrink-0">
+                <div className="w-56 bg-white border-r border-slate-100 flex flex-col flex-shrink-0">
                     {/* Header */}
-                    <div className="px-5 py-4 border-b border-slate-50">
-                        <h1 className="text-lg font-bold text-slate-800 tracking-tight">Инвентаризация</h1>
-                        <p className="text-xs text-slate-400 mt-0.5 font-medium">ГКОУ СКОШИ №102</p>
+                    <div className="px-4 py-3 border-b border-slate-50">
+                        <h1 className="text-base font-bold text-slate-800 tracking-tight">Инвентаризация</h1>
+                        <p className="text-xxs text-slate-400 mt-0.5 font-medium">ГКОУ СКОШИ №102</p>
                     </div>
 
                     {/* Progress */}
-                    <div className="px-5 py-4 border-b border-slate-50 bg-gradient-to-br from-indigo-50/40 to-white">
+                    <div className="px-4 py-3 border-b border-slate-50 bg-gradient-to-br from-indigo-50/30 to-white">
                         <div className="flex items-center gap-3">
-                            <ProgressRing percent={percent} size={64} strokeWidth={5} />
+                            <ProgressRing percent={percent} size={52} strokeWidth={4} />
                             <div className="flex-1 min-w-0">
-                                <p className="text-xxs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">Прогресс</p>
+                                <p className="text-xxs font-semibold text-slate-400 uppercase tracking-wide mb-1">Прогресс</p>
                                 <div className="space-y-0.5">
                                     <div className="flex justify-between text-xs">
                                         <span className="text-slate-500">Проверено</span>
-                                        <span className="font-semibold text-emerald-600">{stats.checked}</span>
+                                        <span className="font-bold text-emerald-600">{stats.checked}</span>
                                     </div>
                                     <div className="flex justify-between text-xs">
                                         <span className="text-slate-500">Осталось</span>
-                                        <span className="font-semibold text-amber-600">{stats.pending}</span>
+                                        <span className="font-bold text-amber-600">{stats.pending}</span>
                                     </div>
                                 </div>
                             </div>
@@ -654,25 +650,25 @@
                     </div>
 
                     {/* Quick Stats Grid */}
-                    <div className="p-3 border-b border-slate-50">
-                        <div className="grid grid-cols-2 gap-2">
+                    <div className="p-2 border-b border-slate-50">
+                        <div className="grid grid-cols-2 gap-1.5">
                             {quickStats.map(stat => (
                                 <button
                                     key={stat.id}
                                     onClick={() => setActiveFilter(activeFilter === stat.id ? 'all' : stat.id)}
-                                    className={`p-2.5 rounded-xl border text-center transition-all ${stat.bgColor} ${stat.borderColor} ${stat.textColor}
+                                    className={`p-2 rounded-lg border text-center transition-all ${stat.bgColor} ${stat.borderColor} ${stat.textColor}
                                         ${activeFilter === stat.id ? 'ring-2 ring-indigo-400 ring-offset-1' : 'hover:scale-[1.02]'}`}
                                 >
-                                    <div className="text-xl font-bold leading-none">{stat.count}</div>
-                                    <div className="text-xxs font-semibold mt-1 opacity-75">{stat.label}</div>
+                                    <div className="text-lg font-bold leading-none">{stat.count}</div>
+                                    <div className="text-xxs font-semibold mt-0.5 opacity-80">{stat.label}</div>
                                 </button>
                             ))}
                         </div>
                     </div>
 
                     {/* Status Filters */}
-                    <div className="px-4 py-3 border-b border-slate-50">
-                        <h3 className="text-xxs font-bold text-slate-400 uppercase tracking-wider mb-2">Статус</h3>
+                    <div className="px-3 py-2 border-b border-slate-50">
+                        <h3 className="text-xxs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Статус</h3>
                         <div className="space-y-0.5">
                             {[
                                 { id: 'all', label: 'Все', count: stats.total },
@@ -682,13 +678,13 @@
                                 <button
                                     key={f.id}
                                     onClick={() => setActiveFilter(f.id)}
-                                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200
+                                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-all duration-200
                                         ${activeFilter === f.id 
                                             ? 'bg-indigo-50 text-indigo-700 font-medium' 
                                             : 'text-slate-600 hover:bg-slate-50'}`}
                                 >
-                                    <span className="text-sm">{f.label}</span>
-                                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-md
+                                    <span className="text-xs">{f.label}</span>
+                                    <span className={`text-xxs font-bold px-1.5 py-0.5 rounded
                                         ${activeFilter === f.id ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500'}`}>
                                         {f.count}
                                     </span>
@@ -698,8 +694,8 @@
                     </div>
 
                     {/* Categories */}
-                    <div className="flex-1 overflow-y-auto px-4 py-3 custom-scrollbar">
-                        <h3 className="text-xxs font-bold text-slate-400 uppercase tracking-wider mb-2">Категории</h3>
+                    <div className="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar">
+                        <h3 className="text-xxs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Категории</h3>
                         <div className="space-y-0.5">
                             {categories.map(cat => {
                                 const Icon = categoryIcons[cat] || Icons.Box;
@@ -708,14 +704,14 @@
                                     <button
                                         key={cat}
                                         onClick={() => setActiveCategory(cat)}
-                                        className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-200
+                                        className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg transition-all duration-200
                                             ${activeCategory === cat 
                                                 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' 
                                                 : 'text-slate-600 hover:bg-slate-50'}`}
                                     >
                                         <Icon />
-                                        <span className="flex-1 text-left text-sm font-medium truncate">{cat}</span>
-                                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded-md
+                                        <span className="flex-1 text-left text-xs font-medium truncate">{cat}</span>
+                                        <span className={`text-xxs font-bold px-1.5 py-0.5 rounded
                                             ${activeCategory === cat ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
                                             {count}
                                         </span>
@@ -728,78 +724,77 @@
             );
         };
 
-        // Equipment Card
-        const EquipmentCard = ({ item, onView, onCheck, onWriteOff }) => {
+        // Equipment Card - Compact with inline status
+        const EquipmentCard = ({ item, onView, onCheck, onWriteOff, directories, onQuickUpdate }) => {
             const Icon = categoryIcons[item.category] || Icons.Box;
             const isProcessed = item.checked || item.writeOff;
             
-            const getStatusBadge = () => {
-                if (item.writeOff) return { text: 'Списание', cls: 'bg-red-100 text-red-700' };
-                if (item.checked) return { text: 'Проверено', cls: 'bg-emerald-100 text-emerald-700' };
-                return { text: 'Ожидает', cls: 'bg-amber-100 text-amber-700' };
+            // Status text
+            const getStatusText = () => {
+                if (item.writeOff) return { text: 'Списание', cls: 'text-red-600' };
+                if (item.checked) return { text: 'Проверено', cls: 'text-emerald-600' };
+                return { text: 'Ожидает', cls: 'text-amber-600' };
             };
-            const status = getStatusBadge();
+            const status = getStatusText();
 
-            // Badges - only unique info
+            // Build status line items
+            const statusItems = [];
+            statusItems.push(<span key="status" className={`font-semibold ${status.cls}`}>{status.text}</span>);
+            
+            if (item.location) {
+                statusItems.push(<span key="sep1" className="sep" />);
+                statusItems.push(<span key="loc">📍 {item.location}</span>);
+            }
+            if (item.responsible) {
+                statusItems.push(<span key="sep2" className="sep" />);
+                statusItems.push(<span key="resp">👤 {item.responsible}</span>);
+            }
+            if (item.serialNumber?.trim()) {
+                statusItems.push(<span key="sep3" className="sep" />);
+                statusItems.push(<span key="sn" className="font-mono">🔢 {item.serialNumber}</span>);
+            }
+
+            // Badges for special states only
             const badges = [];
-            if (item.isUserAdded) badges.push({ text: '🆕 Новое', cls: 'bg-violet-100 text-violet-700' });
-            if (item.hasLabel === false) badges.push({ text: '⚠️ Без бирки', cls: 'bg-orange-100 text-orange-700' });
-            if (item.serialNumber?.trim()) badges.push({ text: '🔢 S/N', cls: 'bg-blue-100 text-blue-700' });
-            if (item.inventoryNote?.trim()) badges.push({ text: '💬', cls: 'bg-slate-100 text-slate-600' });
-
-            // Meta info - location, responsible, serial number (no duplicates)
-            const hasMeta = item.location || item.responsible || item.serialNumber;
+            if (item.isUserAdded) badges.push({ text: '🆕', cls: 'bg-violet-100 text-violet-700', title: 'Новое' });
+            if (item.hasLabel === false) badges.push({ text: '⚠️', cls: 'bg-orange-100 text-orange-700', title: 'Без бирки' });
+            if (item.inventoryNote?.trim()) badges.push({ text: '💬', cls: 'bg-blue-100 text-blue-700', title: 'Есть заметка' });
 
             return (
-                <div className={`bg-white rounded-2xl p-4 card-shadow hover:card-shadow-hover transition-all duration-300 flex flex-col
-                    ${item.writeOff ? 'ring-1 ring-red-200' : item.checked ? 'ring-1 ring-emerald-200' : ''}`}>
+                <div className={`bg-white rounded-xl p-3 card-shadow hover:card-shadow-hover transition-all duration-200 flex flex-col
+                    ${item.writeOff ? 'border-l-4 border-red-400' : item.checked ? 'border-l-4 border-emerald-400' : 'border-l-4 border-slate-200'}`}>
                     
                     {/* Header */}
-                    <div className="flex items-start gap-3 mb-3">
-                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0
+                    <div className="flex items-start gap-2.5 mb-2">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0
                             ${item.writeOff ? 'bg-red-50 text-red-500' : item.checked ? 'bg-emerald-50 text-emerald-500' : 'bg-indigo-50 text-indigo-500'}`}>
                             <Icon />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <span className="inline-block px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-md text-xs font-bold font-mono">
-                                {item.invNumber}
-                            </span>
-                            <h3 className="font-semibold text-slate-800 text-sm leading-snug line-clamp-2 mt-1.5">{item.name}</h3>
-                        </div>
-                    </div>
-
-                    {/* Status Badge */}
-                    <div className="mb-2">
-                        <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-semibold ${status.cls}`}>
-                            {status.text}
-                        </span>
-                    </div>
-
-                    {/* Info Badges - in row */}
-                    {badges.length > 0 && (
-                        <div className="badges-row mb-2">
-                            {badges.map((badge, idx) => (
-                                <span key={idx} className={`inline-flex px-2 py-0.5 rounded-md text-xs font-medium ${badge.cls}`}>
-                                    {badge.text}
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded text-xxs font-bold font-mono">
+                                    {item.invNumber}
                                 </span>
-                            ))}
+                                {badges.map((badge, idx) => (
+                                    <span key={idx} className={`w-5 h-5 rounded flex items-center justify-center text-xxs ${badge.cls}`} title={badge.title}>
+                                        {badge.text}
+                                    </span>
+                                ))}
+                            </div>
+                            <h3 className="font-medium text-slate-800 text-xs leading-snug line-clamp-2 mt-1">{item.name}</h3>
                         </div>
-                    )}
+                    </div>
 
-                    {/* Meta: Location, Responsible, Serial - in row */}
-                    {hasMeta && (
-                        <div className="meta-row text-xs text-slate-500 mb-2">
-                            {item.location && <span>📍 {item.location}</span>}
-                            {item.responsible && <span>👤 {item.responsible}</span>}
-                            {item.serialNumber && <span className="font-mono text-slate-400">{item.serialNumber}</span>}
-                        </div>
-                    )}
+                    {/* Status Line - All info in one row */}
+                    <div className="status-line mb-2">
+                        {statusItems}
+                    </div>
 
                     {/* Actions */}
-                    <div className="flex flex-wrap gap-1.5 pt-3 mt-auto border-t border-slate-50">
+                    <div className="flex gap-1 pt-2 mt-auto border-t border-slate-50">
                         <button
                             onClick={() => onView(item)}
-                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition-colors"
+                            className="flex-1 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded text-xxs font-medium transition-colors"
                         >
                             Просмотр
                         </button>
@@ -808,13 +803,13 @@
                             <>
                                 <button
                                     onClick={() => onCheck(item)}
-                                    className="px-3 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg text-xs font-medium transition-colors"
+                                    className="flex-1 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded text-xxs font-medium transition-colors"
                                 >
                                     ✓ Ok
                                 </button>
                                 <button
                                     onClick={() => onWriteOff(item)}
-                                    className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-medium transition-colors"
+                                    className="py-1.5 px-2 bg-red-50 hover:bg-red-100 text-red-600 rounded text-xxs font-medium transition-colors"
                                 >
                                     Списать
                                 </button>
@@ -822,9 +817,9 @@
                         ) : (
                             <button
                                 onClick={() => onCheck(item, true)}
-                                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-medium transition-colors"
+                                className="flex-1 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded text-xxs font-medium transition-colors"
                             >
-                                ↩️ Отменить
+                                ↩️ Отмена
                             </button>
                         )}
                     </div>
@@ -835,18 +830,18 @@
         // Modal
         const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
             if (!isOpen) return null;
-            const sizeClasses = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-2xl', xl: 'max-w-4xl' };
+            const sizeClasses = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-xl', xl: 'max-w-3xl' };
             
             return (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm" onClick={onClose}>
-                    <div className={`modal-enter bg-white rounded-2xl shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-hidden flex flex-col`} onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 flex-shrink-0">
-                            <h2 className="text-base font-bold text-slate-800">{title}</h2>
-                            <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
+                    <div className={`modal-enter bg-white rounded-2xl shadow-2xl w-full ${sizeClasses[size]} max-h-[85vh] overflow-hidden flex flex-col`} onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 flex-shrink-0">
+                            <h2 className="text-sm font-bold text-slate-800">{title}</h2>
+                            <button onClick={onClose} className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
                                 <Icons.X />
                             </button>
                         </div>
-                        <div className="p-5 overflow-y-auto flex-1 custom-scrollbar">{children}</div>
+                        <div className="p-4 overflow-y-auto flex-1 custom-scrollbar">{children}</div>
                     </div>
                 </div>
             );
@@ -859,15 +854,15 @@
             
             return (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
-                    <div className="modal-enter bg-white rounded-2xl shadow-2xl w-full max-w-xs p-6 text-center">
-                        <div className="text-4xl mb-3">{icon}</div>
-                        <h3 className="text-base font-bold text-slate-800 mb-1">{title}</h3>
-                        <p className="text-sm text-slate-500 mb-6">{message}</p>
+                    <div className="modal-enter bg-white rounded-xl shadow-2xl w-full max-w-xs p-5 text-center">
+                        <div className="text-3xl mb-2">{icon}</div>
+                        <h3 className="text-sm font-bold text-slate-800 mb-1">{title}</h3>
+                        <p className="text-xs text-slate-500 mb-5">{message}</p>
                         <div className="flex gap-2">
-                            <button onClick={onClose} className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors">
+                            <button onClick={onClose} className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-colors">
                                 Отмена
                             </button>
-                            <button onClick={onConfirm} className={`flex-1 py-2.5 ${colors[confirmColor]} text-white rounded-xl text-sm font-semibold transition-colors`}>
+                            <button onClick={onConfirm} className={`flex-1 py-2 ${colors[confirmColor]} text-white rounded-lg text-xs font-semibold transition-colors`}>
                                 {confirmText}
                             </button>
                         </div>
@@ -882,8 +877,8 @@
             if (!isVisible) return null;
             
             return (
-                <div className={`toast-enter fixed bottom-5 left-1/2 -translate-x-1/2 px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 z-[70]
-                    ${type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-slate-800'} text-white text-sm font-medium`}>
+                <div className={`toast-enter fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 z-[70]
+                    ${type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-slate-800'} text-white text-xs font-medium`}>
                     {type === 'success' ? <Icons.CheckCircle /> : <Icons.AlertCircle />}
                     <span>{message}</span>
                 </div>
@@ -896,8 +891,10 @@
             const [filtered, setFiltered] = useState([]);
 
             useEffect(() => {
-                if (value && suggestions.length > 0) {
-                    const f = suggestions.filter(s => s.toLowerCase().includes(value.toLowerCase())).slice(0, 6);
+                if (suggestions.length > 0) {
+                    const f = value 
+                        ? suggestions.filter(s => s.toLowerCase().includes(value.toLowerCase())).slice(0, 5)
+                        : suggestions.slice(0, 5);
                     setFiltered(f);
                 } else {
                     setFiltered([]);
@@ -906,7 +903,7 @@
 
             return (
                 <div className="relative">
-                    {label && <label className="block text-sm font-medium text-slate-600 mb-1.5">{icon} {label}</label>}
+                    {label && <label className="block text-xs font-medium text-slate-600 mb-1">{icon} {label}</label>}
                     <input
                         type="text"
                         value={value}
@@ -914,13 +911,13 @@
                         onFocus={() => setShowDropdown(true)}
                         onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                         placeholder={placeholder}
-                        className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all"
                     />
                     {showDropdown && filtered.length > 0 && (
-                        <div className="autocomplete-dropdown absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-20">
+                        <div className="autocomplete-dropdown absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-20">
                             {filtered.map((item, idx) => (
                                 <button key={idx} type="button" onClick={() => { onChange(item); setShowDropdown(false); }}
-                                    className="w-full text-left px-3 py-2 hover:bg-slate-50 text-sm text-slate-700 first:rounded-t-xl last:rounded-b-xl">
+                                    className="w-full text-left px-3 py-2 hover:bg-slate-50 text-xs text-slate-700 first:rounded-t-lg last:rounded-b-lg">
                                     {item}
                                 </button>
                             ))}
@@ -935,7 +932,7 @@
             // Data
             const [equipment, setEquipment] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('inv_102_data_v3');
+                    const saved = localStorage.getItem('inv_102_data_v4');
                     if (saved) {
                         const parsed = JSON.parse(saved);
                         return initialEquipment.map(item => {
@@ -949,7 +946,7 @@
 
             const [directories, setDirectories] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('inv_102_dirs_v3');
+                    const saved = localStorage.getItem('inv_102_dirs_v4');
                     return saved ? JSON.parse(saved) : { rooms: [], people: [] };
                 } catch (e) { return { rooms: [], people: [] }; }
             });
@@ -971,6 +968,7 @@
             const [quickSearchModal, setQuickSearchModal] = useState({ open: false, query: '' });
             const [roomsModal, setRoomsModal] = useState({ open: false, newRoom: '' });
             const [peopleModal, setPeopleModal] = useState({ open: false, newPerson: '' });
+            const [infoModal, setInfoModal] = useState({ open: false });
 
             // Form states
             const [detailsForm, setDetailsForm] = useState({ serialNumber: '', location: '', responsible: '', inventoryNote: '', hasLabel: null });
@@ -978,8 +976,8 @@
             const [moveForm, setMoveForm] = useState({ category: '', location: '' });
 
             // Save to localStorage
-            useEffect(() => { localStorage.setItem('inv_102_data_v3', JSON.stringify(equipment)); }, [equipment]);
-            useEffect(() => { localStorage.setItem('inv_102_dirs_v3', JSON.stringify(directories)); }, [directories]);
+            useEffect(() => { localStorage.setItem('inv_102_data_v4', JSON.stringify(equipment)); }, [equipment]);
+            useEffect(() => { localStorage.setItem('inv_102_dirs_v4', JSON.stringify(directories)); }, [directories]);
 
             // Stats
             const stats = {
@@ -993,7 +991,7 @@
                 byCategory: equipment.reduce((acc, i) => { acc[i.category] = (acc[i.category] || 0) + 1; return acc; }, {}),
             };
 
-            // Categories - "Все оборудование" always first, rest sorted alphabetically
+            // Categories - "Все оборудование" ALWAYS first, rest sorted
             const otherCategories = [...new Set(equipment.map(i => i.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
             const categories = ['Все оборудование', ...otherCategories];
 
@@ -1217,7 +1215,7 @@
             // Export/Import
             const handleSave = () => {
                 showConfirm('Сохранить?', 'Сохранить все данные?', () => {
-                    localStorage.setItem('inv_102_data_v3', JSON.stringify(equipment));
+                    localStorage.setItem('inv_102_data_v4', JSON.stringify(equipment));
                     setConfirmModal({ ...confirmModal, open: false });
                     showToast('💾 Сохранено');
                 }, '💾', 'Сохранить', 'green');
@@ -1318,6 +1316,7 @@
                         onOpenRooms={() => setRoomsModal({ ...roomsModal, open: true })}
                         onOpenPeople={() => setPeopleModal({ ...peopleModal, open: true })}
                         onAddEquipment={() => openEditModal()}
+                        onShowInfo={() => setInfoModal({ open: true })}
                     />
 
                     {/* Filter Panel */}
@@ -1333,10 +1332,10 @@
                     {/* Main Content */}
                     <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
                         {/* Header */}
-                        <header className="bg-white border-b border-slate-100 px-5 py-4 flex-shrink-0">
-                            <div className="flex items-center gap-3">
+                        <header className="bg-white border-b border-slate-100 px-4 py-3 flex-shrink-0">
+                            <div className="flex items-center gap-2">
                                 {/* Search */}
-                                <div className="flex-1 relative max-w-md">
+                                <div className="flex-1 relative max-w-sm">
                                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                                         <Icons.Search />
                                     </div>
@@ -1345,12 +1344,12 @@
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder="Поиск..."
-                                        className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all"
+                                        className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm placeholder-slate-400 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all"
                                     />
                                 </div>
 
                                 {/* Actions */}
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1">
                                     <button onClick={handleSave} className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors" title="Сохранить">
                                         <Icons.Save />
                                     </button>
@@ -1371,28 +1370,28 @@
                         </header>
 
                         {/* Content */}
-                        <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
+                        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                             {Object.keys(groupedEquipment).length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-full text-slate-400">
-                                    <div className="text-5xl mb-3">📭</div>
-                                    <p className="text-base font-medium">Ничего не найдено</p>
+                                    <div className="text-4xl mb-2">📭</div>
+                                    <p className="text-sm font-medium">Ничего не найдено</p>
                                 </div>
                             ) : (
                                 Object.entries(groupedEquipment).sort((a, b) => a[0].localeCompare(b[0], 'ru')).map(([category, items]) => {
                                     const Icon = categoryIcons[category] || Icons.Box;
                                     const checkedCount = items.filter(i => i.checked || i.writeOff).length;
                                     return (
-                                        <div key={category} className="mb-6">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center">
+                                        <div key={category} className="mb-5">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-7 h-7 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center">
                                                     <Icon />
                                                 </div>
-                                                <h2 className="text-base font-bold text-slate-800">{category}</h2>
-                                                <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md text-xs font-semibold">
+                                                <h2 className="text-sm font-bold text-slate-800">{category}</h2>
+                                                <span className="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-xxs font-bold">
                                                     {checkedCount}/{items.length}
                                                 </span>
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
                                                 {items.map(item => (
                                                     <EquipmentCard
                                                         key={item.id}
@@ -1400,6 +1399,7 @@
                                                         onView={openDetails}
                                                         onCheck={handleCheck}
                                                         onWriteOff={handleWriteOff}
+                                                        directories={directories}
                                                     />
                                                 ))}
                                             </div>
@@ -1413,24 +1413,42 @@
                     {/* FAB */}
                     <button
                         onClick={() => setQuickSearchModal({ open: true, query: '' })}
-                        className="fixed bottom-5 right-5 w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg flex items-center justify-center text-lg z-40 transition-all hover:scale-105"
+                        className="fixed bottom-4 right-4 w-11 h-11 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg flex items-center justify-center text-base z-40 transition-all hover:scale-105"
                     >
                         🔍
                     </button>
 
                     {/* ===== MODALS ===== */}
 
+                    {/* Info Modal */}
+                    <Modal isOpen={infoModal.open} onClose={() => setInfoModal({ open: false })} title="ℹ️ О программе" size="sm">
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <span className="text-2xl font-bold text-indigo-600">ИН</span>
+                            </div>
+                            <h3 className="text-lg font-bold text-slate-800 mb-1">Инвентаризация</h3>
+                            <p className="text-xs text-slate-500 mb-4">ГКОУ СКОШИ №102</p>
+                            <div className="text-xs text-slate-600 space-y-1 text-left bg-slate-50 rounded-lg p-3">
+                                <p>• <strong>Главная</strong> — список оборудования</p>
+                                <p>• <strong>Кабинеты</strong> — справочник кабинетов</p>
+                                <p>• <strong>ФИО</strong> — справочник ответственных</p>
+                                <p>• <strong>Добавить</strong> — новое оборудование</p>
+                            </div>
+                            <p className="text-xxs text-slate-400 mt-4">Версия 1.0</p>
+                        </div>
+                    </Modal>
+
                     {/* Label Modal */}
                     <Modal isOpen={labelModal.open} onClose={() => setLabelModal({ open: false, item: null })} title="🏷️ Бирка" size="sm">
-                        <p className="text-center text-slate-600 mb-5 text-sm">Бирка присутствует на оборудовании?</p>
+                        <p className="text-center text-slate-600 mb-4 text-xs">Бирка присутствует на оборудовании?</p>
                         <div className="space-y-2">
-                            <button onClick={() => handleLabelAnswer(true)} className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold transition-colors text-sm">
+                            <button onClick={() => handleLabelAnswer(true)} className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold transition-colors text-sm">
                                 ✓ Есть бирка
                             </button>
-                            <button onClick={() => handleLabelAnswer(false)} className="w-full py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold transition-colors text-sm">
+                            <button onClick={() => handleLabelAnswer(false)} className="w-full py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors text-sm">
                                 ✗ Нет бирки
                             </button>
-                            <button onClick={() => setLabelModal({ open: false, item: null })} className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium transition-colors text-sm">
+                            <button onClick={() => setLabelModal({ open: false, item: null })} className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors text-sm">
                                 Отмена
                             </button>
                         </div>
@@ -1438,23 +1456,23 @@
 
                     {/* Serial Modal */}
                     <Modal isOpen={serialModal.open} onClose={() => setSerialModal({ open: false, item: null, serial: '' })} title="🔢 Серийный номер" size="sm">
-                        <p className="text-center text-slate-600 mb-4 text-sm">Введите S/N (если есть)</p>
+                        <p className="text-center text-slate-600 mb-3 text-xs">Введите S/N (если есть)</p>
                         <input
                             type="text"
                             value={serialModal.serial}
                             onChange={(e) => setSerialModal(prev => ({ ...prev, serial: e.target.value }))}
                             placeholder="S/N"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-xl text-center font-mono text-base mb-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400"
+                            className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-center font-mono text-sm mb-3 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400"
                             autoFocus
                         />
                         <div className="space-y-2">
-                            <button onClick={handleSerialSave} className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold transition-colors text-sm">
+                            <button onClick={handleSerialSave} className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold transition-colors text-sm">
                                 💾 Сохранить
                             </button>
-                            <button onClick={handleSerialSkip} className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-colors text-sm">
+                            <button onClick={handleSerialSkip} className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors text-sm">
                                 Пропустить →
                             </button>
-                            <button onClick={() => setSerialModal({ open: false, item: null, serial: '' })} className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium transition-colors text-sm">
+                            <button onClick={() => setSerialModal({ open: false, item: null, serial: '' })} className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors text-sm">
                                 Отмена
                             </button>
                         </div>
@@ -1463,23 +1481,23 @@
                     {/* Details Modal */}
                     <Modal isOpen={detailsModal.open} onClose={() => setDetailsModal({ open: false, item: null })} title="📋 Карточка" size="md">
                         {detailsModal.item && (
-                            <div className="space-y-4">
-                                <div className="p-4 bg-gradient-to-br from-indigo-50 to-white rounded-xl">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="px-2 py-1 bg-indigo-600 text-white rounded-lg font-mono font-bold text-sm">{detailsModal.item.invNumber}</span>
-                                        {detailsModal.item.isUserAdded && <span className="px-2 py-0.5 bg-violet-100 text-violet-700 rounded-md text-xs font-medium">Новое</span>}
+                            <div className="space-y-3">
+                                <div className="p-3 bg-gradient-to-br from-indigo-50 to-white rounded-lg">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="px-2 py-0.5 bg-indigo-600 text-white rounded font-mono font-bold text-xs">{detailsModal.item.invNumber}</span>
+                                        {detailsModal.item.isUserAdded && <span className="px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded text-xxs font-medium">Новое</span>}
                                     </div>
-                                    <h3 className="font-semibold text-slate-800">{detailsModal.item.name}</h3>
-                                    <p className="text-xs text-slate-500 mt-1">{detailsModal.item.category} • {detailsModal.item.date}</p>
+                                    <h3 className="font-semibold text-slate-800 text-sm">{detailsModal.item.name}</h3>
+                                    <p className="text-xxs text-slate-500 mt-0.5">{detailsModal.item.category} • {detailsModal.item.date}</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">🏷️ Бирка</label>
+                                    <label className="block text-xs font-medium text-slate-700 mb-1.5">🏷️ Бирка</label>
                                     <div className="grid grid-cols-2 gap-2">
-                                        <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: true }))} className={`py-3 rounded-xl font-medium text-sm transition-all ${detailsForm.hasLabel === true ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+                                        <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: true }))} className={`py-2 rounded-lg font-medium text-xs transition-all ${detailsForm.hasLabel === true ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
                                             ✓ Есть
                                         </button>
-                                        <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: false }))} className={`py-3 rounded-xl font-medium text-sm transition-all ${detailsForm.hasLabel === false ? 'bg-red-500 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+                                        <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: false }))} className={`py-2 rounded-lg font-medium text-xs transition-all ${detailsForm.hasLabel === false ? 'bg-red-500 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
                                             ✗ Нет
                                         </button>
                                     </div>
@@ -1490,26 +1508,26 @@
                                 <AutocompleteInput label="Ответственный" icon="👤" value={detailsForm.responsible} onChange={(v) => setDetailsForm(prev => ({ ...prev, responsible: v }))} suggestions={directories.people} placeholder="ФИО" />
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-600 mb-1.5">💬 Заметки</label>
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">💬 Заметки</label>
                                     <textarea
                                         value={detailsForm.inventoryNote}
                                         onChange={(e) => setDetailsForm(prev => ({ ...prev, inventoryNote: e.target.value }))}
                                         placeholder="Примечания..."
                                         rows={2}
-                                        className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 resize-none"
+                                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 resize-none"
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
-                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openEditModal(detailsModal.item); }} className="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-sm transition-colors">
+                                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openEditModal(detailsModal.item); }} className="py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium text-xs transition-colors">
                                         ✏️ Редактировать
                                     </button>
-                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openMoveModal(detailsModal.item); }} className="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-sm transition-colors">
+                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openMoveModal(detailsModal.item); }} className="py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium text-xs transition-colors">
                                         📦 Переместить
                                     </button>
                                 </div>
 
-                                <button onClick={saveDetails} className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition-colors text-sm">
+                                <button onClick={saveDetails} className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors text-sm">
                                     💾 Сохранить
                                 </button>
                             </div>
@@ -1520,37 +1538,37 @@
                     <Modal isOpen={editModal.open} onClose={() => setEditModal({ open: false, item: null, isNew: false })} title={editModal.isNew ? '➕ Добавить' : '✏️ Редактировать'}>
                         <div className="space-y-3">
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-1">Название *</label>
-                                <input type="text" value={editForm.name} onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Название" className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
+                                <label className="block text-xs font-medium text-slate-600 mb-1">Название *</label>
+                                <input type="text" value={editForm.name} onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Название" className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-600 mb-1">Инв. № *</label>
-                                    <input type="text" value={editForm.invNumber} onChange={(e) => setEditForm(prev => ({ ...prev, invNumber: e.target.value }))} placeholder="Инв. №" className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">Инв. № *</label>
+                                    <input type="text" value={editForm.invNumber} onChange={(e) => setEditForm(prev => ({ ...prev, invNumber: e.target.value }))} placeholder="Инв. №" className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-600 mb-1">Дата</label>
-                                    <input type="text" value={editForm.date} onChange={(e) => setEditForm(prev => ({ ...prev, date: e.target.value }))} placeholder="ДД.ММ.ГГГГ" className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">Дата</label>
+                                    <input type="text" value={editForm.date} onChange={(e) => setEditForm(prev => ({ ...prev, date: e.target.value }))} placeholder="ДД.ММ.ГГГГ" className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-1">Категория *</label>
-                                <select value={editForm.category} onChange={(e) => setEditForm(prev => ({ ...prev, category: e.target.value }))} className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400">
+                                <label className="block text-xs font-medium text-slate-600 mb-1">Категория *</label>
+                                <select value={editForm.category} onChange={(e) => setEditForm(prev => ({ ...prev, category: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400">
                                     <option value="">Выберите...</option>
                                     {categories.filter(c => c !== 'Все оборудование').map(cat => <option key={cat} value={cat}>{cat}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-1">Новая категория</label>
-                                <input type="text" value={editForm.newCategory} onChange={(e) => setEditForm(prev => ({ ...prev, newCategory: e.target.value }))} placeholder="Или введите новую" className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
+                                <label className="block text-xs font-medium text-slate-600 mb-1">Новая категория</label>
+                                <input type="text" value={editForm.newCategory} onChange={(e) => setEditForm(prev => ({ ...prev, newCategory: e.target.value }))} placeholder="Или введите новую" className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-1">Примечание</label>
-                                <textarea value={editForm.note} onChange={(e) => setEditForm(prev => ({ ...prev, note: e.target.value }))} placeholder="Примечание" rows={2} className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 resize-none" />
+                                <label className="block text-xs font-medium text-slate-600 mb-1">Примечание</label>
+                                <textarea value={editForm.note} onChange={(e) => setEditForm(prev => ({ ...prev, note: e.target.value }))} placeholder="Примечание" rows={2} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 resize-none" />
                             </div>
-                            <div className="flex gap-2 pt-3">
-                                <button onClick={() => setEditModal({ open: false, item: null, isNew: false })} className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-sm transition-colors">Отмена</button>
-                                <button onClick={saveEdit} className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-colors">💾 Сохранить</button>
+                            <div className="flex gap-2 pt-2">
+                                <button onClick={() => setEditModal({ open: false, item: null, isNew: false })} className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium text-sm transition-colors">Отмена</button>
+                                <button onClick={saveEdit} className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm transition-colors">💾 Сохранить</button>
                             </div>
                         </div>
                     </Modal>
@@ -1559,20 +1577,20 @@
                     <Modal isOpen={moveModal.open} onClose={() => setMoveModal({ open: false, item: null })} title="📦 Переместить">
                         {moveModal.item && (
                             <div className="space-y-3">
-                                <div className="p-3 bg-slate-50 rounded-xl">
-                                    <p className="font-medium text-slate-800 text-sm">{moveModal.item.name}</p>
-                                    <p className="text-xs text-slate-500 mt-0.5">Инв. № {moveModal.item.invNumber}</p>
+                                <div className="p-2.5 bg-slate-50 rounded-lg">
+                                    <p className="font-medium text-slate-800 text-xs">{moveModal.item.name}</p>
+                                    <p className="text-xxs text-slate-500 mt-0.5">Инв. № {moveModal.item.invNumber}</p>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-600 mb-1">Категория</label>
-                                    <select value={moveForm.category} onChange={(e) => setMoveForm(prev => ({ ...prev, category: e.target.value }))} className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400">
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">Категория</label>
+                                    <select value={moveForm.category} onChange={(e) => setMoveForm(prev => ({ ...prev, category: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400">
                                         {categories.filter(c => c !== 'Все оборудование').map(cat => <option key={cat} value={cat}>{cat}</option>)}
                                     </select>
                                 </div>
                                 <AutocompleteInput label="Локация" icon="📍" value={moveForm.location} onChange={(v) => setMoveForm(prev => ({ ...prev, location: v }))} suggestions={directories.rooms} placeholder="Кабинет" />
-                                <div className="flex gap-2 pt-3">
-                                    <button onClick={() => setMoveModal({ open: false, item: null })} className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-sm transition-colors">Отмена</button>
-                                    <button onClick={saveMove} className="flex-1 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-semibold text-sm transition-colors">📦 Переместить</button>
+                                <div className="flex gap-2 pt-2">
+                                    <button onClick={() => setMoveModal({ open: false, item: null })} className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium text-sm transition-colors">Отмена</button>
+                                    <button onClick={saveMove} className="flex-1 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-semibold text-sm transition-colors">📦 Переместить</button>
                                 </div>
                             </div>
                         )}
@@ -1585,47 +1603,47 @@
                             value={quickSearchModal.query}
                             onChange={(e) => setQuickSearchModal(prev => ({ ...prev, query: e.target.value }))}
                             placeholder="Инв. № или название..."
-                            className="w-full px-4 py-3 border border-slate-200 rounded-xl font-mono text-base mb-3 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400"
+                            className="w-full px-3 py-2.5 border border-slate-200 rounded-lg font-mono text-sm mb-3 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400"
                             autoFocus
                         />
-                        <div className="max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
+                        <div className="max-h-56 overflow-y-auto border border-slate-200 rounded-lg">
                             {quickSearchResults.length === 0 ? (
-                                <div className="p-6 text-center text-slate-400 text-sm">Введите запрос</div>
+                                <div className="p-5 text-center text-slate-400 text-xs">Введите запрос</div>
                             ) : (
                                 quickSearchResults.map(item => (
                                     <button
                                         key={item.id}
                                         onClick={() => { setQuickSearchModal({ open: false, query: '' }); openDetails(item); }}
-                                        className={`w-full text-left p-3 border-b border-slate-50 hover:bg-slate-50 flex items-center gap-3 ${item.checked ? 'bg-emerald-50/50' : item.writeOff ? 'bg-red-50/50' : ''}`}
+                                        className={`w-full text-left p-2.5 border-b border-slate-50 hover:bg-slate-50 flex items-center gap-2 ${item.checked ? 'bg-emerald-50/50' : item.writeOff ? 'bg-red-50/50' : ''}`}
                                     >
-                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${item.writeOff ? 'bg-red-100 text-red-500' : item.checked ? 'bg-emerald-100 text-emerald-500' : 'bg-amber-100 text-amber-500'}`}>
+                                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs ${item.writeOff ? 'bg-red-100 text-red-500' : item.checked ? 'bg-emerald-100 text-emerald-500' : 'bg-amber-100 text-amber-500'}`}>
                                             {item.writeOff ? '📝' : item.checked ? '✓' : '⏳'}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="font-mono font-semibold text-indigo-600 text-sm">{item.invNumber}</div>
-                                            <div className="text-xs text-slate-500 truncate">{item.name}</div>
+                                            <div className="font-mono font-semibold text-indigo-600 text-xs">{item.invNumber}</div>
+                                            <div className="text-xxs text-slate-500 truncate">{item.name}</div>
                                         </div>
                                     </button>
                                 ))
                             )}
                         </div>
-                        {quickSearchResults.length > 0 && <div className="mt-2 text-center text-xs text-slate-400">Найдено: {quickSearchResults.length}</div>}
+                        {quickSearchResults.length > 0 && <div className="mt-2 text-center text-xxs text-slate-400">Найдено: {quickSearchResults.length}</div>}
                     </Modal>
 
                     {/* Rooms Modal */}
                     <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '' })} title="🚪 Кабинеты">
                         <div className="flex gap-2 mb-3">
-                            <input type="text" value={roomsModal.newRoom} onChange={(e) => setRoomsModal(prev => ({ ...prev, newRoom: e.target.value }))} onKeyDown={(e) => e.key === 'Enter' && addToDirectory('rooms', roomsModal.newRoom)} placeholder="Новый кабинет..." className="flex-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
-                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold text-sm">+</button>
+                            <input type="text" value={roomsModal.newRoom} onChange={(e) => setRoomsModal(prev => ({ ...prev, newRoom: e.target.value }))} onKeyDown={(e) => e.key === 'Enter' && addToDirectory('rooms', roomsModal.newRoom)} placeholder="Новый кабинет..." className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
+                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold text-sm">+</button>
                         </div>
-                        <div className="max-h-48 overflow-y-auto border border-slate-200 rounded-xl">
+                        <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-lg">
                             {directories.rooms.length === 0 ? (
-                                <div className="p-6 text-center text-slate-400 text-sm">Пусто</div>
+                                <div className="p-5 text-center text-slate-400 text-xs">Пусто</div>
                             ) : (
                                 directories.rooms.map((room, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 p-2.5 border-b border-slate-50 last:border-0">
-                                        <span className="flex-1 text-sm">{room}</span>
-                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs">🗑️</button>
+                                    <div key={idx} className="flex items-center gap-2 p-2 border-b border-slate-50 last:border-0">
+                                        <span className="flex-1 text-xs">{room}</span>
+                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="p-1 bg-red-50 hover:bg-red-100 text-red-600 rounded text-xxs">🗑️</button>
                                     </div>
                                 ))
                             )}
@@ -1635,17 +1653,17 @@
                     {/* People Modal */}
                     <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="👥 ФИО">
                         <div className="flex gap-2 mb-3">
-                            <input type="text" value={peopleModal.newPerson} onChange={(e) => setPeopleModal(prev => ({ ...prev, newPerson: e.target.value }))} onKeyDown={(e) => e.key === 'Enter' && addToDirectory('people', peopleModal.newPerson)} placeholder="Новое ФИО..." className="flex-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
-                            <button onClick={() => addToDirectory('people', peopleModal.newPerson)} className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold text-sm">+</button>
+                            <input type="text" value={peopleModal.newPerson} onChange={(e) => setPeopleModal(prev => ({ ...prev, newPerson: e.target.value }))} onKeyDown={(e) => e.key === 'Enter' && addToDirectory('people', peopleModal.newPerson)} placeholder="Новое ФИО..." className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400" />
+                            <button onClick={() => addToDirectory('people', peopleModal.newPerson)} className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold text-sm">+</button>
                         </div>
-                        <div className="max-h-48 overflow-y-auto border border-slate-200 rounded-xl">
+                        <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-lg">
                             {directories.people.length === 0 ? (
-                                <div className="p-6 text-center text-slate-400 text-sm">Пусто</div>
+                                <div className="p-5 text-center text-slate-400 text-xs">Пусто</div>
                             ) : (
                                 directories.people.map((person, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 p-2.5 border-b border-slate-50 last:border-0">
-                                        <span className="flex-1 text-sm">{person}</span>
-                                        <button onClick={() => removeFromDirectory('people', idx)} className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs">🗑️</button>
+                                    <div key={idx} className="flex items-center gap-2 p-2 border-b border-slate-50 last:border-0">
+                                        <span className="flex-1 text-xs">{person}</span>
+                                        <button onClick={() => removeFromDirectory('people', idx)} className="p-1 bg-red-50 hover:bg-red-100 text-red-600 rounded text-xxs">🗑️</button>
                                     </div>
                                 ))
                             )}
