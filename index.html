@@ -2597,8 +2597,9 @@ function render() {
                         </div>
                         <div class="card-name">${escapeHtml(item.name)}</div>
                         <div class="card-meta">
-                            ${item.serialNumber ? `<span class="card-meta-item">🔢 ${escapeHtml(item.serialNumber)}</span>` : ''}
                             ${item.location ? `<span class="card-meta-item">📍 ${escapeHtml(item.location)}</span>` : ''}
+                            ${item.responsible ? `<span class="card-meta-item">👤 ${escapeHtml(item.responsible)}</span>` : ''}
+                            ${item.serialNumber ? `<span class="card-meta-item">🔢 ${escapeHtml(item.serialNumber)}</span>` : ''}
                         </div>
                     </div>
                     <div class="card-actions">${actionsHtml}</div>
@@ -3314,13 +3315,6 @@ function attachEvents() {
     });
     $('#detailsLocation').addEventListener('blur', function() {
         hideAutocomplete('locationDropdown');
-        // Добавляем в справочник только при потере фокуса с заполненным полем
-        const value = this.value.trim();
-        if (value && !directories.rooms.includes(value)) {
-            directories.rooms.push(value);
-            directories.rooms.sort((a, b) => a.localeCompare(b, 'ru'));
-            saveDirectories();
-        }
     });
     $('#detailsLocation').addEventListener('focus', function() {
         if (this.value.trim()) {
@@ -3335,13 +3329,6 @@ function attachEvents() {
     });
     $('#detailsResponsible').addEventListener('blur', function() {
         hideAutocomplete('responsibleDropdown');
-        // Добавляем в справочник только при потере фокуса с заполненным полем
-        const value = this.value.trim();
-        if (value && !directories.people.includes(value)) {
-            directories.people.push(value);
-            directories.people.sort((a, b) => a.localeCompare(b, 'ru'));
-            saveDirectories();
-        }
     });
     $('#detailsResponsible').addEventListener('focus', function() {
         if (this.value.trim()) {
