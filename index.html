@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Инвентаризация - ГКОУ СКОШИ №102</title>
@@ -27,7 +27,8 @@
             margin: 0; 
             padding: 0; 
             box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
         }
         
         html { 
@@ -42,108 +43,144 @@
             background: #f8fafc; 
             color: #1e293b;
             line-height: 1.5;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
         
-        /* Custom Scrollbar */
-        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Status bar for iPad */
+        .status-bar {
+            height: env(safe-area-inset-top, 24px);
+            min-height: 24px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 16px;
+        }
+        .status-bar-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            font-weight: 600;
+        }
         
-        /* Modal - CENTERED */
+        /* App container with safe area */
+        .app-container {
+            padding-top: env(safe-area-inset-top, 24px);
+            height: 100vh;
+            height: 100dvh;
+        }
+        
+        /* Custom Scrollbar - lighter for performance */
+        .custom-scroll::-webkit-scrollbar { width: 8px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* Modal - TOP position for keyboard */
         .modal-overlay {
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: 8vh 20px 20px;
+            padding-top: max(2vh, 20px);
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-bottom: 16px;
         }
         
-        /* Touch-friendly */
+        /* Touch-friendly - 44px minimum */
         .touch-btn {
-            min-height: 48px;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.15s ease;
             -webkit-user-select: none;
             user-select: none;
         }
-        .touch-btn:active { transform: scale(0.97); opacity: 0.9; }
+        .touch-btn:active { opacity: 0.8; }
         
         /* Status badges */
         .status-badge {
-            padding: 6px 14px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 8px;
             font-weight: 700;
-            font-size: 0.8125rem;
-            letter-spacing: 0.01em;
+            font-size: 0.75rem;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            gap: 4px;
+            white-space: nowrap;
         }
         .status-checked {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
+            background: #dcfce7;
+            color: #166534;
+            border: 2px solid #22c55e;
         }
         .status-pending {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
+            background: #fef3c7;
+            color: #92400e;
+            border: 2px solid #f59e0b;
         }
         .status-writeoff {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
         }
         
         /* Category colors */
-        .cat-audio { --cat-color: #8b5cf6; --cat-dark: #7c3aed; }
-        .cat-interactive { --cat-color: #3b82f6; --cat-dark: #2563eb; }
-        .cat-printers { --cat-color: #06b6d4; --cat-dark: #0891b2; }
-        .cat-tv { --cat-color: #10b981; --cat-dark: #059669; }
-        .cat-default { --cat-color: #6366f1; --cat-dark: #4f46e5; }
+        .cat-audio { --cat-color: #8b5cf6; --cat-bg: #f5f3ff; }
+        .cat-interactive { --cat-color: #3b82f6; --cat-bg: #eff6ff; }
+        .cat-printers { --cat-color: #06b6d4; --cat-bg: #ecfeff; }
+        .cat-tv { --cat-color: #10b981; --cat-bg: #ecfdf5; }
+        .cat-default { --cat-color: #6366f1; --cat-bg: #eef2ff; }
         
         .category-divider {
-            background: linear-gradient(135deg, var(--cat-color) 0%, var(--cat-dark) 100%);
+            background: var(--cat-color);
             color: white;
-            padding: 14px 20px;
-            border-radius: 16px;
-            margin: 24px 0 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 20px 0 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 700;
-            font-size: 0.9375rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            letter-spacing: 0.01em;
+            font-size: 1rem;
         }
         .category-divider:first-child { margin-top: 0; }
         
         /* Card */
         .card-shadow {
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         
-        /* Modal animation */
+        /* Modal animation - simpler for performance */
         .modal-animate {
-            animation: modalIn 0.2s ease-out;
+            animation: modalIn 0.15s ease-out;
         }
         @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(-10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Responsive */
+        /* Responsive for iPad Pro 9.7" (1024x768) */
         @media (max-width: 1024px) {
-            .nav-rail { display: none; }
+            .nav-rail { display: none !important; }
             .filter-panel { 
                 position: fixed;
                 left: 0;
-                top: 0;
+                top: env(safe-area-inset-top, 24px);
                 bottom: 0;
-                z-index: 200;
+                width: 300px;
+                z-index: 500;
                 transform: translateX(-100%);
-                transition: transform 0.3s ease;
+                transition: transform 0.25s ease;
+                background: white;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.15);
             }
             .filter-panel.open { transform: translateX(0); }
             .mobile-header { display: flex !important; }
@@ -155,24 +192,18 @@
             .mobile-overlay { display: none !important; }
         }
         
-        /* Typography improvements */
-        .text-balance { text-wrap: balance; }
-        
-        /* Quick stat card */
+        /* Quick stat card - VERTICAL layout */
         .quick-stat-card {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 12px 8px;
+            padding: 16px 8px;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.15s ease;
             border: 2px solid transparent;
-        }
-        .quick-stat-card:hover {
-            transform: translateY(-2px);
+            min-height: 80px;
         }
         .quick-stat-card.active {
             border-color: currentColor;
@@ -180,38 +211,75 @@
         .quick-stat-value {
             font-size: 1.75rem;
             font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 4px;
+            line-height: 1;
+            margin-bottom: 6px;
         }
         .quick-stat-label {
             font-size: 0.6875rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            opacity: 0.8;
+            letter-spacing: 0.02em;
+        }
+        
+        /* Note indicator */
+        .has-note-indicator {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Performance: will-change for animations */
+        .filter-panel {
+            will-change: transform;
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <span class="status-bar-text" id="statusTime"></span>
+    </div>
+    
+    <div class="app-container">
+        <div id="root"></div>
+    </div>
     <input type="file" id="fileInput" accept=".json" style="display:none">
 
     <script type="text/babel">
-        const { useState, useEffect, useRef, useCallback } = React;
+        const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+        // Update status bar time
+        const updateTime = () => {
+            const now = new Date();
+            const time = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            const el = document.getElementById('statusTime');
+            if (el) el.textContent = time;
+        };
+        setInterval(updateTime, 1000);
+        updateTime();
 
         // ==================== ICONS ====================
         const Icons = {
-            Home: () => <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
-            Building: () => <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
-            Users: () => <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
-            Plus: () => <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>,
+            Home: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
+            Building: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
+            Users: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+            Move: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>,
+            Plus: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>,
             Search: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
             Save: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>,
             Download: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>,
             Upload: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>,
             Trash: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
             X: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>,
-            Check: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>,
             Menu: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>,
         };
 
@@ -653,9 +721,9 @@
 
         // ==================== COMPONENTS ====================
 
-        // Progress Ring
-        const ProgressRing = ({ percent, size = 72 }) => {
-            const strokeWidth = 7;
+        // Progress Ring - simplified
+        const ProgressRing = ({ percent, size = 64 }) => {
+            const strokeWidth = 6;
             const radius = (size - strokeWidth) / 2;
             const circumference = 2 * Math.PI * radius;
             const offset = circumference - (percent / 100) * circumference;
@@ -663,35 +731,38 @@
             return (
                 <div className="relative" style={{ width: size, height: size }}>
                     <svg className="transform -rotate-90" width={size} height={size}>
-                        <circle className="text-slate-200" strokeWidth={strokeWidth} stroke="currentColor" fill="transparent" r={radius} cx={size/2} cy={size/2} />
-                        <circle className="text-indigo-500" strokeWidth={strokeWidth} stroke="currentColor" fill="transparent" r={radius} cx={size/2} cy={size/2}
-                            strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
+                        <circle stroke="#e2e8f0" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2} />
+                        <circle stroke="#6366f1" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2}
+                            strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xl font-extrabold text-slate-800">{percent}%</span>
+                        <span className="text-lg font-extrabold text-slate-800">{percent}%</span>
                     </div>
                 </div>
             );
         };
 
         // Navigation Rail
-        const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome }) => (
-            <div className="nav-rail w-20 bg-slate-800 flex flex-col items-center py-6 flex-shrink-0">
-                <button onClick={onShowInfo} className="w-14 h-14 bg-indigo-500 rounded-2xl flex items-center justify-center mb-8 shadow-lg" title="О программе">
-                    <span className="text-white font-extrabold text-lg">102</span>
+        const NavRail = ({ onOpenRooms, onOpenPeople, onOpenMove, onAddEquipment, onShowInfo, onGoHome }) => (
+            <div className="nav-rail w-20 bg-slate-900 flex flex-col items-center py-4 flex-shrink-0">
+                <button onClick={onShowInfo} className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mb-6" title="О программе">
+                    <span className="text-white font-extrabold text-base">102</span>
                 </button>
-                <div className="flex-1 flex flex-col items-center gap-3">
-                    <button onClick={onGoHome} className="touch-btn w-14 h-14 rounded-2xl bg-slate-700 text-white hover:bg-slate-600" title="Главная">
+                <div className="flex-1 flex flex-col items-center gap-2">
+                    <button onClick={onGoHome} className="touch-btn w-12 h-12 rounded-xl bg-slate-800 text-white" title="Главная">
                         <Icons.Home />
                     </button>
-                    <button onClick={onOpenRooms} className="touch-btn w-14 h-14 rounded-2xl text-slate-400 hover:bg-slate-700 hover:text-white" title="Кабинеты">
+                    <button onClick={onOpenRooms} className="touch-btn w-12 h-12 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white" title="Кабинеты">
                         <Icons.Building />
                     </button>
-                    <button onClick={onOpenPeople} className="touch-btn w-14 h-14 rounded-2xl text-slate-400 hover:bg-slate-700 hover:text-white" title="Сотрудники">
+                    <button onClick={onOpenPeople} className="touch-btn w-12 h-12 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white" title="Сотрудники">
                         <Icons.Users />
                     </button>
+                    <button onClick={onOpenMove} className="touch-btn w-12 h-12 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white" title="Переместить">
+                        <Icons.Move />
+                    </button>
                 </div>
-                <button onClick={onAddEquipment} className="touch-btn w-14 h-14 rounded-2xl bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg" title="Добавить">
+                <button onClick={onAddEquipment} className="touch-btn w-12 h-12 rounded-xl bg-emerald-600 text-white" title="Добавить">
                     <Icons.Plus />
                 </button>
             </div>
@@ -703,98 +774,94 @@
 
             return (
                 <>
-                    <div className={`mobile-overlay fixed inset-0 bg-black/50 z-150 ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} />
-                    <div className={`filter-panel w-72 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 ${isOpen ? 'open' : ''}`}>
+                    <div className={`mobile-overlay fixed inset-0 bg-black/50 z-400 ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} />
+                    <div className={`filter-panel w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 ${isOpen ? 'open' : ''}`}>
+                        {/* Close button for mobile */}
+                        <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center lg:hidden z-10">
+                            <Icons.X />
+                        </button>
+                        
                         {/* Header */}
-                        <div className="p-5 border-b border-slate-100 bg-gradient-to-r from-indigo-500 to-indigo-600">
-                            <h1 className="text-xl font-extrabold text-white tracking-tight">Инвентаризация</h1>
-                            <p className="text-sm text-indigo-100 mt-0.5">ГКОУ СКОШИ №102</p>
+                        <div className="p-4 border-b border-slate-100 bg-indigo-600">
+                            <h1 className="text-lg font-bold text-white">Инвентаризация</h1>
+                            <p className="text-sm text-indigo-100">ГКОУ СКОШИ №102</p>
                         </div>
 
                         {/* Progress */}
-                        <div className="p-5 border-b border-slate-100">
-                            <div className="flex items-center gap-5">
-                                <ProgressRing percent={percent} size={72} />
+                        <div className="p-4 border-b border-slate-100">
+                            <div className="flex items-center gap-4">
+                                <ProgressRing percent={percent} size={64} />
                                 <div className="flex-1">
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Прогресс</p>
-                                    <div className="space-y-1.5">
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-slate-500">Проверено</span>
-                                            <span className="font-bold text-emerald-600">{stats.checked}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-slate-500">Осталось</span>
-                                            <span className="font-bold text-amber-600">{stats.pending}</span>
-                                        </div>
+                                    <p className="text-xs font-bold text-slate-400 uppercase mb-1">Прогресс</p>
+                                    <div className="flex justify-between text-sm mb-1">
+                                        <span className="text-slate-500">Проверено</span>
+                                        <span className="font-bold text-emerald-600">{stats.checked}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-slate-500">Осталось</span>
+                                        <span className="font-bold text-amber-600">{stats.pending}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Quick Stats - VERTICAL LAYOUT */}
-                        <div className="grid grid-cols-2 gap-3 p-4 border-b border-slate-100">
-                            <div 
-                                onClick={() => setActiveFilter(activeFilter === 'writeoff' ? 'all' : 'writeoff')}
-                                className={`quick-stat-card bg-red-50 text-red-600 ${activeFilter === 'writeoff' ? 'active border-red-400' : ''}`}
-                            >
+                        {/* Quick Stats - 2x2 VERTICAL */}
+                        <div className="grid grid-cols-2 gap-2 p-3 border-b border-slate-100">
+                            <div onClick={() => setActiveFilter(activeFilter === 'writeoff' ? 'all' : 'writeoff')}
+                                className={`quick-stat-card bg-red-50 text-red-600 ${activeFilter === 'writeoff' ? 'active border-red-400' : ''}`}>
                                 <div className="quick-stat-value">{stats.writeOff}</div>
                                 <div className="quick-stat-label">Списание</div>
                             </div>
-                            <div 
-                                onClick={() => setActiveFilter(activeFilter === 'nolabel' ? 'all' : 'nolabel')}
-                                className={`quick-stat-card bg-amber-50 text-amber-600 ${activeFilter === 'nolabel' ? 'active border-amber-400' : ''}`}
-                            >
+                            <div onClick={() => setActiveFilter(activeFilter === 'nolabel' ? 'all' : 'nolabel')}
+                                className={`quick-stat-card bg-amber-50 text-amber-600 ${activeFilter === 'nolabel' ? 'active border-amber-400' : ''}`}>
                                 <div className="quick-stat-value">{stats.noLabel}</div>
                                 <div className="quick-stat-label">Без бирки</div>
                             </div>
-                            <div 
-                                onClick={() => setActiveFilter(activeFilter === 'serial' ? 'all' : 'serial')}
-                                className={`quick-stat-card bg-emerald-50 text-emerald-600 ${activeFilter === 'serial' ? 'active border-emerald-400' : ''}`}
-                            >
+                            <div onClick={() => setActiveFilter(activeFilter === 'serial' ? 'all' : 'serial')}
+                                className={`quick-stat-card bg-emerald-50 text-emerald-600 ${activeFilter === 'serial' ? 'active border-emerald-400' : ''}`}>
                                 <div className="quick-stat-value">{stats.withSerial}</div>
                                 <div className="quick-stat-label">С серийником</div>
                             </div>
-                            <div 
-                                onClick={() => setActiveFilter(activeFilter === 'new' ? 'all' : 'new')}
-                                className={`quick-stat-card bg-violet-50 text-violet-600 ${activeFilter === 'new' ? 'active border-violet-400' : ''}`}
-                            >
-                                <div className="quick-stat-value">{stats.new}</div>
-                                <div className="quick-stat-label">Новые</div>
+                            <div onClick={() => setActiveFilter(activeFilter === 'notes' ? 'all' : 'notes')}
+                                className={`quick-stat-card bg-blue-50 text-blue-600 ${activeFilter === 'notes' ? 'active border-blue-400' : ''}`}>
+                                <div className="quick-stat-value">{stats.withNotes}</div>
+                                <div className="quick-stat-label">С заметками</div>
                             </div>
                         </div>
 
                         {/* Status Filters */}
-                        <div className="p-4 border-b border-slate-100">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Статус</p>
-                            <div className="space-y-2">
+                        <div className="p-3 border-b border-slate-100">
+                            <p className="text-xs font-bold text-slate-400 uppercase mb-2">Статус</p>
+                            <div className="space-y-1">
                                 {[
                                     { id: 'all', label: 'Все', count: stats.total },
-                                    { id: 'unchecked', label: 'Ожидают проверки', count: stats.pending },
+                                    { id: 'unchecked', label: 'Ожидают', count: stats.pending },
                                     { id: 'checked', label: 'Проверено', count: stats.checked },
+                                    { id: 'new', label: 'Новые', count: stats.new },
                                 ].map(f => (
-                                    <button key={f.id} onClick={() => setActiveFilter(f.id)}
-                                        className={`touch-btn w-full flex items-center justify-between px-4 rounded-xl transition-all text-sm font-medium
-                                            ${activeFilter === f.id ? 'bg-indigo-500 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}>
+                                    <button key={f.id} onClick={() => { setActiveFilter(f.id); onClose(); }}
+                                        className={`touch-btn w-full flex items-center justify-between px-3 rounded-lg text-sm font-medium
+                                            ${activeFilter === f.id ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'}`}>
                                         <span>{f.label}</span>
-                                        <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${activeFilter === f.id ? 'bg-white/20' : 'bg-slate-100'}`}>{f.count}</span>
+                                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${activeFilter === f.id ? 'bg-white/20' : 'bg-slate-100'}`}>{f.count}</span>
                                     </button>
                                 ))}
                             </div>
                         </div>
 
                         {/* Categories */}
-                        <div className="flex-1 overflow-y-auto p-4 custom-scroll">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Категории</p>
-                            <div className="space-y-2">
+                        <div className="flex-1 overflow-y-auto p-3 custom-scroll">
+                            <p className="text-xs font-bold text-slate-400 uppercase mb-2">Категории</p>
+                            <div className="space-y-1">
                                 {categories.map(cat => {
                                     const config = categoryConfig[cat] || defaultCatConfig;
                                     return (
-                                        <button key={cat} onClick={() => setActiveCategory(cat)}
-                                            className={`touch-btn w-full flex items-center gap-3 px-4 rounded-xl transition-all text-sm font-medium
-                                                ${activeCategory === cat ? 'bg-indigo-500 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}>
-                                            <span className="text-lg">{cat === 'Все оборудование' ? '📋' : config.icon}</span>
+                                        <button key={cat} onClick={() => { setActiveCategory(cat); onClose(); }}
+                                            className={`touch-btn w-full flex items-center gap-2 px-3 rounded-lg text-sm font-medium
+                                                ${activeCategory === cat ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'}`}>
+                                            <span>{cat === 'Все оборудование' ? '📋' : config.icon}</span>
                                             <span className="flex-1 text-left truncate">{cat}</span>
-                                            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${activeCategory === cat ? 'bg-white/20' : 'bg-slate-100'}`}>
+                                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${activeCategory === cat ? 'bg-white/20' : 'bg-slate-100'}`}>
                                                 {cat === 'Все оборудование' ? stats.total : stats.byCategory[cat] || 0}
                                             </span>
                                         </button>
@@ -807,90 +874,88 @@
             );
         };
 
-        // Equipment Card
-        const EquipmentCard = ({ item, onView, onCheck }) => {
+        // Equipment Card - optimized
+        const EquipmentCard = React.memo(({ item, onView, onCheck }) => {
             const isProcessed = item.checked || item.writeOff;
             
-            const getStatusBadge = () => {
-                if (item.writeOff) return <span className="status-badge status-writeoff">📝 Списание</span>;
-                if (item.checked) return <span className="status-badge status-checked">✅ Проверено</span>;
-                return <span className="status-badge status-pending">⏳ Ожидает</span>;
-            };
+            const statusBadge = item.writeOff 
+                ? <span className="status-badge status-writeoff">📝 Списание</span>
+                : item.checked 
+                    ? <span className="status-badge status-checked">✅ Проверено</span>
+                    : <span className="status-badge status-pending">⏳ Ожидает</span>;
 
-            // Build info line
             const infoParts = [];
-            if (item.location) infoParts.push(<span key="loc" className="flex items-center gap-1"><span>📍</span>{item.location}</span>);
-            if (item.responsible) infoParts.push(<span key="resp" className="flex items-center gap-1"><span>👤</span>{item.responsible}</span>);
-            if (item.serialNumber) infoParts.push(<span key="sn" className="flex items-center gap-1"><span>🔢</span>{item.serialNumber}</span>);
+            if (item.location) infoParts.push(`📍${item.location}`);
+            if (item.responsible) infoParts.push(`👤${item.responsible}`);
+            if (item.serialNumber) infoParts.push(`🔢${item.serialNumber}`);
 
             return (
-                <div className={`bg-white rounded-2xl p-5 card-shadow border-l-4 transition-all
-                    ${item.writeOff ? 'border-red-500 bg-red-50/30' : item.checked ? 'border-emerald-500 bg-emerald-50/30' : 'border-slate-200 hover:border-indigo-300'}`}>
+                <div className={`relative bg-white rounded-xl p-4 card-shadow border-l-4
+                    ${item.writeOff ? 'border-red-500 bg-red-50/50' : item.checked ? 'border-emerald-500 bg-emerald-50/50' : 'border-slate-200'}`}>
+                    
+                    {/* Note indicator */}
+                    {item.inventoryNote && <div className="has-note-indicator">💬</div>}
                     
                     {/* Header */}
-                    <div className="flex items-start gap-4 mb-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-xl
+                    <div className="flex items-start gap-3 mb-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-lg
                             ${item.writeOff ? 'bg-red-100' : item.checked ? 'bg-emerald-100' : 'bg-indigo-100'}`}>
                             {item.writeOff ? '📝' : item.checked ? '✓' : '📦'}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                                <span className="px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-mono font-bold">{item.invNumber}</span>
-                                {item.isUserAdded && <span title="Новое" className="text-base">🆕</span>}
-                                {item.hasLabel === false && <span title="Без бирки" className="text-base">⚠️</span>}
-                                {item.inventoryNote && <span title="Есть заметка" className="text-base">💬</span>}
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                                <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-sm font-mono font-bold">{item.invNumber}</span>
+                                {item.isUserAdded && <span title="Новое">🆕</span>}
+                                {item.hasLabel === false && <span title="Без бирки">⚠️</span>}
                             </div>
-                            <h3 className="font-semibold text-slate-800 text-base leading-snug line-clamp-2">{item.name}</h3>
+                            <h3 className="font-semibold text-slate-800 text-sm leading-snug line-clamp-2">{item.name}</h3>
                         </div>
                     </div>
 
-                    {/* Status & Info */}
-                    <div className="mb-4">
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-slate-500">
-                            {getStatusBadge()}
-                            {infoParts.length > 0 && infoParts.map((part, i) => (
-                                <React.Fragment key={i}>
-                                    <span className="text-slate-300">•</span>
-                                    {part}
-                                </React.Fragment>
-                            ))}
-                        </div>
+                    {/* Status & Info - one line */}
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mb-3">
+                        {statusBadge}
+                        {infoParts.length > 0 && (
+                            <span className="text-slate-400">
+                                {infoParts.join(' • ')}
+                            </span>
+                        )}
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-3 pt-4 border-t border-slate-100">
-                        <button onClick={() => onView(item)} className="touch-btn flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors">
+                    <div className="flex gap-2 pt-3 border-t border-slate-100">
+                        <button onClick={() => onView(item)} className="touch-btn flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-semibold">
                             👁️ Просмотр
                         </button>
                         {!isProcessed ? (
-                            <button onClick={() => onCheck(item)} className="touch-btn flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-md">
+                            <button onClick={() => onCheck(item)} className="touch-btn flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-semibold">
                                 ✓ Проверить
                             </button>
                         ) : (
-                            <button onClick={() => onCheck(item, true)} className="touch-btn flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition-colors">
+                            <button onClick={() => onCheck(item, true)} className="touch-btn flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-sm font-semibold">
                                 ↩️ Отменить
                             </button>
                         )}
                     </div>
                 </div>
             );
-        };
+        });
 
-        // Modal - CENTERED
+        // Modal - TOP position
         const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
             if (!isOpen) return null;
             const sizeClass = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-xl' }[size];
             
             return (
-                <div className="fixed inset-0 z-300 bg-black/50 modal-overlay overflow-y-auto" onClick={onClose}>
-                    <div className={`modal-animate bg-white rounded-2xl shadow-2xl w-full ${sizeClass} mx-auto overflow-hidden`} onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50">
-                            <h2 className="text-lg font-bold text-slate-800">{title}</h2>
-                            <button onClick={onClose} className="touch-btn w-10 h-10 rounded-xl hover:bg-slate-200 flex items-center justify-center text-slate-400">
+                <div className="fixed inset-0 z-600 bg-black/50 modal-overlay overflow-y-auto" onClick={onClose}>
+                    <div className={`modal-animate bg-white rounded-xl shadow-2xl w-full ${sizeClass} mx-auto overflow-hidden`} onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50">
+                            <h2 className="text-base font-bold text-slate-800">{title}</h2>
+                            <button onClick={onClose} className="touch-btn w-10 h-10 rounded-lg hover:bg-slate-200 flex items-center justify-center text-slate-400">
                                 <Icons.X />
                             </button>
                         </div>
-                        <div className="p-6 max-h-[60vh] overflow-y-auto custom-scroll">{children}</div>
+                        <div className="p-5 max-h-[50vh] overflow-y-auto custom-scroll">{children}</div>
                     </div>
                 </div>
             );
@@ -900,14 +965,14 @@
         const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, icon = '⚠️' }) => {
             if (!isOpen) return null;
             return (
-                <div className="fixed inset-0 z-400 bg-black/50 modal-overlay" onClick={onClose}>
-                    <div className="modal-animate bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-auto p-6 text-center" onClick={e => e.stopPropagation()}>
-                        <div className="text-5xl mb-5">{icon}</div>
-                        <h3 className="text-xl font-bold text-slate-800 mb-2">{title}</h3>
-                        <p className="text-base text-slate-500 mb-6">{message}</p>
-                        <div className="flex gap-4">
-                            <button onClick={onClose} className="touch-btn flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-base transition-colors">Отмена</button>
-                            <button onClick={onConfirm} className="touch-btn flex-1 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold text-base transition-colors shadow-md">Да</button>
+                <div className="fixed inset-0 z-700 bg-black/50 modal-overlay" onClick={onClose}>
+                    <div className="modal-animate bg-white rounded-xl shadow-2xl w-full max-w-xs mx-auto p-5 text-center" onClick={e => e.stopPropagation()}>
+                        <div className="text-4xl mb-4">{icon}</div>
+                        <h3 className="text-lg font-bold text-slate-800 mb-2">{title}</h3>
+                        <p className="text-sm text-slate-500 mb-5">{message}</p>
+                        <div className="flex gap-3">
+                            <button onClick={onClose} className="touch-btn flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold">Отмена</button>
+                            <button onClick={onConfirm} className="touch-btn flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold">Да</button>
                         </div>
                     </div>
                 </div>
@@ -916,10 +981,10 @@
 
         // Toast
         const Toast = ({ message, isVisible, onClose }) => {
-            useEffect(() => { if (isVisible) { const t = setTimeout(onClose, 2500); return () => clearTimeout(t); } }, [isVisible, onClose]);
+            useEffect(() => { if (isVisible) { const t = setTimeout(onClose, 2000); return () => clearTimeout(t); } }, [isVisible, onClose]);
             if (!isVisible) return null;
             return (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 bg-slate-800 text-white rounded-2xl shadow-2xl z-500 text-base font-semibold animate-bounce">
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 bg-slate-800 text-white rounded-xl shadow-xl z-800 text-sm font-semibold">
                     {message}
                 </div>
             );
@@ -928,24 +993,22 @@
         // Autocomplete Input
         const AutocompleteInput = ({ value, onChange, suggestions, placeholder, label }) => {
             const [showDropdown, setShowDropdown] = useState(false);
-            const [filtered, setFiltered] = useState([]);
-
-            useEffect(() => {
-                const f = value ? suggestions.filter(s => s.toLowerCase().includes(value.toLowerCase())).slice(0, 5) : suggestions.slice(0, 5);
-                setFiltered(f);
+            const filtered = useMemo(() => {
+                if (!value) return suggestions.slice(0, 5);
+                return suggestions.filter(s => s.toLowerCase().includes(value.toLowerCase())).slice(0, 5);
             }, [value, suggestions]);
 
             return (
                 <div className="relative">
-                    {label && <label className="block text-sm font-semibold text-slate-600 mb-2">{label}</label>}
+                    {label && <label className="block text-sm font-semibold text-slate-600 mb-1">{label}</label>}
                     <input type="text" value={value} onChange={e => onChange(e.target.value)}
-                        onFocus={() => setShowDropdown(true)} onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-                        placeholder={placeholder} className="w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-all" />
+                        onFocus={() => setShowDropdown(true)} onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+                        placeholder={placeholder} className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg text-base focus:border-indigo-500 outline-none" />
                     {showDropdown && filtered.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-slate-200 rounded-lg shadow-lg z-50 overflow-hidden">
                             {filtered.map((item, idx) => (
-                                <button key={idx} type="button" onClick={() => { onChange(item); setShowDropdown(false); }}
-                                    className="w-full text-left px-4 py-3.5 hover:bg-slate-50 text-base border-b border-slate-100 last:border-0 font-medium">
+                                <button key={idx} type="button" onMouseDown={() => { onChange(item); setShowDropdown(false); }}
+                                    className="w-full text-left px-4 py-3 hover:bg-slate-50 text-sm border-b border-slate-100 last:border-0">
                                     {item}
                                 </button>
                             ))}
@@ -962,7 +1025,7 @@
             // State
             const [equipment, setEquipment] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('inv_102_data_v8');
+                    const saved = localStorage.getItem('inv_102_data_v9');
                     if (saved) {
                         const parsed = JSON.parse(saved);
                         return initialEquipment.map(item => {
@@ -976,7 +1039,7 @@
 
             const [directories, setDirectories] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('inv_102_dirs_v8');
+                    const saved = localStorage.getItem('inv_102_dirs_v9');
                     return saved ? JSON.parse(saved) : { rooms: [], people: [] };
                 } catch (e) { return { rooms: [], people: [] }; }
             });
@@ -995,6 +1058,7 @@
             const [quickSearchModal, setQuickSearchModal] = useState({ open: false, query: '' });
             const [roomsModal, setRoomsModal] = useState({ open: false, newRoom: '' });
             const [peopleModal, setPeopleModal] = useState({ open: false, newPerson: '' });
+            const [moveModal, setMoveModal] = useState({ open: false });
             const [infoModal, setInfoModal] = useState({ open: false });
 
             // Form states
@@ -1002,27 +1066,30 @@
             const [editForm, setEditForm] = useState({ name: '', invNumber: '', date: '', category: '', newCategory: '', note: '' });
 
             // Save to localStorage
-            useEffect(() => { localStorage.setItem('inv_102_data_v8', JSON.stringify(equipment)); }, [equipment]);
-            useEffect(() => { localStorage.setItem('inv_102_dirs_v8', JSON.stringify(directories)); }, [directories]);
+            useEffect(() => { localStorage.setItem('inv_102_data_v9', JSON.stringify(equipment)); }, [equipment]);
+            useEffect(() => { localStorage.setItem('inv_102_dirs_v9', JSON.stringify(directories)); }, [directories]);
 
-            // Stats
-            const stats = {
+            // Stats - memoized
+            const stats = useMemo(() => ({
                 total: equipment.length,
                 checked: equipment.filter(i => i.checked || i.writeOff).length,
                 pending: equipment.filter(i => !i.checked && !i.writeOff).length,
                 writeOff: equipment.filter(i => i.writeOff).length,
                 noLabel: equipment.filter(i => i.hasLabel === false).length,
                 withSerial: equipment.filter(i => i.serialNumber?.trim()).length,
+                withNotes: equipment.filter(i => i.inventoryNote?.trim()).length,
                 new: equipment.filter(i => i.isUserAdded).length,
                 byCategory: equipment.reduce((acc, i) => { acc[i.category] = (acc[i.category] || 0) + 1; return acc; }, {}),
-            };
+            }), [equipment]);
 
-            // Categories - "Все оборудование" FIRST, then sorted alphabetically
-            const otherCategories = [...new Set(equipment.map(i => i.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
-            const categories = ['Все оборудование', ...otherCategories];
+            // Categories - "Все оборудование" FIRST
+            const categories = useMemo(() => {
+                const others = [...new Set(equipment.map(i => i.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
+                return ['Все оборудование', ...others];
+            }, [equipment]);
 
-            // Filtered equipment
-            const filteredEquipment = equipment.filter(item => {
+            // Filtered equipment - memoized
+            const filteredEquipment = useMemo(() => equipment.filter(item => {
                 if (activeCategory !== 'Все оборудование' && item.category !== activeCategory) return false;
                 
                 switch (activeFilter) {
@@ -1031,6 +1098,7 @@
                     case 'writeoff': if (!item.writeOff) return false; break;
                     case 'nolabel': if (item.hasLabel !== false) return false; break;
                     case 'serial': if (!item.serialNumber?.trim()) return false; break;
+                    case 'notes': if (!item.inventoryNote?.trim()) return false; break;
                     case 'new': if (!item.isUserAdded) return false; break;
                 }
                 
@@ -1041,95 +1109,91 @@
                 }
                 
                 return true;
-            });
+            }), [equipment, activeCategory, activeFilter, searchQuery]);
 
             // Group by category
-            const groupedEquipment = filteredEquipment.reduce((acc, item) => {
+            const groupedEquipment = useMemo(() => filteredEquipment.reduce((acc, item) => {
                 const cat = item.category || 'Прочее';
                 if (!acc[cat]) acc[cat] = [];
                 acc[cat].push(item);
                 return acc;
-            }, {});
+            }, {}), [filteredEquipment]);
 
             // Helpers
-            const showToast = (msg) => setToast({ visible: true, message: msg });
-            const showConfirm = (title, message, onConfirm, icon = '⚠️') => setConfirmModal({ open: true, title, message, onConfirm, icon });
+            const showToast = useCallback((msg) => setToast({ visible: true, message: msg }), []);
+            const showConfirm = useCallback((title, message, onConfirm, icon = '⚠️') => setConfirmModal({ open: true, title, message, onConfirm, icon }), []);
 
-            // Go Home - reset filters and scroll to top
-            const goHome = () => {
+            // Go Home
+            const goHome = useCallback(() => {
                 setActiveCategory('Все оборудование');
                 setActiveFilter('all');
                 setSearchQuery('');
                 setSidebarOpen(false);
-                if (contentRef.current) {
-                    contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            };
+                contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+            }, []);
 
             // Check process
-            const startCheckProcess = (item) => {
+            const startCheckProcess = useCallback((item) => {
                 if (item.hasLabel === null) {
                     setLabelModal({ open: true, item });
                 } else if (!item.serialNumber?.trim()) {
                     setSerialModal({ open: true, item, serial: '' });
                 } else {
-                    finishCheck(item);
+                    setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: true, writeOff: false, checkedAt: new Date().toISOString() } : i));
+                    showToast('✅ Проверено!');
                 }
-            };
+            }, [showToast]);
 
-            const handleLabelAnswer = (hasLabel) => {
+            const handleLabelAnswer = useCallback((hasLabel) => {
                 const item = labelModal.item;
                 setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, hasLabel } : i));
                 setLabelModal({ open: false, item: null });
-                const updatedItem = { ...item, hasLabel };
-                if (!updatedItem.serialNumber?.trim()) {
-                    setSerialModal({ open: true, item: updatedItem, serial: '' });
+                if (!item.serialNumber?.trim()) {
+                    setSerialModal({ open: true, item: { ...item, hasLabel }, serial: '' });
                 } else {
-                    finishCheck(updatedItem);
+                    setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: true, writeOff: false, checkedAt: new Date().toISOString() } : i));
+                    showToast('✅ Проверено!');
                 }
-            };
+            }, [labelModal.item, showToast]);
 
-            const handleSerialSave = () => {
+            const handleSerialSave = useCallback(() => {
                 const item = serialModal.item;
                 const serial = serialModal.serial.trim();
                 setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, serialNumber: serial, checked: true, writeOff: false, checkedAt: new Date().toISOString() } : i));
                 setSerialModal({ open: false, item: null, serial: '' });
-                showToast('✅ Оборудование проверено!');
-            };
+                showToast('✅ Проверено!');
+            }, [serialModal, showToast]);
 
-            const handleSerialSkip = () => {
-                finishCheck(serialModal.item);
-                setSerialModal({ open: false, item: null, serial: '' });
-            };
-
-            const finishCheck = (item) => {
+            const handleSerialSkip = useCallback(() => {
+                const item = serialModal.item;
                 setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: true, writeOff: false, checkedAt: new Date().toISOString() } : i));
-                showToast('✅ Оборудование проверено!');
-            };
+                setSerialModal({ open: false, item: null, serial: '' });
+                showToast('✅ Проверено!');
+            }, [serialModal.item, showToast]);
 
-            const handleCheck = (item, undo = false) => {
+            const handleCheck = useCallback((item, undo = false) => {
                 if (undo) {
-                    showConfirm('Отменить проверку?', 'Статус будет сброшен', () => {
+                    showConfirm('Отменить?', 'Статус будет сброшен', () => {
                         setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: false, writeOff: false, checkedAt: null } : i));
-                        setConfirmModal({ ...confirmModal, open: false });
-                        showToast('↩️ Проверка отменена');
+                        setConfirmModal(prev => ({ ...prev, open: false }));
+                        showToast('↩️ Отменено');
                     }, '↩️');
                 } else {
                     startCheckProcess(item);
                 }
-            };
+            }, [showConfirm, startCheckProcess, showToast]);
 
-            const handleWriteOff = (item) => {
-                showConfirm('Списать оборудование?', `${item.name}`, () => {
+            const handleWriteOff = useCallback((item) => {
+                showConfirm('Списать?', item.name, () => {
                     setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, writeOff: true, checked: false, checkedAt: new Date().toISOString(), hasLabel: i.hasLabel === null ? true : i.hasLabel } : i));
-                    setConfirmModal({ ...confirmModal, open: false });
+                    setConfirmModal(prev => ({ ...prev, open: false }));
                     setDetailsModal({ open: false, item: null });
-                    showToast('📝 Отправлено на списание');
+                    showToast('📝 Списано');
                 }, '📝');
-            };
+            }, [showConfirm, showToast]);
 
             // Details modal
-            const openDetails = (item) => {
+            const openDetails = useCallback((item) => {
                 setDetailsForm({
                     serialNumber: item.serialNumber || '',
                     location: item.location || '',
@@ -1138,9 +1202,9 @@
                     hasLabel: item.hasLabel
                 });
                 setDetailsModal({ open: true, item });
-            };
+            }, []);
 
-            const saveDetails = () => {
+            const saveDetails = useCallback(() => {
                 const item = detailsModal.item;
                 setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, ...detailsForm } : i));
                 
@@ -1152,11 +1216,11 @@
                 }
                 
                 setDetailsModal({ open: false, item: null });
-                showToast('💾 Данные сохранены');
-            };
+                showToast('💾 Сохранено');
+            }, [detailsModal.item, detailsForm, directories, showToast]);
 
             // Edit modal
-            const openEditModal = (item = null) => {
+            const openEditModal = useCallback((item = null) => {
                 if (item) {
                     setEditForm({ name: item.name, invNumber: item.invNumber, date: item.date || '', category: item.category, newCategory: '', note: item.note || '' });
                     setEditModal({ open: true, item, isNew: false });
@@ -1164,17 +1228,17 @@
                     setEditForm({ name: '', invNumber: '', date: new Date().toLocaleDateString('ru-RU'), category: '', newCategory: '', note: '' });
                     setEditModal({ open: true, item: null, isNew: true });
                 }
-            };
+            }, []);
 
-            const saveEdit = () => {
+            const saveEdit = useCallback(() => {
                 const { name, invNumber, date, category, newCategory, note } = editForm;
                 if (!name.trim()) { showToast('⚠️ Введите название'); return; }
-                if (!invNumber.trim()) { showToast('⚠️ Введите инв. номер'); return; }
+                if (!invNumber.trim()) { showToast('⚠️ Введите номер'); return; }
                 const finalCategory = newCategory.trim() || category;
                 if (!finalCategory) { showToast('⚠️ Выберите категорию'); return; }
                 
                 const duplicate = equipment.find(i => i.invNumber === invNumber && i.id !== editModal.item?.id);
-                if (duplicate) { showToast('⚠️ Такой номер уже есть'); return; }
+                if (duplicate) { showToast('⚠️ Номер уже есть'); return; }
 
                 if (editModal.isNew) {
                     const newItem = {
@@ -1182,85 +1246,77 @@
                         checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', isUserAdded: true
                     };
                     setEquipment(prev => [...prev, newItem]);
-                    showToast('➕ Оборудование добавлено');
+                    showToast('➕ Добавлено');
                 } else {
                     setEquipment(prev => prev.map(i => i.id === editModal.item.id ? { ...i, name: name.trim(), invNumber: invNumber.trim(), date: date.trim(), category: finalCategory, note: note.trim() } : i));
-                    showToast('✏️ Изменения сохранены');
+                    showToast('✏️ Сохранено');
                 }
                 setEditModal({ open: false, item: null, isNew: false });
-            };
+            }, [editForm, editModal, equipment, showToast]);
 
             // Directories
-            const addToDirectory = (type, value) => {
+            const addToDirectory = useCallback((type, value) => {
                 if (!value.trim()) return;
                 const key = type === 'rooms' ? 'rooms' : 'people';
-                if (directories[key].includes(value.trim())) { showToast('⚠️ Уже существует'); return; }
+                if (directories[key].includes(value.trim())) { showToast('⚠️ Уже есть'); return; }
                 setDirectories(prev => ({ ...prev, [key]: [...prev[key], value.trim()].sort((a, b) => a.localeCompare(b, 'ru')) }));
                 if (type === 'rooms') setRoomsModal(prev => ({ ...prev, newRoom: '' }));
                 else setPeopleModal(prev => ({ ...prev, newPerson: '' }));
                 showToast('➕ Добавлено');
-            };
+            }, [directories, showToast]);
 
-            const removeFromDirectory = (type, idx) => {
+            const removeFromDirectory = useCallback((type, idx) => {
                 const key = type === 'rooms' ? 'rooms' : 'people';
                 const item = directories[key][idx];
-                showConfirm('Удалить?', `"${item}"`, () => {
+                showConfirm('Удалить?', item, () => {
                     setDirectories(prev => ({ ...prev, [key]: prev[key].filter((_, i) => i !== idx) }));
-                    setConfirmModal({ ...confirmModal, open: false });
+                    setConfirmModal(prev => ({ ...prev, open: false }));
                     showToast('🗑️ Удалено');
                 }, '🗑️');
-            };
+            }, [directories, showConfirm, showToast]);
 
-            // Export/Import with confirmations
-            const handleSave = () => {
-                showConfirm('Сохранить данные?', 'Все изменения будут сохранены', () => {
-                    localStorage.setItem('inv_102_data_v8', JSON.stringify(equipment));
-                    setConfirmModal({ ...confirmModal, open: false });
-                    showToast('💾 Данные сохранены');
-                }, '💾');
-            };
+            // Export/Import
+            const handleSave = () => showConfirm('Сохранить?', 'Все данные будут сохранены', () => {
+                localStorage.setItem('inv_102_data_v9', JSON.stringify(equipment));
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                showToast('💾 Сохранено');
+            }, '💾');
 
-            const handleExportExcel = () => {
-                showConfirm('Экспорт в Excel?', 'Будет загружен CSV файл', () => {
-                    const BOM = '\uFEFF';
-                    const headers = ['Инв.№', 'S/N', 'Название', 'Категория', 'Локация', 'Ответственный', 'Статус', 'Бирка', 'Заметка'];
-                    let csv = BOM + headers.join(';') + '\n';
-                    equipment.forEach(item => {
-                        const status = item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает';
-                        const label = item.hasLabel === true ? 'Есть' : item.hasLabel === false ? 'НЕТ' : '-';
-                        const row = [item.invNumber, item.serialNumber || '', item.name, item.category, item.location || '', item.responsible || '', status, label, item.inventoryNote || '']
-                            .map(f => `"${String(f).replace(/"/g, '""')}"`).join(';');
-                        csv += row + '\n';
-                    });
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `inventory_${new Date().toISOString().slice(0, 10)}.csv`;
-                    link.click();
-                    setConfirmModal({ ...confirmModal, open: false });
-                    showToast('📊 Файл скачан');
-                }, '📊');
-            };
+            const handleExportExcel = () => showConfirm('Экспорт Excel?', 'Скачать CSV файл', () => {
+                const BOM = '\uFEFF';
+                const headers = ['Инв.№', 'S/N', 'Название', 'Категория', 'Локация', 'Ответственный', 'Статус', 'Бирка', 'Заметка'];
+                let csv = BOM + headers.join(';') + '\n';
+                equipment.forEach(item => {
+                    const status = item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает';
+                    const label = item.hasLabel === true ? 'Есть' : item.hasLabel === false ? 'НЕТ' : '-';
+                    const row = [item.invNumber, item.serialNumber || '', item.name, item.category, item.location || '', item.responsible || '', status, label, item.inventoryNote || '']
+                        .map(f => `"${String(f).replace(/"/g, '""')}"`).join(';');
+                    csv += row + '\n';
+                });
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `inventory_${new Date().toISOString().slice(0, 10)}.csv`;
+                link.click();
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                showToast('📊 Скачано');
+            }, '📊');
 
-            const handleExportJSON = () => {
-                showConfirm('Экспорт JSON?', 'Резервная копия всех данных', () => {
-                    const data = JSON.stringify({ equipment, directories }, null, 2);
-                    const blob = new Blob([data], { type: 'application/json' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `backup_${new Date().toISOString().slice(0, 10)}.json`;
-                    link.click();
-                    setConfirmModal({ ...confirmModal, open: false });
-                    showToast('📤 Экспортировано');
-                }, '📤');
-            };
+            const handleExportJSON = () => showConfirm('Экспорт JSON?', 'Резервная копия', () => {
+                const data = JSON.stringify({ equipment, directories }, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `backup_${new Date().toISOString().slice(0, 10)}.json`;
+                link.click();
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                showToast('📤 Экспортировано');
+            }, '📤');
 
-            const handleImportClick = () => {
-                showConfirm('Импорт данных?', 'Выберите JSON файл', () => {
-                    setConfirmModal({ ...confirmModal, open: false });
-                    document.getElementById('fileInput').click();
-                }, '📥');
-            };
+            const handleImportClick = () => showConfirm('Импорт?', 'Выберите JSON файл', () => {
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                document.getElementById('fileInput').click();
+            }, '📥');
 
             const handleImportJSON = (e) => {
                 const file = e.target.files[0];
@@ -1288,35 +1344,35 @@
                                 people: [...new Set([...prev.people, ...(json.directories.people || [])])].sort((a, b) => a.localeCompare(b, 'ru'))
                             }));
                         }
-                        showToast(`📥 Импортировано: ${count}`);
+                        showToast(`📥 Импорт: ${count}`);
                     } catch (err) {
-                        showToast('❌ Ошибка: ' + err.message);
+                        showToast('❌ Ошибка');
                     }
                 };
                 reader.readAsText(file);
                 e.target.value = '';
             };
 
-            const handleClearAll = () => {
-                showConfirm('Сбросить все данные?', 'Отметки проверки будут удалены', () => {
-                    setEquipment(prev => prev.map(i => ({ ...i, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', checkedAt: null })));
-                    setConfirmModal({ ...confirmModal, open: false });
-                    showToast('🗑️ Данные сброшены');
-                }, '🗑️');
-            };
+            const handleClearAll = () => showConfirm('Сбросить?', 'Все отметки будут удалены', () => {
+                setEquipment(prev => prev.map(i => ({ ...i, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', checkedAt: null })));
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                showToast('🗑️ Сброшено');
+            }, '🗑️');
 
             // Quick search
-            const quickSearchResults = quickSearchModal.query ? equipment.filter(item => {
+            const quickSearchResults = useMemo(() => {
+                if (!quickSearchModal.query) return [];
                 const q = quickSearchModal.query.toLowerCase();
-                return [item.invNumber, item.name, item.serialNumber].join(' ').toLowerCase().includes(q);
-            }).slice(0, 30) : [];
+                return equipment.filter(item => [item.invNumber, item.name, item.serialNumber].join(' ').toLowerCase().includes(q)).slice(0, 20);
+            }, [quickSearchModal.query, equipment]);
 
             return (
-                <div className="flex h-screen overflow-hidden bg-slate-50">
+                <div className="flex h-full overflow-hidden bg-slate-50">
                     {/* Navigation Rail */}
                     <NavRail 
                         onOpenRooms={() => setRoomsModal({ ...roomsModal, open: true })}
                         onOpenPeople={() => setPeopleModal({ ...peopleModal, open: true })}
+                        onOpenMove={() => setMoveModal({ open: true })}
                         onAddEquipment={() => openEditModal()}
                         onShowInfo={() => setInfoModal({ open: true })}
                         onGoHome={goHome}
@@ -1329,7 +1385,7 @@
                         stats={stats}
                         categories={categories}
                         activeCategory={activeCategory}
-                        setActiveCategory={(cat) => { setActiveCategory(cat); setSidebarOpen(false); }}
+                        setActiveCategory={setActiveCategory}
                         activeFilter={activeFilter}
                         setActiveFilter={setActiveFilter}
                     />
@@ -1337,51 +1393,43 @@
                     {/* Main Content */}
                     <main className="main-area flex-1 flex flex-col min-w-0 overflow-hidden">
                         {/* Mobile Header */}
-                        <header className="mobile-header hidden bg-white border-b border-slate-200 px-4 py-3 items-center gap-3">
-                            <button onClick={() => setSidebarOpen(true)} className="touch-btn w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
+                        <header className="mobile-header hidden bg-white border-b border-slate-200 px-4 py-3 items-center gap-3 flex-shrink-0">
+                            <button onClick={() => setSidebarOpen(true)} className="touch-btn w-11 h-11 rounded-lg bg-slate-100 flex items-center justify-center">
                                 <Icons.Menu />
                             </button>
                             <div className="flex-1 relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
                                 <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск..."
-                                    className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl text-base" />
+                                    className="w-full pl-10 pr-4 py-2.5 border-2 border-slate-200 rounded-lg text-base" />
                             </div>
                         </header>
 
                         {/* Desktop Header */}
-                        <header className="bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0 shadow-sm">
-                            <div className="flex items-center gap-4">
-                                <div className="flex-1 relative max-w-lg">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
-                                    <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск по номеру, названию, серийнику..."
-                                        className="w-full pl-12 pr-4 py-3.5 border-2 border-slate-200 rounded-xl text-base focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all" />
+                        <header className="bg-white border-b border-slate-200 px-5 py-3 flex-shrink-0">
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1 relative max-w-md">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
+                                    <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск..."
+                                        className="w-full pl-10 pr-4 py-2.5 border-2 border-slate-200 rounded-lg text-base focus:border-indigo-500 outline-none" />
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <button onClick={handleSave} className="touch-btn px-5 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-bold flex items-center gap-2 shadow-md">
+                                <div className="flex items-center gap-2">
+                                    <button onClick={handleSave} className="touch-btn px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold flex items-center gap-2">
                                         <Icons.Save /> Сохранить
                                     </button>
-                                    <button onClick={handleExportExcel} className="touch-btn p-3.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl shadow-md" title="Excel">
-                                        📊
-                                    </button>
-                                    <button onClick={handleExportJSON} className="touch-btn p-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl" title="Экспорт JSON">
-                                        <Icons.Download />
-                                    </button>
-                                    <button onClick={handleImportClick} className="touch-btn p-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl" title="Импорт JSON">
-                                        <Icons.Upload />
-                                    </button>
-                                    <button onClick={handleClearAll} className="touch-btn p-3.5 bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 rounded-xl" title="Сброс">
-                                        <Icons.Trash />
-                                    </button>
+                                    <button onClick={handleExportExcel} className="touch-btn p-2.5 bg-emerald-600 text-white rounded-lg" title="Excel">📊</button>
+                                    <button onClick={handleExportJSON} className="touch-btn p-2.5 bg-slate-100 text-slate-600 rounded-lg" title="Экспорт"><Icons.Download /></button>
+                                    <button onClick={handleImportClick} className="touch-btn p-2.5 bg-slate-100 text-slate-600 rounded-lg" title="Импорт"><Icons.Upload /></button>
+                                    <button onClick={handleClearAll} className="touch-btn p-2.5 bg-slate-100 text-red-600 rounded-lg" title="Сброс"><Icons.Trash /></button>
                                 </div>
                             </div>
                         </header>
 
                         {/* Content */}
-                        <div ref={contentRef} className="flex-1 overflow-y-auto p-6 custom-scroll">
+                        <div ref={contentRef} className="flex-1 overflow-y-auto p-5 custom-scroll">
                             {Object.keys(groupedEquipment).length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-full text-slate-400">
-                                    <div className="text-6xl mb-4">📭</div>
-                                    <p className="text-xl font-semibold">Ничего не найдено</p>
+                                    <div className="text-5xl mb-3">📭</div>
+                                    <p className="text-lg font-semibold">Ничего не найдено</p>
                                 </div>
                             ) : (
                                 Object.entries(groupedEquipment).sort((a, b) => a[0].localeCompare(b[0], 'ru')).map(([category, items]) => {
@@ -1390,13 +1438,13 @@
                                     return (
                                         <div key={category} className={config.colorClass}>
                                             <div className="category-divider">
-                                                <span className="flex items-center gap-3">
-                                                    <span className="text-2xl">{config.icon}</span>
+                                                <span className="flex items-center gap-2">
+                                                    <span className="text-xl">{config.icon}</span>
                                                     <span>{category}</span>
                                                 </span>
-                                                <span className="bg-white/20 px-4 py-1.5 rounded-full text-sm font-bold">{checkedCount} / {items.length}</span>
+                                                <span className="bg-white/20 px-3 py-1 rounded-full text-sm font-bold">{checkedCount}/{items.length}</span>
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                                                 {items.map(item => (
                                                     <EquipmentCard key={item.id} item={item} onView={openDetails} onCheck={handleCheck} />
                                                 ))}
@@ -1405,13 +1453,13 @@
                                     );
                                 })
                             )}
-                            <div className="h-20"></div>
+                            <div className="h-16"></div>
                         </div>
                     </main>
 
                     {/* FAB */}
                     <button onClick={() => setQuickSearchModal({ open: true, query: '' })}
-                        className="fixed bottom-8 right-8 w-16 h-16 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full shadow-xl flex items-center justify-center text-2xl z-100 transition-all hover:scale-105">
+                        className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center text-xl z-100">
                         🔍
                     </button>
 
@@ -1420,198 +1468,183 @@
                     {/* Info Modal */}
                     <Modal isOpen={infoModal.open} onClose={() => setInfoModal({ open: false })} title="О программе" size="sm">
                         <div className="text-center">
-                            <div className="w-20 h-20 bg-indigo-100 rounded-3xl flex items-center justify-center mx-auto mb-5">
-                                <span className="text-4xl">📋</span>
+                            <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <span className="text-3xl">📋</span>
                             </div>
-                            <h3 className="text-2xl font-extrabold text-slate-800 mb-1">Инвентаризация</h3>
-                            <p className="text-base text-slate-500 mb-5">ГКОУ СКОШИ №102</p>
-                            <div className="text-left bg-slate-50 rounded-xl p-5 space-y-3">
-                                <p className="text-sm"><span className="font-bold">🏠 Главная</span> — список оборудования</p>
-                                <p className="text-sm"><span className="font-bold">🏢 Кабинеты</span> — справочник помещений</p>
-                                <p className="text-sm"><span className="font-bold">👥 Сотрудники</span> — справочник ФИО</p>
-                                <p className="text-sm"><span className="font-bold">➕ Добавить</span> — новое оборудование</p>
+                            <h3 className="text-xl font-bold text-slate-800 mb-1">Инвентаризация</h3>
+                            <p className="text-sm text-slate-500 mb-4">ГКОУ СКОШИ №102</p>
+                            <div className="text-left bg-slate-50 rounded-lg p-4 space-y-2 text-sm">
+                                <p><b>🏠 Главная</b> — список оборудования</p>
+                                <p><b>🏢 Кабинеты</b> — справочник</p>
+                                <p><b>👥 Сотрудники</b> — справочник</p>
+                                <p><b>↔️ Переместить</b> — смена локации</p>
+                                <p><b>➕</b> — добавить оборудование</p>
                             </div>
-                            <p className="text-xs text-slate-400 mt-5">Версия 2.1</p>
+                            <p className="text-xs text-slate-400 mt-4">Версия 3.0</p>
                         </div>
                     </Modal>
 
                     {/* Label Modal */}
                     <Modal isOpen={labelModal.open} onClose={() => setLabelModal({ open: false, item: null })} title="🏷️ Проверка бирки" size="sm">
-                        <p className="text-center text-slate-600 text-base mb-6">Инвентарная бирка присутствует на оборудовании?</p>
-                        <div className="space-y-4">
-                            <button onClick={() => handleLabelAnswer(true)} className="touch-btn w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-base shadow-md">
-                                ✅ Да, есть бирка
-                            </button>
-                            <button onClick={() => handleLabelAnswer(false)} className="touch-btn w-full py-4 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-base shadow-md">
-                                ❌ Нет бирки
-                            </button>
-                            <button onClick={() => setLabelModal({ open: false, item: null })} className="touch-btn w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-semibold text-base">
-                                Отмена
-                            </button>
+                        <p className="text-center text-slate-600 mb-5">Бирка есть на оборудовании?</p>
+                        <div className="space-y-3">
+                            <button onClick={() => handleLabelAnswer(true)} className="touch-btn w-full py-4 bg-emerald-500 text-white rounded-lg font-bold">✅ Да, есть</button>
+                            <button onClick={() => handleLabelAnswer(false)} className="touch-btn w-full py-4 bg-red-500 text-white rounded-lg font-bold">❌ Нет бирки</button>
+                            <button onClick={() => setLabelModal({ open: false, item: null })} className="touch-btn w-full py-3 bg-slate-100 text-slate-600 rounded-lg font-semibold">Отмена</button>
                         </div>
                     </Modal>
 
                     {/* Serial Modal */}
                     <Modal isOpen={serialModal.open} onClose={() => setSerialModal({ open: false, item: null, serial: '' })} title="🔢 Серийный номер" size="sm">
-                        <p className="text-center text-slate-600 text-base mb-5">Введите серийный номер (если есть)</p>
+                        <p className="text-center text-slate-600 mb-4">Введите серийный номер (если есть)</p>
                         <input type="text" value={serialModal.serial} onChange={e => setSerialModal(prev => ({ ...prev, serial: e.target.value }))}
-                            placeholder="S/N" className="w-full px-5 py-4 border-2 border-slate-200 rounded-xl text-center font-mono text-xl mb-5" autoFocus />
-                        <div className="space-y-4">
-                            <button onClick={handleSerialSave} className="touch-btn w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-base shadow-md">
-                                💾 Сохранить
-                            </button>
-                            <button onClick={handleSerialSkip} className="touch-btn w-full py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-semibold text-base">
-                                Пропустить →
-                            </button>
-                            <button onClick={() => setSerialModal({ open: false, item: null, serial: '' })} className="touch-btn w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-semibold text-base">
-                                Отмена
-                            </button>
+                            placeholder="S/N" className="w-full px-4 py-4 border-2 border-slate-200 rounded-lg text-center font-mono text-lg mb-4" autoFocus />
+                        <div className="space-y-3">
+                            <button onClick={handleSerialSave} className="touch-btn w-full py-4 bg-emerald-500 text-white rounded-lg font-bold">💾 Сохранить</button>
+                            <button onClick={handleSerialSkip} className="touch-btn w-full py-3 bg-indigo-600 text-white rounded-lg font-semibold">Пропустить →</button>
+                            <button onClick={() => setSerialModal({ open: false, item: null, serial: '' })} className="touch-btn w-full py-3 bg-slate-100 text-slate-600 rounded-lg font-semibold">Отмена</button>
                         </div>
                     </Modal>
 
                     {/* Details Modal */}
-                    <Modal isOpen={detailsModal.open} onClose={() => setDetailsModal({ open: false, item: null })} title="📋 Карточка оборудования" size="lg">
+                    <Modal isOpen={detailsModal.open} onClose={() => setDetailsModal({ open: false, item: null })} title="📋 Карточка" size="lg">
                         {detailsModal.item && (
-                            <div className="space-y-6">
-                                <div className="p-5 bg-indigo-50 rounded-xl">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <span className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-sm font-mono font-bold">{detailsModal.item.invNumber}</span>
-                                        {detailsModal.item.isUserAdded && <span className="text-lg">🆕</span>}
+                            <div className="space-y-4">
+                                <div className="p-4 bg-indigo-50 rounded-lg">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="px-2 py-1 bg-indigo-600 text-white rounded text-sm font-mono font-bold">{detailsModal.item.invNumber}</span>
+                                        {detailsModal.item.isUserAdded && <span>🆕</span>}
                                     </div>
-                                    <h3 className="font-bold text-slate-800 text-lg">{detailsModal.item.name}</h3>
-                                    <p className="text-sm text-slate-500 mt-1">{detailsModal.item.category}</p>
+                                    <h3 className="font-bold text-slate-800">{detailsModal.item.name}</h3>
+                                    <p className="text-sm text-slate-500">{detailsModal.item.category}</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-600 mb-3">🏷️ Наличие бирки</label>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <label className="block text-sm font-semibold text-slate-600 mb-2">🏷️ Бирка</label>
+                                    <div className="grid grid-cols-2 gap-3">
                                         <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: true }))} 
-                                            className={`touch-btn py-3.5 rounded-xl font-bold text-base transition-all ${detailsForm.hasLabel === true ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                                            className={`touch-btn py-3 rounded-lg font-bold ${detailsForm.hasLabel === true ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-600'}`}>
                                             ✅ Есть
                                         </button>
                                         <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: false }))} 
-                                            className={`touch-btn py-3.5 rounded-xl font-bold text-base transition-all ${detailsForm.hasLabel === false ? 'bg-red-500 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                                            className={`touch-btn py-3 rounded-lg font-bold ${detailsForm.hasLabel === false ? 'bg-red-500 text-white' : 'bg-slate-100 text-slate-600'}`}>
                                             ❌ Нет
                                         </button>
                                     </div>
                                 </div>
 
                                 <AutocompleteInput label="🔢 Серийный номер" value={detailsForm.serialNumber} onChange={v => setDetailsForm(prev => ({ ...prev, serialNumber: v }))} suggestions={[]} placeholder="S/N" />
-                                <AutocompleteInput label="📍 Локация (кабинет)" value={detailsForm.location} onChange={v => setDetailsForm(prev => ({ ...prev, location: v }))} suggestions={directories.rooms} placeholder="Выберите или введите" />
-                                <AutocompleteInput label="👤 Ответственный" value={detailsForm.responsible} onChange={v => setDetailsForm(prev => ({ ...prev, responsible: v }))} suggestions={directories.people} placeholder="ФИО сотрудника" />
+                                <AutocompleteInput label="📍 Кабинет" value={detailsForm.location} onChange={v => setDetailsForm(prev => ({ ...prev, location: v }))} suggestions={directories.rooms} placeholder="Выберите или введите" />
+                                <AutocompleteInput label="👤 Ответственный" value={detailsForm.responsible} onChange={v => setDetailsForm(prev => ({ ...prev, responsible: v }))} suggestions={directories.people} placeholder="ФИО" />
 
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-600 mb-2">💬 Заметки</label>
+                                    <label className="block text-sm font-semibold text-slate-600 mb-1">💬 Заметки</label>
                                     <textarea value={detailsForm.inventoryNote} onChange={e => setDetailsForm(prev => ({ ...prev, inventoryNote: e.target.value }))}
-                                        placeholder="Дополнительная информация..." rows={3} className="w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base resize-none" />
+                                        placeholder="Дополнительная информация..." rows={2} className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg text-base resize-none" />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openEditModal(detailsModal.item); }} className="touch-btn py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-base">
+                                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openEditModal(detailsModal.item); }} className="touch-btn py-3 bg-slate-100 text-slate-700 rounded-lg font-bold">
                                         ✏️ Редактировать
                                     </button>
-                                    <button onClick={() => handleWriteOff(detailsModal.item)} className="touch-btn py-3.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl font-bold text-base">
+                                    <button onClick={() => handleWriteOff(detailsModal.item)} className="touch-btn py-3 bg-red-100 text-red-600 rounded-lg font-bold">
                                         📝 Списать
                                     </button>
                                 </div>
 
-                                <button onClick={saveDetails} className="touch-btn w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold text-base shadow-md">
-                                    💾 Сохранить изменения
+                                <button onClick={saveDetails} className="touch-btn w-full py-4 bg-indigo-600 text-white rounded-lg font-bold">
+                                    💾 Сохранить
                                 </button>
                             </div>
                         )}
                     </Modal>
 
                     {/* Edit Modal */}
-                    <Modal isOpen={editModal.open} onClose={() => setEditModal({ open: false, item: null, isNew: false })} title={editModal.isNew ? '➕ Новое оборудование' : '✏️ Редактировать'} size="md">
-                        <div className="space-y-5">
+                    <Modal isOpen={editModal.open} onClose={() => setEditModal({ open: false, item: null, isNew: false })} title={editModal.isNew ? '➕ Добавить' : '✏️ Редактировать'} size="md">
+                        <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-semibold text-slate-600 mb-2">Название *</label>
+                                <label className="block text-sm font-semibold text-slate-600 mb-1">Название *</label>
                                 <input type="text" value={editForm.name} onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                                    placeholder="Название оборудования" className="w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base" />
+                                    placeholder="Название" className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg text-base" />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-600 mb-2">Инв. номер *</label>
+                                    <label className="block text-sm font-semibold text-slate-600 mb-1">Инв. номер *</label>
                                     <input type="text" value={editForm.invNumber} onChange={e => setEditForm(prev => ({ ...prev, invNumber: e.target.value }))}
-                                        placeholder="Инв. №" className="w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base" />
+                                        placeholder="№" className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg text-base" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-600 mb-2">Дата</label>
+                                    <label className="block text-sm font-semibold text-slate-600 mb-1">Дата</label>
                                     <input type="text" value={editForm.date} onChange={e => setEditForm(prev => ({ ...prev, date: e.target.value }))}
-                                        placeholder="ДД.ММ.ГГГГ" className="w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base" />
+                                        placeholder="ДД.ММ.ГГГГ" className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg text-base" />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-semibold text-slate-600 mb-2">Категория *</label>
+                                <label className="block text-sm font-semibold text-slate-600 mb-1">Категория *</label>
                                 <select value={editForm.category} onChange={e => setEditForm(prev => ({ ...prev, category: e.target.value }))}
-                                    className="w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base">
+                                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg text-base">
                                     <option value="">Выберите...</option>
                                     {categories.filter(c => c !== 'Все оборудование').map(cat => <option key={cat} value={cat}>{cat}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-semibold text-slate-600 mb-2">Или новая категория</label>
+                                <label className="block text-sm font-semibold text-slate-600 mb-1">Новая категория</label>
                                 <input type="text" value={editForm.newCategory} onChange={e => setEditForm(prev => ({ ...prev, newCategory: e.target.value }))}
-                                    placeholder="Название новой категории" className="w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base" />
+                                    placeholder="Или введите новую" className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg text-base" />
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-600 mb-2">Примечание</label>
-                                <textarea value={editForm.note} onChange={e => setEditForm(prev => ({ ...prev, note: e.target.value }))}
-                                    placeholder="Доп. информация" rows={2} className="w-full px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base resize-none" />
-                            </div>
-                            <div className="flex gap-4 pt-4">
-                                <button onClick={() => setEditModal({ open: false, item: null, isNew: false })} className="touch-btn flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-base">
-                                    Отмена
-                                </button>
-                                <button onClick={saveEdit} className="touch-btn flex-1 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold text-base shadow-md">
-                                    💾 Сохранить
-                                </button>
+                            <div className="flex gap-3 pt-3">
+                                <button onClick={() => setEditModal({ open: false, item: null, isNew: false })} className="touch-btn flex-1 py-3 bg-slate-100 text-slate-600 rounded-lg font-bold">Отмена</button>
+                                <button onClick={saveEdit} className="touch-btn flex-1 py-3 bg-indigo-600 text-white rounded-lg font-bold">💾 Сохранить</button>
                             </div>
                         </div>
                     </Modal>
 
+                    {/* Move Modal */}
+                    <Modal isOpen={moveModal.open} onClose={() => setMoveModal({ open: false })} title="↔️ Переместить оборудование" size="md">
+                        <p className="text-slate-600 mb-4">Выберите оборудование и укажите новый кабинет в карточке просмотра.</p>
+                        <p className="text-sm text-slate-500">Для массового переноса используйте экспорт/импорт данных.</p>
+                    </Modal>
+
                     {/* Quick Search Modal */}
-                    <Modal isOpen={quickSearchModal.open} onClose={() => setQuickSearchModal({ open: false, query: '' })} title="🔍 Быстрый поиск" size="lg">
+                    <Modal isOpen={quickSearchModal.open} onClose={() => setQuickSearchModal({ open: false, query: '' })} title="🔍 Быстрый поиск" size="md">
                         <input type="text" value={quickSearchModal.query} onChange={e => setQuickSearchModal(prev => ({ ...prev, query: e.target.value }))}
-                            placeholder="Инв. номер или название..." className="w-full px-5 py-4 border-2 border-slate-200 rounded-xl font-mono text-lg mb-5" autoFocus />
-                        <div className="max-h-72 overflow-y-auto border-2 border-slate-200 rounded-xl">
+                            placeholder="Номер или название..." className="w-full px-4 py-4 border-2 border-slate-200 rounded-lg font-mono text-lg mb-4" autoFocus />
+                        <div className="max-h-60 overflow-y-auto border-2 border-slate-200 rounded-lg">
                             {quickSearchResults.length === 0 ? (
-                                <div className="p-10 text-center text-slate-400 text-base">Начните вводить для поиска...</div>
+                                <div className="p-8 text-center text-slate-400">Начните вводить...</div>
                             ) : (
                                 quickSearchResults.map(item => (
                                     <button key={item.id} onClick={() => { setQuickSearchModal({ open: false, query: '' }); openDetails(item); }}
-                                        className={`w-full text-left p-4 border-b border-slate-100 hover:bg-slate-50 flex items-center gap-4 ${item.checked ? 'bg-emerald-50' : item.writeOff ? 'bg-red-50' : ''}`}>
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${item.writeOff ? 'bg-red-500 text-white' : item.checked ? 'bg-emerald-500 text-white' : 'bg-amber-100 text-amber-600'}`}>
+                                        className={`w-full text-left p-3 border-b border-slate-100 hover:bg-slate-50 flex items-center gap-3 ${item.checked ? 'bg-emerald-50' : item.writeOff ? 'bg-red-50' : ''}`}>
+                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${item.writeOff ? 'bg-red-500 text-white' : item.checked ? 'bg-emerald-500 text-white' : 'bg-amber-100 text-amber-600'}`}>
                                             {item.writeOff ? '📝' : item.checked ? '✓' : '⏳'}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="font-mono font-bold text-indigo-600">{item.invNumber}</div>
-                                            <div className="text-sm text-slate-500 truncate">{item.name}</div>
+                                            <div className="font-mono font-bold text-indigo-600 text-sm">{item.invNumber}</div>
+                                            <div className="text-xs text-slate-500 truncate">{item.name}</div>
                                         </div>
                                     </button>
                                 ))
                             )}
                         </div>
-                        {quickSearchResults.length > 0 && <div className="text-center text-sm text-slate-400 mt-4">Найдено: {quickSearchResults.length}</div>}
                     </Modal>
 
                     {/* Rooms Modal */}
-                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '' })} title="🏢 Справочник кабинетов" size="sm">
-                        <div className="flex gap-3 mb-5">
+                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '' })} title="🏢 Кабинеты" size="sm">
+                        <div className="flex gap-2 mb-4">
                             <input type="text" value={roomsModal.newRoom} onChange={e => setRoomsModal(prev => ({ ...prev, newRoom: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && addToDirectory('rooms', roomsModal.newRoom)}
-                                placeholder="Новый кабинет..." className="flex-1 px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base" />
-                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="touch-btn px-5 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xl shadow-md">+</button>
+                                placeholder="Новый кабинет..." className="flex-1 px-4 py-3 border-2 border-slate-200 rounded-lg" />
+                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="touch-btn px-4 py-3 bg-emerald-600 text-white rounded-lg font-bold">+</button>
                         </div>
-                        <div className="max-h-64 overflow-y-auto border-2 border-slate-200 rounded-xl">
+                        <div className="max-h-52 overflow-y-auto border-2 border-slate-200 rounded-lg">
                             {directories.rooms.length === 0 ? (
-                                <div className="p-10 text-center text-slate-400">Список пуст</div>
+                                <div className="p-8 text-center text-slate-400">Пусто</div>
                             ) : (
                                 directories.rooms.map((room, idx) => (
-                                    <div key={idx} className="flex items-center gap-3 p-4 border-b border-slate-100">
-                                        <span className="flex-1 text-base">🚪 {room}</span>
-                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="touch-btn p-2.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg">🗑️</button>
+                                    <div key={idx} className="flex items-center gap-2 p-3 border-b border-slate-100">
+                                        <span className="flex-1">🚪 {room}</span>
+                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="touch-btn p-2 bg-red-100 text-red-600 rounded-lg">🗑️</button>
                                     </div>
                                 ))
                             )}
@@ -1619,21 +1652,21 @@
                     </Modal>
 
                     {/* People Modal */}
-                    <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="👥 Справочник сотрудников" size="sm">
-                        <div className="flex gap-3 mb-5">
+                    <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="👥 Сотрудники" size="sm">
+                        <div className="flex gap-2 mb-4">
                             <input type="text" value={peopleModal.newPerson} onChange={e => setPeopleModal(prev => ({ ...prev, newPerson: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && addToDirectory('people', peopleModal.newPerson)}
-                                placeholder="Новое ФИО..." className="flex-1 px-4 py-3.5 border-2 border-slate-200 rounded-xl text-base" />
-                            <button onClick={() => addToDirectory('people', peopleModal.newPerson)} className="touch-btn px-5 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xl shadow-md">+</button>
+                                placeholder="Новое ФИО..." className="flex-1 px-4 py-3 border-2 border-slate-200 rounded-lg" />
+                            <button onClick={() => addToDirectory('people', peopleModal.newPerson)} className="touch-btn px-4 py-3 bg-emerald-600 text-white rounded-lg font-bold">+</button>
                         </div>
-                        <div className="max-h-64 overflow-y-auto border-2 border-slate-200 rounded-xl">
+                        <div className="max-h-52 overflow-y-auto border-2 border-slate-200 rounded-lg">
                             {directories.people.length === 0 ? (
-                                <div className="p-10 text-center text-slate-400">Список пуст</div>
+                                <div className="p-8 text-center text-slate-400">Пусто</div>
                             ) : (
                                 directories.people.map((person, idx) => (
-                                    <div key={idx} className="flex items-center gap-3 p-4 border-b border-slate-100">
-                                        <span className="flex-1 text-base">👤 {person}</span>
-                                        <button onClick={() => removeFromDirectory('people', idx)} className="touch-btn p-2.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg">🗑️</button>
+                                    <div key={idx} className="flex items-center gap-2 p-3 border-b border-slate-100">
+                                        <span className="flex-1">👤 {person}</span>
+                                        <button onClick={() => removeFromDirectory('people', idx)} className="touch-btn p-2 bg-red-100 text-red-600 rounded-lg">🗑️</button>
                                     </div>
                                 ))
                             )}
@@ -1641,7 +1674,7 @@
                     </Modal>
 
                     {/* Confirm Modal */}
-                    <ConfirmModal isOpen={confirmModal.open} onClose={() => setConfirmModal({ ...confirmModal, open: false })}
+                    <ConfirmModal isOpen={confirmModal.open} onClose={() => setConfirmModal(prev => ({ ...prev, open: false }))}
                         onConfirm={confirmModal.onConfirm} title={confirmModal.title} message={confirmModal.message} icon={confirmModal.icon} />
 
                     {/* Toast */}
