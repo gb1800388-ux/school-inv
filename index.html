@@ -167,7 +167,7 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
         }
         
-        /* Note indicator - low z-index */
+        /* Note indicator - contained within card, no z-index issues */
         .note-indicator {
             position: absolute;
             top: 8px;
@@ -176,8 +176,29 @@
             height: 8px;
             background: #3182ce;
             border-radius: 50%;
-            z-index: 1;
+            /* No z-index - stays within card stacking context */
         }
+        
+        /* Cards should create stacking context */
+        .equipment-card {
+            position: relative;
+            isolation: isolate; /* Creates new stacking context */
+        }
+        
+        /* Modal z-index hierarchy */
+        .modal-base {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 3vh 16px 16px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .modal-z-500 { z-index: 500; }
+        .modal-z-600 { z-index: 600; }
+        .modal-z-700 { z-index: 700; }
+        .modal-z-800 { z-index: 800; }
         
         /* Modal animation */
         .modal-animate {
@@ -309,7 +330,7 @@
             {id:"item_3",name:"Акустическая система для аудитории",invNumber:"1101340095",date:"30.03.2018",note:"оргтехника",category:"Аудиооборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_4",name:"Интерактивное устройство IRBIS",invNumber:"0101340042",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_5",name:"Интерактивное устройство IRBIS",invNumber:"0101340043",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-{"id": "item_6", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340044", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
+            {"id": "item_6", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340044", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
 {"id": "item_7", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340045", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
 {"id": "item_8", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340046", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
 {"id": "item_9", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340047", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
@@ -717,7 +738,7 @@
 {"id": "item_411", "name": "Точка доступа Huawei Xingfu Kele [WP4094]", "invNumber": "БД-46", "date": "01.07.2022", "category": "Сетевое оборудование", "writeOff": false},
 {"id": "item_412", "name": "Точка доступа Huawei Xingfu Kele [WP4094]", "invNumber": "БД-47", "date": "01.07.2022", "category": "Сетевое оборудование", "writeOff": false},
 {"id": "item_413", "name": "Интерактивная панель (моноблок) со встроенным компьютером OPS, диагональ 86 дюймов, модель AIO86A9G (i7-1280P / 16Gb / 256 SSD)", "invNumber": "БД-48", "date": "03.10.2022", "category": "Интерактивное оборудование", "writeOff": false},
-{"id": "item_414", "name": "Интерактивная панель (моноблок) со встроенным компьютером OPS, диагональ 86 дюймов, модель AIO86A9G (i7-1280P / 16Gb / 256 SSD)", "invNumber": "БД-49", "date": "03.10.2022", "category": "Интерактивное оборудование", "writeOff": false},
+{"id": "item_414", "name": "Интерактивная панель (моноблок) со встроенным компьютером OPS, диагональ 86 дюймов, модель AIO86A9G (i7-1280P / 16Gb / 256 SSD)", "invNumber": "БД-49", "date": "03.10.2022", "category": "Интерактивное оборудование", "writeOff": false}, 
             {id:"item_415",name:"Интерактивная панель 86 дюймов",invNumber:"БД-50",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_416",name:"Интерактивная панель 86 дюймов",invNumber:"БД-51",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_417",name:"Интерактивная панель 86 дюймов",invNumber:"БД-52",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
@@ -896,7 +917,7 @@
             if (item.serialNumber) infoParts.push(`S/N: ${item.serialNumber}`);
 
             return (
-                <div className={`relative bg-white rounded-xl p-4 card-shadow border-l-4 transition-all
+                <div className={`equipment-card bg-white rounded-xl p-4 card-shadow border-l-4 transition-all
                     ${item.writeOff ? 'border-l-red-500' : item.checked ? 'border-l-green-500' : 'border-l-gray-300'}`}>
                     
                     {hasNote && <div className="note-indicator" title="Есть заметка" />}
@@ -952,8 +973,8 @@
             const sizeClass = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg' }[size];
             
             return (
-                <div className="fixed inset-0 z-600 bg-black/50 modal-overlay" onClick={onClose}>
-                    <div className={`modal-animate bg-white rounded-xl shadow-xl w-full ${sizeClass} mx-auto`} onClick={e => e.stopPropagation()}>
+                <div className="modal-base modal-z-600" onClick={onClose}>
+                    <div className={`modal-animate bg-white rounded-xl shadow-xl w-full ${sizeClass}`} onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                             <h2 className="text-base font-semibold text-gray-800">{title}</h2>
                             <button onClick={onClose} className="touch-btn w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-400">
@@ -970,8 +991,8 @@
         const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
             if (!isOpen) return null;
             return (
-                <div className="fixed inset-0 z-700 bg-black/50 modal-overlay" onClick={onClose}>
-                    <div className="modal-animate bg-white rounded-xl shadow-xl w-full max-w-xs mx-auto p-5 text-center" onClick={e => e.stopPropagation()}>
+                <div className="modal-base modal-z-700" onClick={onClose}>
+                    <div className="modal-animate bg-white rounded-xl shadow-xl w-full max-w-xs p-5 text-center" onClick={e => e.stopPropagation()}>
                         <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
                         <p className="text-sm text-gray-500 mb-5">{message}</p>
                         <div className="flex gap-3">
