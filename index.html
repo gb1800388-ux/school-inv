@@ -10,26 +10,14 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Roboto', 'system-ui', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
                     },
-                    colors: {
-                        bank: {
-                            primary: '#1a365d',
-                            secondary: '#2c5282',
-                            accent: '#3182ce',
-                            success: '#38a169',
-                            warning: '#d69e2e',
-                            danger: '#e53e3e',
-                            light: '#f7fafc',
-                            dark: '#1a202c',
-                        }
-                    }
                 }
             }
         }
@@ -43,17 +31,20 @@
         }
         
         html { 
-            font-size: 15px; 
+            font-size: 17px; 
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         body { 
-            font-family: 'Roboto', system-ui, sans-serif; 
-            background: #f7fafc; 
-            color: #1a202c;
+            font-family: 'Inter', system-ui, sans-serif; 
+            background: #f8fafc; 
+            color: #0f172a;
             line-height: 1.5;
             overflow: hidden;
             height: 100dvh;
+            font-weight: 500;
+            letter-spacing: -0.01em;
         }
         
         /* App container */
@@ -63,9 +54,9 @@
         }
         
         /* Scrollbar */
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 2px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
         
         /* Content scroll */
         .content-scroll {
@@ -76,94 +67,87 @@
             overscroll-behavior: contain;
         }
         
-        /* Modal - simplified for performance */
-        .modal-overlay {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 3vh 16px 16px;
-        }
-        
         /* Touch button */
         .touch-btn {
-            min-height: 44px;
+            min-height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.15s ease;
+            font-weight: 600;
         }
-        .touch-btn:active { transform: scale(0.98); }
+        .touch-btn:active { transform: scale(0.97); }
         
         /* Status badges */
         .status-badge {
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.75rem;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.8rem;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.03em;
         }
         .status-checked {
-            background: #c6f6d5;
-            color: #276749;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
         }
         .status-pending {
-            background: #feebc8;
-            color: #975a16;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
         }
         .status-writeoff {
-            background: #fed7d7;
-            color: #c53030;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #b91c1c;
         }
         
-        /* Category colors */
-        .cat-audio { border-left-color: #805ad5; }
-        .cat-interactive { border-left-color: #3182ce; }
-        .cat-printers { border-left-color: #00b5d8; }
-        .cat-tv { border-left-color: #38a169; }
-        .cat-default { border-left-color: #718096; }
-        
+        /* Category divider */
         .category-divider {
-            background: #1a365d;
+            background: linear-gradient(135deg, #1e293b, #334155);
             color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin: 20px 0 12px;
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin: 24px 0 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 600;
-            font-size: 0.875rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
         .category-divider:first-child { margin-top: 0; }
         
         /* Card */
         .card-shadow {
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.04);
         }
         .card-shadow:hover {
-            box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+        
+        /* Equipment card */
+        .equipment-card {
+            position: relative;
+            isolation: isolate;
+            transition: all 0.2s ease;
         }
         
         /* Note indicator */
         .note-indicator {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 8px;
-            height: 8px;
-            background: #3182ce;
+            top: 12px;
+            right: 12px;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             border-radius: 50%;
-        }
-        
-        /* Cards stacking context */
-        .equipment-card {
-            position: relative;
-            isolation: isolate;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
         }
         
         /* Modal z-index hierarchy */
@@ -174,7 +158,8 @@
             align-items: flex-start;
             justify-content: center;
             padding: 3vh 16px 16px;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
         }
         .modal-z-500 { z-index: 500; }
         .modal-z-600 { z-index: 600; }
@@ -183,11 +168,11 @@
         
         /* Modal animation */
         .modal-animate {
-            animation: modalIn 0.2s ease-out;
+            animation: modalIn 0.25s ease-out;
         }
         @keyframes modalIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         
         /* Responsive */
@@ -198,11 +183,11 @@
                 left: 0;
                 top: 0;
                 bottom: 0;
-                width: 300px;
+                width: 320px;
                 z-index: 500;
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
-                box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+                box-shadow: 4px 0 30px rgba(0,0,0,0.2);
             }
             .filter-panel.open { transform: translateX(0); }
             .mobile-header { display: flex !important; }
@@ -218,11 +203,9 @@
         
         /* Tablet */
         @media (min-width: 769px) and (max-width: 1024px) {
-            .nav-rail { width: 56px; }
-            .nav-rail button { width: 40px; height: 40px; }
-            .filter-panel { width: 220px; }
-            .quick-stat-card { padding: 8px 4px; }
-            .quick-stat-value { font-size: 1.25rem; }
+            .nav-rail { width: 64px; }
+            .nav-rail button { width: 44px; height: 44px; }
+            .filter-panel { width: 260px; }
         }
         
         /* Quick stat - vertical */
@@ -232,36 +215,97 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 12px 8px;
-            border-radius: 8px;
+            padding: 16px 12px;
+            border-radius: 16px;
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.15s ease;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
         }
         .quick-stat-card:hover {
             border-color: #e2e8f0;
+            transform: translateY(-2px);
         }
         .quick-stat-card.active {
-            border-color: #3182ce;
-            background: #ebf8ff;
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
         }
         .quick-stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: 900;
             line-height: 1;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            letter-spacing: -0.03em;
         }
         .quick-stat-label {
-            font-size: 0.625rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #718096;
+            color: #64748b;
         }
         
-        /* Filter panel performance */
+        /* Filter panel */
         .filter-panel {
             will-change: transform;
+        }
+        
+        /* Gradient buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+        
+        /* Input styles */
+        .input-modern {
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+        .input-modern:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            outline: none;
+        }
+        
+        /* Big icon style */
+        .icon-box {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+        
+        /* Progress ring glow */
+        .progress-glow {
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
         }
     </style>
 </head>
@@ -276,19 +320,18 @@
 
         // Icons (SVG)
         const Icons = {
-            Home: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
-            Building: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
-            Users: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
-            Plus: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>,
-            Search: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
-            Save: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>,
-            Download: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>,
-            Upload: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>,
-            Trash: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
-            X: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>,
-            Menu: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>,
-            Check: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>,
-            Clock: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+            Home: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
+            Building: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
+            Users: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+            Plus: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>,
+            Search: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
+            Save: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>,
+            Download: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>,
+            Upload: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>,
+            Trash: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
+            X: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>,
+            Menu: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>,
+            Check: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>,
         };
 
         // Initial data
@@ -311,29 +354,35 @@
 
         // Category config
         const categoryConfig = {
-            "Аудиооборудование": { icon: "🔊", colorClass: "cat-audio", color: "#805ad5" },
-            "Интерактивное оборудование": { icon: "📱", colorClass: "cat-interactive", color: "#3182ce" },
-            "Принтеры и МФУ": { icon: "🖨️", colorClass: "cat-printers", color: "#00b5d8" },
-            "Телевизоры": { icon: "📺", colorClass: "cat-tv", color: "#38a169" },
+            "Аудиооборудование": { icon: "🔊", color: "#8b5cf6", bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
+            "Интерактивное оборудование": { icon: "📱", color: "#3b82f6", bg: "linear-gradient(135deg, #3b82f6, #2563eb)" },
+            "Принтеры и МФУ": { icon: "🖨️", color: "#06b6d4", bg: "linear-gradient(135deg, #06b6d4, #0891b2)" },
+            "Телевизоры": { icon: "📺", color: "#22c55e", bg: "linear-gradient(135deg, #22c55e, #16a34a)" },
         };
-        const defaultCatConfig = { icon: "📦", colorClass: "cat-default", color: "#718096" };
+        const defaultCatConfig = { icon: "📦", color: "#64748b", bg: "linear-gradient(135deg, #64748b, #475569)" };
 
         // Progress Ring
-        const ProgressRing = ({ percent, size = 64 }) => {
-            const strokeWidth = 6;
+        const ProgressRing = ({ percent, size = 80 }) => {
+            const strokeWidth = 8;
             const radius = (size - strokeWidth) / 2;
             const circumference = 2 * Math.PI * radius;
             const offset = circumference - (percent / 100) * circumference;
             
             return (
-                <div className="relative" style={{ width: size, height: size }}>
+                <div className="relative progress-glow" style={{ width: size, height: size }}>
                     <svg className="transform -rotate-90" width={size} height={size}>
                         <circle stroke="#e2e8f0" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2} />
-                        <circle stroke="#3182ce" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2}
+                        <circle stroke="url(#progressGradient)" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2}
                             strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
+                        <defs>
+                            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#3b82f6" />
+                                <stop offset="100%" stopColor="#8b5cf6" />
+                            </linearGradient>
+                        </defs>
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-lg font-bold text-gray-800">{percent}%</span>
+                        <span className="text-2xl font-black text-slate-800">{percent}%</span>
                     </div>
                 </div>
             );
@@ -341,25 +390,25 @@
 
         // Navigation Rail
         const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenNotes }) => (
-            <div className="nav-rail w-16 bg-gray-900 flex flex-col items-center py-4 flex-shrink-0">
-                <button onClick={onShowInfo} className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mb-6" title="О программе">
-                    <span className="text-white font-bold text-sm">102</span>
+            <div className="nav-rail w-20 bg-gradient-to-b from-slate-900 to-slate-800 flex flex-col items-center py-5 flex-shrink-0">
+                <button onClick={onShowInfo} className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-blue-500/30" title="О программе">
+                    <span className="text-white font-black text-lg">102</span>
                 </button>
-                <div className="flex-1 flex flex-col items-center gap-2">
-                    <button onClick={onGoHome} className="touch-btn w-10 h-10 rounded-lg bg-gray-800 text-white" title="Главная">
+                <div className="flex-1 flex flex-col items-center gap-3">
+                    <button onClick={onGoHome} className="touch-btn w-12 h-12 rounded-2xl bg-slate-700/50 text-white hover:bg-slate-700" title="Главная">
                         <Icons.Home />
                     </button>
-                    <button onClick={onOpenRooms} className="touch-btn w-10 h-10 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white" title="Кабинеты">
+                    <button onClick={onOpenRooms} className="touch-btn w-12 h-12 rounded-2xl text-slate-400 hover:bg-slate-700/50 hover:text-white" title="Кабинеты">
                         <Icons.Building />
                     </button>
-                    <button onClick={onOpenPeople} className="touch-btn w-10 h-10 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white" title="Сотрудники">
+                    <button onClick={onOpenPeople} className="touch-btn w-12 h-12 rounded-2xl text-slate-400 hover:bg-slate-700/50 hover:text-white" title="Сотрудники">
                         <Icons.Users />
                     </button>
-                    <button onClick={onOpenNotes} className="touch-btn w-10 h-10 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white" title="Все заметки">
-                        <span className="text-lg">📝</span>
+                    <button onClick={onOpenNotes} className="touch-btn w-12 h-12 rounded-2xl text-slate-400 hover:bg-slate-700/50 hover:text-white" title="Заметки">
+                        <span className="text-2xl">📝</span>
                     </button>
                 </div>
-                <button onClick={onAddEquipment} className="touch-btn w-10 h-10 rounded-lg bg-green-600 text-white" title="Добавить">
+                <button onClick={onAddEquipment} className="touch-btn w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30" title="Добавить">
                     <Icons.Plus />
                 </button>
             </div>
@@ -371,60 +420,60 @@
 
             return (
                 <>
-                    <div className={`mobile-overlay fixed inset-0 bg-black/40 z-400 ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} />
-                    <div className={`filter-panel w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 ${isOpen ? 'open' : ''}`}>
-                        <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center lg:hidden">
+                    <div className={`mobile-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-400 ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} />
+                    <div className={`filter-panel w-80 bg-white flex flex-col flex-shrink-0 ${isOpen ? 'open' : ''}`}>
+                        <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center lg:hidden hover:bg-slate-200">
                             <Icons.X />
                         </button>
                         
-                        <div className="p-4 border-b border-gray-100">
-                            <h1 className="text-base font-bold text-gray-900">Инвентаризация</h1>
-                            <p className="text-xs text-gray-500">ГКОУ СКОШИ №102</p>
+                        <div className="p-5 border-b border-slate-100">
+                            <h1 className="text-xl font-black text-slate-900 tracking-tight">Инвентаризация</h1>
+                            <p className="text-sm font-semibold text-slate-500">ГКОУ СКОШИ №102</p>
                         </div>
 
-                        <div className="p-4 border-b border-gray-100">
-                            <div className="flex items-center gap-4">
-                                <ProgressRing percent={percent} size={56} />
+                        <div className="p-5 border-b border-slate-100">
+                            <div className="flex items-center gap-5">
+                                <ProgressRing percent={percent} size={72} />
                                 <div className="flex-1">
-                                    <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Прогресс</div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-gray-600">Проверено</span>
-                                        <span className="font-semibold text-green-600">{stats.checked}</span>
+                                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Прогресс</div>
+                                    <div className="flex justify-between text-base mb-1">
+                                        <span className="font-semibold text-slate-600">Проверено</span>
+                                        <span className="font-black text-emerald-600">{stats.checked}</span>
                                     </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-gray-600">Осталось</span>
-                                        <span className="font-semibold text-amber-600">{stats.pending}</span>
+                                    <div className="flex justify-between text-base">
+                                        <span className="font-semibold text-slate-600">Осталось</span>
+                                        <span className="font-black text-amber-600">{stats.pending}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 p-3 border-b border-gray-100">
+                        <div className="grid grid-cols-2 gap-3 p-4 border-b border-slate-100">
                             <div onClick={() => setActiveFilter(activeFilter === 'writeoff' ? 'all' : 'writeoff')}
-                                className={`quick-stat-card bg-red-50 ${activeFilter === 'writeoff' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-red-600">{stats.writeOff}</div>
+                                className={`quick-stat-card ${activeFilter === 'writeoff' ? 'active' : ''}`}>
+                                <div className="quick-stat-value text-red-500">{stats.writeOff}</div>
                                 <div className="quick-stat-label">Списание</div>
                             </div>
                             <div onClick={() => setActiveFilter(activeFilter === 'nolabel' ? 'all' : 'nolabel')}
-                                className={`quick-stat-card bg-amber-50 ${activeFilter === 'nolabel' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-amber-600">{stats.noLabel}</div>
+                                className={`quick-stat-card ${activeFilter === 'nolabel' ? 'active' : ''}`}>
+                                <div className="quick-stat-value text-amber-500">{stats.noLabel}</div>
                                 <div className="quick-stat-label">Без бирки</div>
                             </div>
                             <div onClick={() => setActiveFilter(activeFilter === 'serial' ? 'all' : 'serial')}
-                                className={`quick-stat-card bg-green-50 ${activeFilter === 'serial' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-green-600">{stats.withSerial}</div>
+                                className={`quick-stat-card ${activeFilter === 'serial' ? 'active' : ''}`}>
+                                <div className="quick-stat-value text-emerald-500">{stats.withSerial}</div>
                                 <div className="quick-stat-label">С серийником</div>
                             </div>
                             <div onClick={() => setActiveFilter(activeFilter === 'new' ? 'all' : 'new')}
-                                className={`quick-stat-card bg-blue-50 ${activeFilter === 'new' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-blue-600">{stats.new}</div>
+                                className={`quick-stat-card ${activeFilter === 'new' ? 'active' : ''}`}>
+                                <div className="quick-stat-value text-blue-500">{stats.new}</div>
                                 <div className="quick-stat-label">Новые</div>
                             </div>
                         </div>
 
-                        <div className="p-3 border-b border-gray-100">
-                            <div className="text-xs font-semibold text-gray-400 uppercase mb-2">Статус</div>
-                            <div className="space-y-1">
+                        <div className="p-4 border-b border-slate-100">
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Статус</div>
+                            <div className="space-y-2">
                                 {[
                                     { id: 'all', label: 'Все', count: stats.total },
                                     { id: 'unchecked', label: 'Ожидают', count: stats.pending },
@@ -432,27 +481,27 @@
                                     { id: 'notes', label: 'С заметками', count: stats.withNotes },
                                 ].map(f => (
                                     <button key={f.id} onClick={() => { setActiveFilter(f.id); onClose(); }}
-                                        className={`touch-btn w-full flex items-center gap-2 px-3 rounded-lg text-sm
-                                            ${activeFilter === f.id ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
-                                        <span className="flex-1 text-left">{f.label}</span>
-                                        <span className={`text-xs font-medium px-2 py-0.5 rounded ${activeFilter === f.id ? 'bg-white/20' : 'bg-gray-100'}`}>{f.count}</span>
+                                        className={`touch-btn w-full flex items-center gap-3 px-4 rounded-xl text-base
+                                            ${activeFilter === f.id ? 'btn-primary' : 'text-slate-700 hover:bg-slate-50'}`}>
+                                        <span className="flex-1 text-left font-semibold">{f.label}</span>
+                                        <span className={`text-sm font-bold px-3 py-1 rounded-lg ${activeFilter === f.id ? 'bg-white/20' : 'bg-slate-100'}`}>{f.count}</span>
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-3 custom-scroll">
-                            <div className="text-xs font-semibold text-gray-400 uppercase mb-2">Категории</div>
-                            <div className="space-y-1">
+                        <div className="flex-1 overflow-y-auto p-4 custom-scroll">
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Категории</div>
+                            <div className="space-y-2">
                                 {categories.map(cat => {
                                     const config = categoryConfig[cat] || defaultCatConfig;
                                     return (
                                         <button key={cat} onClick={() => { setActiveCategory(cat); onClose(); }}
-                                            className={`touch-btn w-full flex items-center gap-2 px-3 rounded-lg text-sm
-                                                ${activeCategory === cat ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
-                                            <span>{cat === 'Все оборудование' ? '📋' : config.icon}</span>
-                                            <span className="flex-1 text-left truncate">{cat}</span>
-                                            <span className={`text-xs font-medium px-2 py-0.5 rounded ${activeCategory === cat ? 'bg-white/20' : 'bg-gray-100'}`}>
+                                            className={`touch-btn w-full flex items-center gap-3 px-4 rounded-xl text-base
+                                                ${activeCategory === cat ? 'btn-primary' : 'text-slate-700 hover:bg-slate-50'}`}>
+                                            <span className="text-xl">{cat === 'Все оборудование' ? '📋' : config.icon}</span>
+                                            <span className="flex-1 text-left font-semibold truncate">{cat}</span>
+                                            <span className={`text-sm font-bold px-3 py-1 rounded-lg ${activeCategory === cat ? 'bg-white/20' : 'bg-slate-100'}`}>
                                                 {cat === 'Все оборудование' ? stats.total : stats.byCategory[cat] || 0}
                                             </span>
                                         </button>
@@ -477,48 +526,45 @@
             if (item.serialNumber) infoParts.push(`S/N: ${item.serialNumber}`);
 
             return (
-                <div className={`equipment-card bg-white rounded-xl p-4 card-shadow border-l-4 transition-all
-                    ${item.writeOff ? 'border-l-red-500' : item.checked ? 'border-l-green-500' : 'border-l-gray-300'}`}>
+                <div className={`equipment-card bg-white rounded-2xl p-5 card-shadow border-l-4 
+                    ${item.writeOff ? 'border-l-red-500' : item.checked ? 'border-l-emerald-500' : 'border-l-slate-300'}`}>
                     
                     {hasNote && <div className="note-indicator" title="Есть заметка" />}
                     
-                    <div className="flex items-start gap-3 mb-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-lg
-                            ${item.writeOff ? 'bg-red-100' : item.checked ? 'bg-green-100' : 'bg-gray-100'}`}>
+                    <div className="flex items-start gap-4 mb-4">
+                        <div className={`icon-box flex-shrink-0
+                            ${item.writeOff ? 'bg-red-100' : item.checked ? 'bg-emerald-100' : 'bg-slate-100'}`}>
                             {item.writeOff ? '📝' : item.checked ? '✓' : config.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap mb-1">
-                                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-mono font-semibold">{item.invNumber}</span>
-                                {item.isUserAdded && <span title="Новое" className="w-2 h-2 bg-blue-500 rounded-full" />}
-                                {item.hasLabel === false && <span title="Без бирки" className="w-2 h-2 bg-amber-500 rounded-full" />}
+                            <div className="flex items-center gap-2 flex-wrap mb-2">
+                                <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg text-sm font-bold font-mono shadow-sm">{item.invNumber}</span>
+                                {item.isUserAdded && <span title="Новое" className="w-3 h-3 bg-blue-500 rounded-full shadow-sm shadow-blue-500/50" />}
+                                {item.hasLabel === false && <span title="Без бирки" className="w-3 h-3 bg-amber-500 rounded-full shadow-sm shadow-amber-500/50" />}
                             </div>
-                            <h3 className="font-medium text-gray-800 text-sm leading-snug line-clamp-2">{item.name}</h3>
+                            <h3 className="font-bold text-slate-800 text-base leading-snug line-clamp-2">{item.name}</h3>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-3 flex-wrap">
+                    <div className="flex items-center gap-3 text-sm text-slate-500 mb-4 flex-wrap">
                         <span className={`status-badge ${item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending'}`}>
                             {item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает'}
                         </span>
-                        {infoParts.length > 0 && (
-                            <span className="text-gray-400">•</span>
-                        )}
                         {infoParts.map((part, idx) => (
-                            <span key={idx}>{part}</span>
+                            <span key={idx} className="font-medium">{part}</span>
                         ))}
                     </div>
 
-                    <div className="flex gap-2 pt-3 border-t border-gray-100">
-                        <button onClick={() => onView(item)} className="touch-btn flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-medium">
+                    <div className="flex gap-3 pt-4 border-t border-slate-100">
+                        <button onClick={() => onView(item)} className="touch-btn flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold">
                             Просмотр
                         </button>
                         {!isProcessed ? (
-                            <button onClick={() => onCheck(item)} className="touch-btn flex-1 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-medium">
+                            <button onClick={() => onCheck(item)} className="touch-btn flex-1 py-3 btn-success rounded-xl text-sm font-bold">
                                 ✓ Проверить
                             </button>
                         ) : (
-                            <button onClick={() => onCheck(item, true)} className="touch-btn flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-xs font-medium">
+                            <button onClick={() => onCheck(item, true)} className="touch-btn flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-bold">
                                 ↩ Отменить
                             </button>
                         )}
@@ -534,14 +580,14 @@
             
             return (
                 <div className="modal-base modal-z-600" onClick={onClose}>
-                    <div className={`modal-animate bg-white rounded-xl shadow-xl w-full ${sizeClass}`} onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                            <h2 className="text-base font-semibold text-gray-800">{title}</h2>
-                            <button onClick={onClose} className="touch-btn w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-400">
+                    <div className={`modal-animate bg-white rounded-3xl shadow-2xl w-full ${sizeClass}`} onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                            <h2 className="text-xl font-black text-slate-800">{title}</h2>
+                            <button onClick={onClose} className="touch-btn w-10 h-10 rounded-xl hover:bg-slate-100 text-slate-400">
                                 <Icons.X />
                             </button>
                         </div>
-                        <div className="p-4 max-h-[60vh] overflow-y-auto custom-scroll">{children}</div>
+                        <div className="p-6 max-h-[65vh] overflow-y-auto custom-scroll">{children}</div>
                     </div>
                 </div>
             );
@@ -552,12 +598,12 @@
             if (!isOpen) return null;
             return (
                 <div className="modal-base modal-z-700" onClick={onClose}>
-                    <div className="modal-animate bg-white rounded-xl shadow-xl w-full max-w-xs p-5 text-center" onClick={e => e.stopPropagation()}>
-                        <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
-                        <p className="text-sm text-gray-500 mb-5">{message}</p>
+                    <div className="modal-animate bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-2xl font-black text-slate-800 mb-2">{title}</h3>
+                        <p className="text-base font-medium text-slate-500 mb-6">{message}</p>
                         <div className="flex gap-3">
-                            <button onClick={onClose} className="touch-btn flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm">Отмена</button>
-                            <button onClick={onConfirm} className="touch-btn flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm">Да</button>
+                            <button onClick={onClose} className="touch-btn flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold text-base">Отмена</button>
+                            <button onClick={onConfirm} className="touch-btn flex-1 py-4 btn-primary rounded-2xl font-bold text-base">Да</button>
                         </div>
                     </div>
                 </div>
@@ -569,7 +615,7 @@
             useEffect(() => { if (isVisible) { const t = setTimeout(onClose, 2500); return () => clearTimeout(t); } }, [isVisible, onClose]);
             if (!isVisible) return null;
             return (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-3 bg-gray-800 text-white rounded-lg shadow-lg z-800 text-sm font-medium">
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 bg-slate-900 text-white rounded-2xl shadow-2xl z-800 text-base font-bold">
                     {message}
                 </div>
             );
@@ -585,15 +631,15 @@
 
             return (
                 <div className="relative">
-                    {label && <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>}
+                    {label && <label className="block text-sm font-bold text-slate-500 mb-2">{label}</label>}
                     <input type="text" value={value} onChange={e => onChange(e.target.value)}
                         onFocus={() => setShowDropdown(true)} onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-                        placeholder={placeholder} className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+                        placeholder={placeholder} className="w-full input-modern" />
                     {showDropdown && filtered.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-slate-100 rounded-2xl shadow-xl z-50 overflow-hidden">
                             {filtered.map((item, idx) => (
                                 <button key={idx} type="button" onMouseDown={() => { onChange(item); setShowDropdown(false); }}
-                                    className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm border-b border-gray-50 last:border-0">
+                                    className="w-full text-left px-4 py-3 hover:bg-slate-50 text-base font-medium border-b border-slate-50 last:border-0">
                                     {item}
                                 </button>
                             ))}
@@ -936,7 +982,7 @@
             }, [quickSearchModal.query, equipment]);
 
             return (
-                <div className="flex bg-gray-50" style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
+                <div className="flex bg-slate-50" style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
                     <NavRail 
                         onOpenRooms={() => setRoomsModal({ ...roomsModal, open: true })}
                         onOpenPeople={() => setPeopleModal({ ...peopleModal, open: true })}
@@ -958,46 +1004,46 @@
                     />
 
                     <main className="main-area flex-1 flex flex-col min-w-0 overflow-hidden">
-                        {/* Мобильный header с меню и поиском */}
-                        <header className="mobile-header bg-white border-b border-gray-200 px-4 py-3 items-center gap-3 flex-shrink-0">
-                            <button onClick={() => setSidebarOpen(true)} className="touch-btn w-10 h-10 rounded-lg bg-gray-100">
+                        {/* Мобильный header */}
+                        <header className="mobile-header bg-white border-b border-slate-200 px-4 py-4 items-center gap-4 flex-shrink-0">
+                            <button onClick={() => setSidebarOpen(true)} className="touch-btn w-12 h-12 rounded-2xl bg-slate-100">
                                 <Icons.Menu />
                             </button>
                             <div className="flex-1 relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Icons.Search /></span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
                                 <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск..."
-                                    className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none" />
+                                    className="w-full pl-12 pr-4 input-modern" />
                             </div>
-                            <button onClick={handleSave} className="touch-btn w-10 h-10 rounded-lg bg-blue-600 text-white">
+                            <button onClick={handleSave} className="touch-btn w-12 h-12 rounded-2xl btn-primary">
                                 <Icons.Save />
                             </button>
                         </header>
 
                         {/* Десктопный header */}
-                        <header className="desktop-header bg-white border-b border-gray-200 px-5 py-3 flex-shrink-0">
-                            <div className="flex items-center gap-3">
-                                <div className="flex-1 relative max-w-md">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Icons.Search /></span>
-                                    <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск..."
-                                        className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none" />
+                        <header className="desktop-header bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0">
+                            <div className="flex items-center gap-4">
+                                <div className="flex-1 relative max-w-lg">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
+                                    <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск по номеру, названию..."
+                                        className="w-full pl-12 pr-4 input-modern" />
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <button onClick={handleSave} className="touch-btn px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-medium flex items-center gap-1.5">
-                                        <Icons.Save /> <span className="hidden sm:inline">Сохранить</span>
+                                <div className="flex items-center gap-3">
+                                    <button onClick={handleSave} className="touch-btn px-5 py-3 btn-primary rounded-2xl text-base flex items-center gap-2">
+                                        <Icons.Save /> <span className="hidden lg:inline font-bold">Сохранить</span>
                                     </button>
-                                    <button onClick={handleExportExcel} className="touch-btn p-2 bg-green-600 text-white rounded-lg" title="Excel">📊</button>
-                                    <button onClick={handleExportJSON} className="touch-btn p-2 bg-gray-100 text-gray-600 rounded-lg" title="Экспорт"><Icons.Download /></button>
-                                    <button onClick={handleImportClick} className="touch-btn p-2 bg-gray-100 text-gray-600 rounded-lg" title="Импорт"><Icons.Upload /></button>
-                                    <button onClick={handleClearAll} className="touch-btn p-2 bg-gray-100 text-red-600 rounded-lg" title="Сброс"><Icons.Trash /></button>
+                                    <button onClick={handleExportExcel} className="touch-btn w-12 h-12 btn-success rounded-2xl text-xl" title="Excel">📊</button>
+                                    <button onClick={handleExportJSON} className="touch-btn w-12 h-12 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl" title="Экспорт"><Icons.Download /></button>
+                                    <button onClick={handleImportClick} className="touch-btn w-12 h-12 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl" title="Импорт"><Icons.Upload /></button>
+                                    <button onClick={handleClearAll} className="touch-btn w-12 h-12 bg-red-50 hover:bg-red-100 text-red-500 rounded-2xl" title="Сброс"><Icons.Trash /></button>
                                 </div>
                             </div>
                         </header>
 
-                        <div ref={contentRef} className="content-scroll p-5 custom-scroll">
+                        <div ref={contentRef} className="content-scroll p-6 custom-scroll">
                             {Object.keys(groupedEquipment).length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                                    <div className="text-4xl mb-3">📭</div>
-                                    <p className="text-base">Ничего не найдено</p>
+                                <div className="flex flex-col items-center justify-center h-full text-slate-400">
+                                    <div className="text-6xl mb-4">📭</div>
+                                    <p className="text-xl font-bold">Ничего не найдено</p>
                                 </div>
                             ) : (
                                 Object.entries(groupedEquipment).sort((a, b) => a[0].localeCompare(b[0], 'ru')).map(([category, items]) => {
@@ -1005,14 +1051,14 @@
                                     const checkedCount = items.filter(i => i.checked || i.writeOff).length;
                                     return (
                                         <div key={category}>
-                                            <div className="category-divider" style={{ background: config.color }}>
-                                                <span className="flex items-center gap-2">
-                                                    <span>{config.icon}</span>
+                                            <div className="category-divider" style={{ background: config.bg }}>
+                                                <span className="flex items-center gap-3">
+                                                    <span className="text-2xl">{config.icon}</span>
                                                     <span>{category}</span>
                                                 </span>
-                                                <span className="bg-white/20 px-2.5 py-0.5 rounded text-xs">{checkedCount}/{items.length}</span>
+                                                <span className="bg-white/20 px-4 py-1.5 rounded-xl text-base font-bold">{checkedCount}/{items.length}</span>
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                                                 {items.map(item => (
                                                     <EquipmentCard key={item.id} item={item} onView={openDetails} onCheck={handleCheck} />
                                                 ))}
@@ -1021,68 +1067,74 @@
                                     );
                                 })
                             )}
-                            <div className="h-16"></div>
+                            <div className="h-20"></div>
                         </div>
                     </main>
 
                     <button onClick={() => setQuickSearchModal({ open: true, query: '' })}
-                        className="fixed bottom-5 right-5 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center z-100 hover:bg-blue-700">
-                        🔍
+                        className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full shadow-xl shadow-blue-500/40 flex items-center justify-center z-100 hover:scale-105 transition-transform">
+                        <span className="text-2xl">🔍</span>
                     </button>
 
                     {/* Modals */}
                     <Modal isOpen={infoModal.open} onClose={() => setInfoModal({ open: false })} title="О программе" size="sm">
                         <div className="text-center">
-                            <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                                <span className="text-2xl">📋</span>
+                            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
+                                <span className="text-4xl">📋</span>
                             </div>
-                            <h3 className="text-lg font-bold text-gray-800 mb-1">Инвентаризация</h3>
-                            <p className="text-sm text-gray-500 mb-4">ГКОУ СКОШИ №102</p>
-                            <p className="text-xs text-gray-400">Версия 4.0</p>
+                            <h3 className="text-2xl font-black text-slate-800 mb-2">Инвентаризация</h3>
+                            <p className="text-lg font-semibold text-slate-500 mb-4">ГКОУ СКОШИ №102</p>
+                            <p className="text-base font-bold text-slate-400">Версия 5.0</p>
                         </div>
                     </Modal>
 
                     <Modal isOpen={labelModal.open} onClose={() => setLabelModal({ open: false, item: null })} title="Проверка бирки" size="sm">
-                        <p className="text-center text-gray-600 text-sm mb-4">Бирка есть на оборудовании?</p>
-                        <div className="space-y-2">
-                            <button onClick={() => handleLabelAnswer(true)} className="touch-btn w-full py-3 bg-green-500 text-white rounded-lg font-medium">✓ Да, есть</button>
-                            <button onClick={() => handleLabelAnswer(false)} className="touch-btn w-full py-3 bg-red-500 text-white rounded-lg font-medium">✗ Нет бирки</button>
-                            <button onClick={() => setLabelModal({ open: false, item: null })} className="touch-btn w-full py-3 bg-gray-100 text-gray-600 rounded-lg font-medium">Отмена</button>
+                        <div className="text-center mb-6">
+                            <div className="text-6xl mb-4">🏷️</div>
+                            <p className="text-lg font-semibold text-slate-600">Бирка есть на оборудовании?</p>
+                        </div>
+                        <div className="space-y-3">
+                            <button onClick={() => handleLabelAnswer(true)} className="touch-btn w-full py-4 btn-success rounded-2xl text-lg font-bold">✓ Да, есть</button>
+                            <button onClick={() => handleLabelAnswer(false)} className="touch-btn w-full py-4 btn-danger rounded-2xl text-lg font-bold">✗ Нет бирки</button>
+                            <button onClick={() => setLabelModal({ open: false, item: null })} className="touch-btn w-full py-4 bg-slate-100 text-slate-600 rounded-2xl text-lg font-bold">Отмена</button>
                         </div>
                     </Modal>
 
                     <Modal isOpen={serialModal.open} onClose={() => setSerialModal({ open: false, item: null, serial: '' })} title="Серийный номер" size="sm">
-                        <p className="text-center text-gray-600 text-sm mb-3">Введите серийный номер (если есть)</p>
+                        <div className="text-center mb-4">
+                            <div className="text-5xl mb-3">🔢</div>
+                            <p className="text-base font-semibold text-slate-500">Введите серийный номер (если есть)</p>
+                        </div>
                         <input type="text" value={serialModal.serial} onChange={e => setSerialModal(prev => ({ ...prev, serial: e.target.value }))}
-                            placeholder="S/N" className="w-full px-4 py-3 border border-gray-200 rounded-lg text-center font-mono mb-4" autoFocus />
-                        <div className="space-y-2">
-                            <button onClick={handleSerialSave} className="touch-btn w-full py-3 bg-green-500 text-white rounded-lg font-medium">Сохранить</button>
-                            <button onClick={handleSerialSkip} className="touch-btn w-full py-3 bg-blue-600 text-white rounded-lg font-medium">Пропустить</button>
-                            <button onClick={() => setSerialModal({ open: false, item: null, serial: '' })} className="touch-btn w-full py-3 bg-gray-100 text-gray-600 rounded-lg font-medium">Отмена</button>
+                            placeholder="S/N" className="w-full input-modern text-center font-mono text-lg mb-5" autoFocus />
+                        <div className="space-y-3">
+                            <button onClick={handleSerialSave} className="touch-btn w-full py-4 btn-success rounded-2xl text-lg font-bold">Сохранить</button>
+                            <button onClick={handleSerialSkip} className="touch-btn w-full py-4 btn-primary rounded-2xl text-lg font-bold">Пропустить</button>
+                            <button onClick={() => setSerialModal({ open: false, item: null, serial: '' })} className="touch-btn w-full py-4 bg-slate-100 text-slate-600 rounded-2xl text-lg font-bold">Отмена</button>
                         </div>
                     </Modal>
 
                     <Modal isOpen={detailsModal.open} onClose={() => setDetailsModal({ open: false, item: null })} title="Карточка оборудования" size="lg">
                         {detailsModal.item && (
-                            <div className="space-y-4">
-                                <div className="p-3 bg-blue-50 rounded-lg">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs font-mono">{detailsModal.item.invNumber}</span>
-                                        {detailsModal.item.isUserAdded && <span className="text-xs text-blue-600">Новое</span>}
+                            <div className="space-y-5">
+                                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <span className="px-4 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-base font-bold font-mono">{detailsModal.item.invNumber}</span>
+                                        {detailsModal.item.isUserAdded && <span className="text-base font-bold text-blue-500">Новое</span>}
                                     </div>
-                                    <h3 className="font-medium text-gray-800 text-sm">{detailsModal.item.name}</h3>
-                                    <p className="text-xs text-gray-500">{detailsModal.item.category}</p>
+                                    <h3 className="font-bold text-slate-800 text-lg">{detailsModal.item.name}</h3>
+                                    <p className="text-base font-semibold text-slate-500">{detailsModal.item.category}</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500 mb-2">Бирка</label>
-                                    <div className="grid grid-cols-2 gap-2">
+                                    <label className="block text-sm font-bold text-slate-500 mb-3">Бирка</label>
+                                    <div className="grid grid-cols-2 gap-3">
                                         <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: true }))} 
-                                            className={`touch-btn py-2.5 rounded-lg font-medium text-sm ${detailsForm.hasLabel === true ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                            className={`touch-btn py-4 rounded-2xl font-bold text-lg ${detailsForm.hasLabel === true ? 'btn-success' : 'bg-slate-100 text-slate-600'}`}>
                                             ✓ Есть
                                         </button>
                                         <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: false }))} 
-                                            className={`touch-btn py-2.5 rounded-lg font-medium text-sm ${detailsForm.hasLabel === false ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                            className={`touch-btn py-4 rounded-2xl font-bold text-lg ${detailsForm.hasLabel === false ? 'btn-danger' : 'bg-slate-100 text-slate-600'}`}>
                                             ✗ Нет
                                         </button>
                                     </div>
@@ -1093,82 +1145,85 @@
                                 <AutocompleteInput label="Ответственный" value={detailsForm.responsible} onChange={v => setDetailsForm(prev => ({ ...prev, responsible: v }))} suggestions={directories.people} placeholder="ФИО" />
 
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500 mb-1">Заметки</label>
+                                    <label className="block text-sm font-bold text-slate-500 mb-2">Заметки</label>
                                     <textarea value={detailsForm.inventoryNote} onChange={e => setDetailsForm(prev => ({ ...prev, inventoryNote: e.target.value }))}
-                                        placeholder="..." rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none" />
+                                        placeholder="..." rows={3} className="w-full input-modern resize-none" />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-2 pt-3 border-t border-gray-100">
-                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openEditModal(detailsModal.item); }} className="touch-btn py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium text-sm">
-                                        Редактировать
+                                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
+                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openEditModal(detailsModal.item); }} className="touch-btn py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold text-base">
+                                        ✏️ Редактировать
                                     </button>
-                                    <button onClick={() => handleWriteOff(detailsModal.item)} className="touch-btn py-2.5 bg-red-100 text-red-600 rounded-lg font-medium text-sm">
-                                        Списать
+                                    <button onClick={() => handleWriteOff(detailsModal.item)} className="touch-btn py-4 bg-red-50 text-red-500 rounded-2xl font-bold text-base">
+                                        📝 Списать
                                     </button>
                                 </div>
 
-                                <button onClick={saveDetails} className="touch-btn w-full py-3 bg-blue-600 text-white rounded-lg font-medium">
-                                    Сохранить
+                                <button onClick={saveDetails} className="touch-btn w-full py-4 btn-primary rounded-2xl text-lg font-bold">
+                                    💾 Сохранить
                                 </button>
                             </div>
                         )}
                     </Modal>
 
-                    <Modal isOpen={editModal.open} onClose={() => setEditModal({ open: false, item: null, isNew: false })} title={editModal.isNew ? 'Добавить' : 'Редактировать'} size="md">
-                        <div className="space-y-3">
+                    <Modal isOpen={editModal.open} onClose={() => setEditModal({ open: false, item: null, isNew: false })} title={editModal.isNew ? 'Новое оборудование' : 'Редактирование'} size="md">
+                        <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1">Название *</label>
+                                <label className="block text-sm font-bold text-slate-500 mb-2">Название *</label>
                                 <input type="text" value={editForm.name} onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                                    placeholder="Название" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                                    placeholder="Название оборудования" className="w-full input-modern" />
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500 mb-1">Инв. номер *</label>
+                                    <label className="block text-sm font-bold text-slate-500 mb-2">Инв. номер *</label>
                                     <input type="text" value={editForm.invNumber} onChange={e => setEditForm(prev => ({ ...prev, invNumber: e.target.value }))}
-                                        placeholder="№" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                                        placeholder="№" className="w-full input-modern font-mono" />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500 mb-1">Дата</label>
+                                    <label className="block text-sm font-bold text-slate-500 mb-2">Дата</label>
                                     <input type="text" value={editForm.date} onChange={e => setEditForm(prev => ({ ...prev, date: e.target.value }))}
-                                        placeholder="ДД.ММ.ГГГГ" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                                        placeholder="ДД.ММ.ГГГГ" className="w-full input-modern" />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1">Категория *</label>
+                                <label className="block text-sm font-bold text-slate-500 mb-2">Категория *</label>
                                 <select value={editForm.category} onChange={e => setEditForm(prev => ({ ...prev, category: e.target.value }))}
-                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm">
+                                    className="w-full input-modern">
                                     <option value="">Выберите...</option>
                                     {categories.filter(c => c !== 'Все оборудование').map(cat => <option key={cat} value={cat}>{cat}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1">Новая категория</label>
+                                <label className="block text-sm font-bold text-slate-500 mb-2">Новая категория</label>
                                 <input type="text" value={editForm.newCategory} onChange={e => setEditForm(prev => ({ ...prev, newCategory: e.target.value }))}
-                                    placeholder="Или введите новую" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                                    placeholder="Или введите новую" className="w-full input-modern" />
                             </div>
-                            <div className="flex gap-2 pt-3">
-                                <button onClick={() => setEditModal({ open: false, item: null, isNew: false })} className="touch-btn flex-1 py-3 bg-gray-100 text-gray-600 rounded-lg font-medium">Отмена</button>
-                                <button onClick={saveEdit} className="touch-btn flex-1 py-3 bg-blue-600 text-white rounded-lg font-medium">Сохранить</button>
+                            <div className="flex gap-3 pt-4">
+                                <button onClick={() => setEditModal({ open: false, item: null, isNew: false })} className="touch-btn flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-base">Отмена</button>
+                                <button onClick={saveEdit} className="touch-btn flex-1 py-4 btn-primary rounded-2xl font-bold text-base">Сохранить</button>
                             </div>
                         </div>
                     </Modal>
 
                     <Modal isOpen={quickSearchModal.open} onClose={() => setQuickSearchModal({ open: false, query: '' })} title="Быстрый поиск" size="md">
                         <input type="text" value={quickSearchModal.query} onChange={e => setQuickSearchModal(prev => ({ ...prev, query: e.target.value }))}
-                            placeholder="Номер или название..." className="w-full px-4 py-3 border border-gray-200 rounded-lg font-mono mb-4" autoFocus />
-                        <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
+                            placeholder="Номер или название..." className="w-full input-modern font-mono mb-5" autoFocus />
+                        <div className="max-h-72 overflow-y-auto border-2 border-slate-100 rounded-2xl">
                             {quickSearchResults.length === 0 ? (
-                                <div className="p-8 text-center text-gray-400 text-sm">Начните вводить...</div>
+                                <div className="p-10 text-center text-slate-400">
+                                    <div className="text-4xl mb-2">🔍</div>
+                                    <p className="text-base font-semibold">Начните вводить...</p>
+                                </div>
                             ) : (
                                 quickSearchResults.map(item => (
                                     <button key={item.id} onClick={() => { setQuickSearchModal({ open: false, query: '' }); openDetails(item); }}
-                                        className={`w-full text-left p-3 border-b border-gray-50 hover:bg-gray-50 flex items-center gap-3 ${item.checked ? 'bg-green-50' : item.writeOff ? 'bg-red-50' : ''}`}>
-                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${item.writeOff ? 'bg-red-500 text-white' : item.checked ? 'bg-green-500 text-white' : 'bg-amber-100 text-amber-600'}`}>
+                                        className={`w-full text-left p-4 border-b border-slate-50 hover:bg-slate-50 flex items-center gap-4 ${item.checked ? 'bg-emerald-50' : item.writeOff ? 'bg-red-50' : ''}`}>
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold ${item.writeOff ? 'bg-red-500 text-white' : item.checked ? 'bg-emerald-500 text-white' : 'bg-amber-100 text-amber-600'}`}>
                                             {item.writeOff ? '📝' : item.checked ? '✓' : '⏳'}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="font-mono font-semibold text-blue-600 text-sm">{item.invNumber}</div>
-                                            <div className="text-xs text-gray-500 truncate">{item.name}</div>
+                                            <div className="font-mono font-black text-blue-600 text-base">{item.invNumber}</div>
+                                            <div className="text-base font-medium text-slate-500 truncate">{item.name}</div>
                                         </div>
                                     </button>
                                 ))
@@ -1176,42 +1231,42 @@
                         </div>
                     </Modal>
 
-                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '' })} title="Кабинеты" size="sm">
-                        <div className="flex gap-2 mb-4">
+                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '' })} title="🏢 Кабинеты" size="sm">
+                        <div className="flex gap-3 mb-5">
                             <input type="text" value={roomsModal.newRoom} onChange={e => setRoomsModal(prev => ({ ...prev, newRoom: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && addToDirectory('rooms', roomsModal.newRoom)}
-                                placeholder="Новый кабинет..." className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
-                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="touch-btn px-4 py-2.5 bg-green-600 text-white rounded-lg font-bold">+</button>
+                                placeholder="Новый кабинет..." className="flex-1 input-modern" />
+                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="touch-btn w-14 h-14 btn-success rounded-2xl text-2xl font-black">+</button>
                         </div>
-                        <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+                        <div className="max-h-56 overflow-y-auto border-2 border-slate-100 rounded-2xl">
                             {directories.rooms.length === 0 ? (
-                                <div className="p-6 text-center text-gray-400 text-sm">Пусто</div>
+                                <div className="p-8 text-center text-slate-400 text-base font-semibold">Пусто</div>
                             ) : (
                                 directories.rooms.map((room, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 p-3 border-b border-gray-50">
-                                        <span className="flex-1 text-sm">{room}</span>
-                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="touch-btn p-2 bg-red-100 text-red-600 rounded-lg text-xs">🗑️</button>
+                                    <div key={idx} className="flex items-center gap-3 p-4 border-b border-slate-50">
+                                        <span className="flex-1 text-base font-semibold">{room}</span>
+                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="touch-btn w-10 h-10 bg-red-50 text-red-500 rounded-xl text-lg">🗑️</button>
                                     </div>
                                 ))
                             )}
                         </div>
                     </Modal>
 
-                    <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="Сотрудники" size="sm">
-                        <div className="flex gap-2 mb-4">
+                    <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="👥 Сотрудники" size="sm">
+                        <div className="flex gap-3 mb-5">
                             <input type="text" value={peopleModal.newPerson} onChange={e => setPeopleModal(prev => ({ ...prev, newPerson: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && addToDirectory('people', peopleModal.newPerson)}
-                                placeholder="Новое ФИО..." className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
-                            <button onClick={() => addToDirectory('people', peopleModal.newPerson)} className="touch-btn px-4 py-2.5 bg-green-600 text-white rounded-lg font-bold">+</button>
+                                placeholder="Новое ФИО..." className="flex-1 input-modern" />
+                            <button onClick={() => addToDirectory('people', peopleModal.newPerson)} className="touch-btn w-14 h-14 btn-success rounded-2xl text-2xl font-black">+</button>
                         </div>
-                        <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+                        <div className="max-h-56 overflow-y-auto border-2 border-slate-100 rounded-2xl">
                             {directories.people.length === 0 ? (
-                                <div className="p-6 text-center text-gray-400 text-sm">Пусто</div>
+                                <div className="p-8 text-center text-slate-400 text-base font-semibold">Пусто</div>
                             ) : (
                                 directories.people.map((person, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 p-3 border-b border-gray-50">
-                                        <span className="flex-1 text-sm">{person}</span>
-                                        <button onClick={() => removeFromDirectory('people', idx)} className="touch-btn p-2 bg-red-100 text-red-600 rounded-lg text-xs">🗑️</button>
+                                    <div key={idx} className="flex items-center gap-3 p-4 border-b border-slate-50">
+                                        <span className="flex-1 text-base font-semibold">{person}</span>
+                                        <button onClick={() => removeFromDirectory('people', idx)} className="touch-btn w-10 h-10 bg-red-50 text-red-500 rounded-xl text-lg">🗑️</button>
                                     </div>
                                 ))
                             )}
@@ -1221,24 +1276,24 @@
                     <Modal isOpen={notesModal.open} onClose={() => setNotesModal({ open: false })} title="📝 Все заметки" size="lg">
                         <div className="max-h-96 overflow-y-auto">
                             {equipment.filter(i => i.inventoryNote?.trim()).length === 0 ? (
-                                <div className="p-8 text-center text-gray-400">
-                                    <div className="text-3xl mb-2">📝</div>
-                                    <p className="text-sm">Заметок пока нет</p>
+                                <div className="p-12 text-center text-slate-400">
+                                    <div className="text-5xl mb-3">📝</div>
+                                    <p className="text-lg font-bold">Заметок пока нет</p>
                                 </div>
                             ) : (
-                                <div className="space-y-3">
+                                <div className="space-y-4">
                                     {equipment.filter(i => i.inventoryNote?.trim()).map(item => (
                                         <button key={item.id} onClick={() => { setNotesModal({ open: false }); openDetails(item); }}
-                                            className="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs font-mono">{item.invNumber}</span>
-                                                <span className={`px-2 py-0.5 rounded text-xs font-medium ${item.writeOff ? 'bg-red-100 text-red-600' : item.checked ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>
+                                            className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl transition-colors">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span className="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm font-bold font-mono">{item.invNumber}</span>
+                                                <span className={`px-3 py-1 rounded-lg text-sm font-bold ${item.writeOff ? 'bg-red-100 text-red-600' : item.checked ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
                                                     {item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает'}
                                                 </span>
                                             </div>
-                                            <p className="text-sm font-medium text-gray-800 mb-1 line-clamp-1">{item.name}</p>
-                                            <p className="text-xs text-gray-600 bg-white p-2 rounded border border-gray-200">{item.inventoryNote}</p>
-                                            {item.location && <p className="text-xs text-gray-400 mt-1">📍 {item.location}</p>}
+                                            <p className="text-base font-bold text-slate-800 mb-2 line-clamp-1">{item.name}</p>
+                                            <p className="text-base text-slate-600 bg-white p-3 rounded-xl border border-slate-200">{item.inventoryNote}</p>
+                                            {item.location && <p className="text-sm font-semibold text-slate-400 mt-2">📍 {item.location}</p>}
                                         </button>
                                     ))}
                                 </div>
