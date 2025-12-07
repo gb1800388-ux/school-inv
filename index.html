@@ -120,6 +120,35 @@
             color: #c53030;
         }
         
+        /* Building colors */
+        .building-nansen {
+            border-left-color: #3182ce !important;
+        }
+        .building-botanica {
+            border-left-color: #38a169 !important;
+        }
+        .building-unknown {
+            border-left-color: #a0aec0 !important;
+        }
+        
+        /* Building badges */
+        .building-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .building-badge-nansen {
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+        .building-badge-botanica {
+            background: #f0fff4;
+            color: #276749;
+        }
+        
         /* Category colors */
         .cat-audio { border-left-color: #805ad5; }
         .cat-interactive { border-left-color: #3182ce; }
@@ -264,11 +293,8 @@
             will-change: transform;
         }
         
-        /* Category dropdown */
-        .category-dropdown {
-            position: relative;
-        }
-        .category-dropdown-btn {
+        /* Dropdown base */
+        .dropdown-btn {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -281,22 +307,20 @@
             color: #2d3748;
             cursor: pointer;
             transition: all 0.15s ease;
-            min-width: 180px;
-            max-width: 280px;
+            min-width: 140px;
         }
-        .category-dropdown-btn:hover {
+        .dropdown-btn:hover {
             background: #edf2f7;
             border-color: #cbd5e0;
         }
-        .category-dropdown-btn.open {
+        .dropdown-btn.open {
             border-color: #3182ce;
             box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
         }
-        .category-dropdown-menu {
+        .dropdown-menu {
             position: absolute;
             top: 100%;
             left: 0;
-            right: 0;
             margin-top: 4px;
             background: white;
             border: 1px solid #e2e8f0;
@@ -306,12 +330,13 @@
             max-height: 320px;
             overflow-y: auto;
             animation: dropdownIn 0.15s ease-out;
+            min-width: 200px;
         }
         @keyframes dropdownIn {
             from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .category-dropdown-item {
+        .dropdown-item {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -322,21 +347,21 @@
             border-bottom: 1px solid #f7fafc;
             transition: background 0.1s ease;
         }
-        .category-dropdown-item:last-child {
+        .dropdown-item:last-child {
             border-bottom: none;
         }
-        .category-dropdown-item:hover {
+        .dropdown-item:hover {
             background: #f7fafc;
         }
-        .category-dropdown-item.active {
+        .dropdown-item.active {
             background: #ebf8ff;
             color: #2b6cb0;
             font-weight: 700;
         }
-        .category-dropdown-item .cat-icon {
+        .dropdown-item .item-icon {
             font-size: 1.125rem;
         }
-        .category-dropdown-item .cat-count {
+        .dropdown-item .item-count {
             margin-left: auto;
             padding: 2px 8px;
             background: #e2e8f0;
@@ -344,26 +369,62 @@
             font-size: 0.75rem;
             font-weight: 600;
         }
-        .category-dropdown-item.active .cat-count {
+        .dropdown-item.active .item-count {
             background: #bee3f8;
         }
         
-        /* Mobile category button */
+        /* Building selector in sidebar */
+        .building-selector {
+            display: flex;
+            gap: 4px;
+            padding: 2px;
+            background: #edf2f7;
+            border-radius: 8px;
+        }
+        .building-selector-btn {
+            flex: 1;
+            padding: 8px 4px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            background: transparent;
+            color: #718096;
+        }
+        .building-selector-btn:hover {
+            color: #4a5568;
+        }
+        .building-selector-btn.active {
+            background: white;
+            color: #2d3748;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .building-selector-btn.nansen.active {
+            background: #3182ce;
+            color: white;
+        }
+        .building-selector-btn.botanica.active {
+            background: #38a169;
+            color: white;
+        }
+        
+        /* Mobile dropdown adaptations */
         @media (max-width: 768px) {
-            .category-dropdown-btn {
+            .dropdown-btn {
                 min-width: unset;
-                max-width: unset;
                 padding: 8px 10px;
             }
-            .category-dropdown-btn .cat-name {
-                max-width: 100px;
+            .dropdown-btn .btn-name {
+                max-width: 80px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
-            .category-dropdown-menu {
-                min-width: 260px;
-                right: auto;
+            .dropdown-menu {
+                min-width: 220px;
             }
         }
     </style>
@@ -392,24 +453,32 @@
             Menu: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>,
             Check: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>,
             Clock: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+            ChevronDown: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>,
         };
 
-        // Initial data
+        // Buildings config
+        const buildingsConfig = {
+            "Нансена": { icon: "🏫", color: "#3182ce", colorClass: "nansen" },
+            "Ботаничка": { icon: "🏢", color: "#38a169", colorClass: "botanica" },
+        };
+        const buildingsList = ["Все здания", "Нансена", "Ботаничка", "Не указано"];
+
+        // Initial data with building field
         const initialEquipment = [
-            {id:"item_0",name:"МФУ групповое, цветное OKI MC563dn",invNumber:"1101340057",date:"29.12.2017",note:"оргтехника",category:"Принтеры и МФУ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_1",name:"Принтер групповой Epson WorkForce Pro WF-M5190DW",invNumber:"1101340077",date:"22.03.2018",note:"оргтехника",category:"Принтеры и МФУ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_2",name:"Акустическая система для аудитории",invNumber:"1101340084",date:"30.03.2018",note:"оргтехника",category:"Аудиооборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_3",name:"Акустическая система для аудитории",invNumber:"1101340095",date:"30.03.2018",note:"оргтехника",category:"Аудиооборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_4",name:"Интерактивное устройство IRBIS",invNumber:"0101340042",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_5",name:"Интерактивное устройство IRBIS",invNumber:"0101340043",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_415",name:"Интерактивная панель 86 дюймов",invNumber:"БД-50",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_416",name:"Интерактивная панель 86 дюймов",invNumber:"БД-51",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_417",name:"Интерактивная панель 86 дюймов",invNumber:"БД-52",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_418",name:"Интерактивная панель 86 дюймов",invNumber:"БД-53",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_419",name:"Интерактивная панель 86 дюймов",invNumber:"БД-54",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_420",name:"Интерактивная панель 86 дюймов",invNumber:"БД-55",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_421",name:"Интерактивная панель 86 дюймов",invNumber:"БД-56",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_422",name:"Интерактивная панель ICL InfoRay",invNumber:"БД-57",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_0",name:"МФУ групповое, цветное OKI MC563dn",invNumber:"1101340057",date:"29.12.2017",note:"оргтехника",category:"Принтеры и МФУ",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_1",name:"Принтер групповой Epson WorkForce Pro WF-M5190DW",invNumber:"1101340077",date:"22.03.2018",note:"оргтехника",category:"Принтеры и МФУ",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_2",name:"Акустическая система для аудитории",invNumber:"1101340084",date:"30.03.2018",note:"оргтехника",category:"Аудиооборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_3",name:"Акустическая система для аудитории",invNumber:"1101340095",date:"30.03.2018",note:"оргтехника",category:"Аудиооборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_4",name:"Интерактивное устройство IRBIS",invNumber:"0101340042",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_5",name:"Интерактивное устройство IRBIS",invNumber:"0101340043",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_415",name:"Интерактивная панель 86 дюймов",invNumber:"БД-50",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_416",name:"Интерактивная панель 86 дюймов",invNumber:"БД-51",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_417",name:"Интерактивная панель 86 дюймов",invNumber:"БД-52",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_418",name:"Интерактивная панель 86 дюймов",invNumber:"БД-53",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_419",name:"Интерактивная панель 86 дюймов",invNumber:"БД-54",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_420",name:"Интерактивная панель 86 дюймов",invNumber:"БД-55",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_421",name:"Интерактивная панель 86 дюймов",invNumber:"БД-56",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_422",name:"Интерактивная панель ICL InfoRay",invNumber:"БД-57",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
         ];
 
         // Category config
@@ -469,7 +538,7 @@
         );
 
         // Filter Panel
-        const FilterPanel = ({ isOpen, onClose, stats, categories, activeCategory, setActiveCategory, activeFilter, setActiveFilter }) => {
+        const FilterPanel = ({ isOpen, onClose, stats, categories, activeCategory, setActiveCategory, activeFilter, setActiveFilter, activeBuilding, setActiveBuilding }) => {
             const percent = stats.total > 0 ? Math.round((stats.checked / stats.total) * 100) : 0;
 
             return (
@@ -483,6 +552,29 @@
                         <div className="p-4 border-b border-gray-100">
                             <h1 className="text-base font-bold text-gray-900">Инвентаризация</h1>
                             <p className="text-xs text-gray-500">ГКОУ СКОШИ №102</p>
+                        </div>
+
+                        {/* Building selector */}
+                        <div className="p-3 border-b border-gray-100">
+                            <div className="text-xs font-semibold text-gray-400 uppercase mb-2">Здание</div>
+                            <div className="building-selector">
+                                <button onClick={() => { setActiveBuilding('Все здания'); onClose(); }}
+                                    className={`building-selector-btn ${activeBuilding === 'Все здания' ? 'active' : ''}`}>
+                                    Все
+                                </button>
+                                <button onClick={() => { setActiveBuilding('Нансена'); onClose(); }}
+                                    className={`building-selector-btn nansen ${activeBuilding === 'Нансена' ? 'active' : ''}`}>
+                                    🏫 Нансена
+                                </button>
+                                <button onClick={() => { setActiveBuilding('Ботаничка'); onClose(); }}
+                                    className={`building-selector-btn botanica ${activeBuilding === 'Ботаничка' ? 'active' : ''}`}>
+                                    🏢 Ботаничка
+                                </button>
+                            </div>
+                            <button onClick={() => { setActiveBuilding('Не указано'); onClose(); }}
+                                className={`w-full mt-2 py-2 text-xs rounded-lg transition-all ${activeBuilding === 'Не указано' ? 'bg-gray-200 text-gray-700 font-bold' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>
+                                ❓ Не указано ({stats.noBuilding})
+                            </button>
                         </div>
 
                         <div className="p-4 border-b border-gray-100">
@@ -573,15 +665,26 @@
             const isProcessed = item.checked || item.writeOff;
             const hasNote = !!item.inventoryNote?.trim();
             const config = categoryConfig[item.category] || defaultCatConfig;
+            const buildingConfig = buildingsConfig[item.building];
+
+            // Building-based border color
+            const getBuildingBorderClass = () => {
+                if (item.writeOff) return 'border-l-red-500';
+                if (item.checked) return 'border-l-green-500';
+                if (item.building === 'Нансена') return 'building-nansen';
+                if (item.building === 'Ботаничка') return 'building-botanica';
+                return 'building-unknown';
+            };
 
             const infoParts = [];
-            if (item.location) infoParts.push(`📍 ${item.location}`);
-            if (item.responsible) infoParts.push(`👤 ${item.responsible}`);
-            if (item.serialNumber) infoParts.push(`S/N: ${item.serialNumber}`);
+            if (item.building) infoParts.push({ icon: buildingConfig?.icon || '🏢', text: item.building });
+            if (item.floor) infoParts.push({ icon: '🔢', text: `${item.floor} эт.` });
+            if (item.location) infoParts.push({ icon: '📍', text: item.location });
+            if (item.responsible) infoParts.push({ icon: '👤', text: item.responsible });
+            if (item.serialNumber) infoParts.push({ icon: '🔖', text: `S/N: ${item.serialNumber}` });
 
             return (
-                <div className={`equipment-card bg-white rounded-xl p-4 card-shadow border-l-4 transition-all
-                    ${item.writeOff ? 'border-l-red-500' : item.checked ? 'border-l-green-500' : 'border-l-gray-300'}`}>
+                <div className={`equipment-card bg-white rounded-xl p-4 card-shadow border-l-4 transition-all ${getBuildingBorderClass()}`}>
                     
                     {hasNote && <div className="note-indicator" title="Есть заметка" />}
                     
@@ -593,6 +696,11 @@
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap mb-1">
                                 <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-mono font-bold">{item.invNumber}</span>
+                                {item.building && (
+                                    <span className={`building-badge ${item.building === 'Нансена' ? 'building-badge-nansen' : 'building-badge-botanica'}`}>
+                                        {item.building === 'Нансена' ? '🏫' : '🏢'} {item.building}
+                                    </span>
+                                )}
                                 {item.isUserAdded && <span title="Новое" className="w-2 h-2 bg-blue-500 rounded-full" />}
                                 {item.hasLabel === false && <span title="Без бирки" className="w-2 h-2 bg-amber-500 rounded-full" />}
                             </div>
@@ -604,12 +712,13 @@
                         <span className={`status-badge ${item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending'}`}>
                             {item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает'}
                         </span>
-                        {infoParts.length > 0 && (
-                            <span className="text-gray-400">•</span>
+                        {(item.floor || item.location) && (
+                            <>
+                                <span className="text-gray-400">•</span>
+                                {item.floor && <span>🔢 {item.floor} эт.</span>}
+                                {item.location && <span>📍 {item.location}</span>}
+                            </>
                         )}
-                        {infoParts.map((part, idx) => (
-                            <span key={idx}>{part}</span>
-                        ))}
                     </div>
 
                     <div className="flex gap-2 pt-3 border-t border-gray-100">
@@ -629,6 +738,62 @@
                 </div>
             );
         });
+
+        // Dropdown Component
+        const Dropdown = ({ value, options, onChange, icon, placeholder }) => {
+            const [isOpen, setIsOpen] = useState(false);
+            const dropdownRef = useRef(null);
+            
+            useEffect(() => {
+                const handleClickOutside = (e) => {
+                    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                        setIsOpen(false);
+                    }
+                };
+                if (isOpen) {
+                    document.addEventListener('mousedown', handleClickOutside);
+                    document.addEventListener('touchstart', handleClickOutside);
+                }
+                return () => {
+                    document.removeEventListener('mousedown', handleClickOutside);
+                    document.removeEventListener('touchstart', handleClickOutside);
+                };
+            }, [isOpen]);
+            
+            const currentOption = options.find(o => o.value === value) || options[0];
+            
+            return (
+                <div className="relative" ref={dropdownRef}>
+                    <button 
+                        className={`dropdown-btn ${isOpen ? 'open' : ''}`}
+                        onClick={() => setIsOpen(!isOpen)}
+                    >
+                        {currentOption?.icon && <span className="item-icon">{currentOption.icon}</span>}
+                        <span className="btn-name flex-1 text-left truncate">{currentOption?.label || placeholder}</span>
+                        {currentOption?.count !== undefined && (
+                            <span className="item-count">{currentOption.count}</span>
+                        )}
+                        <Icons.ChevronDown />
+                    </button>
+                    
+                    {isOpen && (
+                        <div className="dropdown-menu custom-scroll">
+                            {options.map(opt => (
+                                <div
+                                    key={opt.value}
+                                    className={`dropdown-item ${value === opt.value ? 'active' : ''}`}
+                                    onClick={() => { onChange(opt.value); setIsOpen(false); }}
+                                >
+                                    {opt.icon && <span className="item-icon">{opt.icon}</span>}
+                                    <span className="flex-1 truncate">{opt.label}</span>
+                                    {opt.count !== undefined && <span className="item-count">{opt.count}</span>}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        };
 
         // Modal
         const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
@@ -678,70 +843,6 @@
             );
         };
 
-        // Category Dropdown Component
-        const CategoryDropdown = ({ categories, activeCategory, setActiveCategory, stats }) => {
-            const [isOpen, setIsOpen] = useState(false);
-            const dropdownRef = useRef(null);
-            
-            useEffect(() => {
-                const handleClickOutside = (e) => {
-                    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-                        setIsOpen(false);
-                    }
-                };
-                if (isOpen) {
-                    document.addEventListener('mousedown', handleClickOutside);
-                    document.addEventListener('touchstart', handleClickOutside);
-                }
-                return () => {
-                    document.removeEventListener('mousedown', handleClickOutside);
-                    document.removeEventListener('touchstart', handleClickOutside);
-                };
-            }, [isOpen]);
-            
-            const currentConfig = categoryConfig[activeCategory] || defaultCatConfig;
-            const currentIcon = activeCategory === 'Все оборудование' ? '📋' : currentConfig.icon;
-            const currentCount = activeCategory === 'Все оборудование' ? stats.total : stats.byCategory[activeCategory] || 0;
-            
-            return (
-                <div className="category-dropdown" ref={dropdownRef}>
-                    <button 
-                        className={`category-dropdown-btn ${isOpen ? 'open' : ''}`}
-                        onClick={() => setIsOpen(!isOpen)}
-                    >
-                        <span className="cat-icon">{currentIcon}</span>
-                        <span className="cat-name flex-1 text-left truncate">{activeCategory}</span>
-                        <span className="cat-count">{currentCount}</span>
-                        <svg className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    
-                    {isOpen && (
-                        <div className="category-dropdown-menu custom-scroll">
-                            {categories.map(cat => {
-                                const config = categoryConfig[cat] || defaultCatConfig;
-                                const icon = cat === 'Все оборудование' ? '📋' : config.icon;
-                                const count = cat === 'Все оборудование' ? stats.total : stats.byCategory[cat] || 0;
-                                
-                                return (
-                                    <div
-                                        key={cat}
-                                        className={`category-dropdown-item ${activeCategory === cat ? 'active' : ''}`}
-                                        onClick={() => { setActiveCategory(cat); setIsOpen(false); }}
-                                    >
-                                        <span className="cat-icon">{icon}</span>
-                                        <span className="flex-1 truncate">{cat}</span>
-                                        <span className="cat-count">{count}</span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
         // Autocomplete Input
         const AutocompleteInput = ({ value, onChange, suggestions, placeholder, label }) => {
             const [showDropdown, setShowDropdown] = useState(false);
@@ -757,7 +858,7 @@
                         onFocus={() => setShowDropdown(true)} onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                         placeholder={placeholder} className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
                     {showDropdown && filtered.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-40 overflow-y-auto">
                             {filtered.map((item, idx) => (
                                 <button key={idx} type="button" onMouseDown={() => { onChange(item); setShowDropdown(false); }}
                                     className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm border-b border-gray-50 last:border-0">
@@ -776,7 +877,7 @@
             
             const [equipment, setEquipment] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('inv_102_data_v11');
+                    const saved = localStorage.getItem('inv_102_data_v12');
                     if (saved) {
                         const parsed = JSON.parse(saved);
                         return initialEquipment.map(item => {
@@ -790,14 +891,20 @@
 
             const [directories, setDirectories] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('inv_102_dirs_v11');
-                    return saved ? JSON.parse(saved) : { rooms: [], people: [] };
-                } catch (e) { return { rooms: [], people: [] }; }
+                    const saved = localStorage.getItem('inv_102_dirs_v12');
+                    return saved ? JSON.parse(saved) : { 
+                        rooms: [], 
+                        people: [],
+                        // Rooms now have building association
+                        roomsWithBuilding: []
+                    };
+                } catch (e) { return { rooms: [], people: [], roomsWithBuilding: [] }; }
             });
 
             const [sidebarOpen, setSidebarOpen] = useState(false);
             const [activeCategory, setActiveCategory] = useState('Все оборудование');
             const [activeFilter, setActiveFilter] = useState('all');
+            const [activeBuilding, setActiveBuilding] = useState('Все здания');
             const [searchQuery, setSearchQuery] = useState('');
             const [toast, setToast] = useState({ visible: false, message: '' });
             const [confirmModal, setConfirmModal] = useState({ open: false, title: '', message: '', onConfirm: null });
@@ -806,16 +913,16 @@
             const [labelModal, setLabelModal] = useState({ open: false, item: null });
             const [serialModal, setSerialModal] = useState({ open: false, item: null, serial: '' });
             const [quickSearchModal, setQuickSearchModal] = useState({ open: false, query: '' });
-            const [roomsModal, setRoomsModal] = useState({ open: false, newRoom: '' });
+            const [roomsModal, setRoomsModal] = useState({ open: false, newRoom: '', newRoomBuilding: 'Нансена' });
             const [peopleModal, setPeopleModal] = useState({ open: false, newPerson: '' });
             const [infoModal, setInfoModal] = useState({ open: false });
             const [notesModal, setNotesModal] = useState({ open: false });
 
-            const [detailsForm, setDetailsForm] = useState({ serialNumber: '', location: '', responsible: '', inventoryNote: '', hasLabel: null });
-            const [editForm, setEditForm] = useState({ name: '', invNumber: '', date: '', category: '', newCategory: '', note: '' });
+            const [detailsForm, setDetailsForm] = useState({ serialNumber: '', location: '', responsible: '', inventoryNote: '', hasLabel: null, building: '', floor: '' });
+            const [editForm, setEditForm] = useState({ name: '', invNumber: '', date: '', category: '', newCategory: '', note: '', building: '', floor: '' });
 
-            useEffect(() => { localStorage.setItem('inv_102_data_v11', JSON.stringify(equipment)); }, [equipment]);
-            useEffect(() => { localStorage.setItem('inv_102_dirs_v11', JSON.stringify(directories)); }, [directories]);
+            useEffect(() => { localStorage.setItem('inv_102_data_v12', JSON.stringify(equipment)); }, [equipment]);
+            useEffect(() => { localStorage.setItem('inv_102_dirs_v12', JSON.stringify(directories)); }, [directories]);
 
             const stats = useMemo(() => ({
                 total: equipment.length,
@@ -826,7 +933,13 @@
                 withSerial: equipment.filter(i => i.serialNumber?.trim()).length,
                 withNotes: equipment.filter(i => i.inventoryNote?.trim()).length,
                 new: equipment.filter(i => i.isUserAdded).length,
+                noBuilding: equipment.filter(i => !i.building).length,
                 byCategory: equipment.reduce((acc, i) => { acc[i.category] = (acc[i.category] || 0) + 1; return acc; }, {}),
+                byBuilding: equipment.reduce((acc, i) => { 
+                    const b = i.building || 'Не указано';
+                    acc[b] = (acc[b] || 0) + 1; 
+                    return acc; 
+                }, {}),
             }), [equipment]);
 
             const categories = useMemo(() => {
@@ -834,7 +947,20 @@
                 return ['Все оборудование', ...others];
             }, [equipment]);
 
+            // Get rooms filtered by current building selection in details form
+            const filteredRooms = useMemo(() => {
+                if (!detailsForm.building) return directories.rooms;
+                const roomsForBuilding = directories.roomsWithBuilding
+                    .filter(r => r.building === detailsForm.building)
+                    .map(r => r.name);
+                return roomsForBuilding.length > 0 ? roomsForBuilding : directories.rooms;
+            }, [directories, detailsForm.building]);
+
             const filteredEquipment = useMemo(() => equipment.filter(item => {
+                // Building filter
+                if (activeBuilding === 'Не указано' && item.building) return false;
+                if (activeBuilding !== 'Все здания' && activeBuilding !== 'Не указано' && item.building !== activeBuilding) return false;
+                
                 if (activeCategory !== 'Все оборудование' && item.category !== activeCategory) return false;
                 
                 switch (activeFilter) {
@@ -849,12 +975,12 @@
                 
                 if (searchQuery) {
                     const q = searchQuery.toLowerCase();
-                    const s = [item.invNumber, item.name, item.serialNumber, item.location, item.responsible].join(' ').toLowerCase();
+                    const s = [item.invNumber, item.name, item.serialNumber, item.location, item.responsible, item.building, item.floor].join(' ').toLowerCase();
                     if (!s.includes(q)) return false;
                 }
                 
                 return true;
-            }), [equipment, activeCategory, activeFilter, searchQuery]);
+            }), [equipment, activeCategory, activeFilter, activeBuilding, searchQuery]);
 
             const groupedEquipment = useMemo(() => filteredEquipment.reduce((acc, item) => {
                 const cat = item.category || 'Прочее';
@@ -863,12 +989,31 @@
                 return acc;
             }, {}), [filteredEquipment]);
 
+            // Dropdown options
+            const buildingOptions = useMemo(() => [
+                { value: 'Все здания', label: 'Все здания', icon: '🏛️', count: stats.total },
+                { value: 'Нансена', label: 'Нансена', icon: '🏫', count: stats.byBuilding['Нансена'] || 0 },
+                { value: 'Ботаничка', label: 'Ботаничка', icon: '🏢', count: stats.byBuilding['Ботаничка'] || 0 },
+                { value: 'Не указано', label: 'Не указано', icon: '❓', count: stats.noBuilding },
+            ], [stats]);
+
+            const categoryOptions = useMemo(() => [
+                { value: 'Все оборудование', label: 'Все оборудование', icon: '📋', count: stats.total },
+                ...categories.filter(c => c !== 'Все оборудование').map(cat => ({
+                    value: cat,
+                    label: cat,
+                    icon: categoryConfig[cat]?.icon || '📦',
+                    count: stats.byCategory[cat] || 0
+                }))
+            ], [categories, stats]);
+
             const showToast = useCallback((msg) => setToast({ visible: true, message: msg }), []);
             const showConfirm = useCallback((title, message, onConfirm) => setConfirmModal({ open: true, title, message, onConfirm }), []);
 
             const goHome = useCallback(() => {
                 setActiveCategory('Все оборудование');
                 setActiveFilter('all');
+                setActiveBuilding('Все здания');
                 setSearchQuery('');
                 setSidebarOpen(false);
                 contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -939,7 +1084,9 @@
                     location: item.location || '',
                     responsible: item.responsible || '',
                     inventoryNote: item.inventoryNote || '',
-                    hasLabel: item.hasLabel
+                    hasLabel: item.hasLabel,
+                    building: item.building || '',
+                    floor: item.floor || ''
                 });
                 setDetailsModal({ open: true, item });
             }, []);
@@ -948,9 +1095,20 @@
                 const item = detailsModal.item;
                 setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, ...detailsForm } : i));
                 
-                if (detailsForm.location && !directories.rooms.includes(detailsForm.location)) {
+                // Add room with building association
+                if (detailsForm.location && detailsForm.building) {
+                    const exists = directories.roomsWithBuilding.find(r => r.name === detailsForm.location && r.building === detailsForm.building);
+                    if (!exists) {
+                        setDirectories(prev => ({
+                            ...prev,
+                            roomsWithBuilding: [...prev.roomsWithBuilding, { name: detailsForm.location, building: detailsForm.building }],
+                            rooms: [...new Set([...prev.rooms, detailsForm.location])].sort((a, b) => a.localeCompare(b, 'ru'))
+                        }));
+                    }
+                } else if (detailsForm.location && !directories.rooms.includes(detailsForm.location)) {
                     setDirectories(prev => ({ ...prev, rooms: [...prev.rooms, detailsForm.location].sort((a, b) => a.localeCompare(b, 'ru')) }));
                 }
+                
                 if (detailsForm.responsible && !directories.people.includes(detailsForm.responsible)) {
                     setDirectories(prev => ({ ...prev, people: [...prev.people, detailsForm.responsible].sort((a, b) => a.localeCompare(b, 'ru')) }));
                 }
@@ -961,16 +1119,16 @@
 
             const openEditModal = useCallback((item = null) => {
                 if (item) {
-                    setEditForm({ name: item.name, invNumber: item.invNumber, date: item.date || '', category: item.category, newCategory: '', note: item.note || '' });
+                    setEditForm({ name: item.name, invNumber: item.invNumber, date: item.date || '', category: item.category, newCategory: '', note: item.note || '', building: item.building || '', floor: item.floor || '' });
                     setEditModal({ open: true, item, isNew: false });
                 } else {
-                    setEditForm({ name: '', invNumber: '', date: new Date().toLocaleDateString('ru-RU'), category: '', newCategory: '', note: '' });
+                    setEditForm({ name: '', invNumber: '', date: new Date().toLocaleDateString('ru-RU'), category: '', newCategory: '', note: '', building: '', floor: '' });
                     setEditModal({ open: true, item: null, isNew: true });
                 }
             }, []);
 
             const saveEdit = useCallback(() => {
-                const { name, invNumber, date, category, newCategory, note } = editForm;
+                const { name, invNumber, date, category, newCategory, note, building, floor } = editForm;
                 if (!name.trim()) { showToast('Введите название'); return; }
                 if (!invNumber.trim()) { showToast('Введите номер'); return; }
                 const finalCategory = newCategory.trim() || category;
@@ -982,24 +1140,39 @@
                 if (editModal.isNew) {
                     const newItem = {
                         id: 'item_' + Date.now(), name: name.trim(), invNumber: invNumber.trim(), date: date.trim(), category: finalCategory, note: note.trim(),
-                        checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', isUserAdded: true
+                        building: building, floor: floor, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', isUserAdded: true
                     };
                     setEquipment(prev => [...prev, newItem]);
                     showToast('Добавлено');
                 } else {
-                    setEquipment(prev => prev.map(i => i.id === editModal.item.id ? { ...i, name: name.trim(), invNumber: invNumber.trim(), date: date.trim(), category: finalCategory, note: note.trim() } : i));
+                    setEquipment(prev => prev.map(i => i.id === editModal.item.id ? { ...i, name: name.trim(), invNumber: invNumber.trim(), date: date.trim(), category: finalCategory, note: note.trim(), building, floor } : i));
                     showToast('Сохранено');
                 }
                 setEditModal({ open: false, item: null, isNew: false });
             }, [editForm, editModal, equipment, showToast]);
 
-            const addToDirectory = useCallback((type, value) => {
+            const addToDirectory = useCallback((type, value, building = null) => {
                 if (!value.trim()) return;
-                const key = type === 'rooms' ? 'rooms' : 'people';
-                if (directories[key].includes(value.trim())) { showToast('Уже существует'); return; }
-                setDirectories(prev => ({ ...prev, [key]: [...prev[key], value.trim()].sort((a, b) => a.localeCompare(b, 'ru')) }));
-                if (type === 'rooms') setRoomsModal(prev => ({ ...prev, newRoom: '' }));
-                else setPeopleModal(prev => ({ ...prev, newPerson: '' }));
+                
+                if (type === 'rooms') {
+                    if (building) {
+                        const exists = directories.roomsWithBuilding.find(r => r.name === value.trim() && r.building === building);
+                        if (exists) { showToast('Уже существует'); return; }
+                        setDirectories(prev => ({
+                            ...prev,
+                            roomsWithBuilding: [...prev.roomsWithBuilding, { name: value.trim(), building }],
+                            rooms: [...new Set([...prev.rooms, value.trim()])].sort((a, b) => a.localeCompare(b, 'ru'))
+                        }));
+                    } else {
+                        if (directories.rooms.includes(value.trim())) { showToast('Уже существует'); return; }
+                        setDirectories(prev => ({ ...prev, rooms: [...prev.rooms, value.trim()].sort((a, b) => a.localeCompare(b, 'ru')) }));
+                    }
+                    setRoomsModal(prev => ({ ...prev, newRoom: '' }));
+                } else {
+                    if (directories.people.includes(value.trim())) { showToast('Уже существует'); return; }
+                    setDirectories(prev => ({ ...prev, people: [...prev.people, value.trim()].sort((a, b) => a.localeCompare(b, 'ru')) }));
+                    setPeopleModal(prev => ({ ...prev, newPerson: '' }));
+                }
                 showToast('Добавлено');
             }, [directories, showToast]);
 
@@ -1007,26 +1180,34 @@
                 const key = type === 'rooms' ? 'rooms' : 'people';
                 const item = directories[key][idx];
                 showConfirm('Удалить?', item, () => {
-                    setDirectories(prev => ({ ...prev, [key]: prev[key].filter((_, i) => i !== idx) }));
+                    if (type === 'rooms') {
+                        setDirectories(prev => ({
+                            ...prev,
+                            rooms: prev.rooms.filter((_, i) => i !== idx),
+                            roomsWithBuilding: prev.roomsWithBuilding.filter(r => r.name !== item)
+                        }));
+                    } else {
+                        setDirectories(prev => ({ ...prev, [key]: prev[key].filter((_, i) => i !== idx) }));
+                    }
                     setConfirmModal(prev => ({ ...prev, open: false }));
                     showToast('Удалено');
                 });
             }, [directories, showConfirm, showToast]);
 
             const handleSave = () => showConfirm('Сохранить?', 'Сохранить все данные?', () => {
-                localStorage.setItem('inv_102_data_v11', JSON.stringify(equipment));
+                localStorage.setItem('inv_102_data_v12', JSON.stringify(equipment));
                 setConfirmModal(prev => ({ ...prev, open: false }));
                 showToast('💾 Сохранено');
             });
 
             const handleExportExcel = () => showConfirm('Excel?', 'Скачать CSV?', () => {
                 const BOM = '\uFEFF';
-                const headers = ['Инв.№', 'S/N', 'Название', 'Категория', 'Локация', 'Ответственный', 'Статус', 'Бирка', 'Заметка'];
+                const headers = ['Инв.№', 'S/N', 'Название', 'Категория', 'Здание', 'Этаж', 'Кабинет', 'Ответственный', 'Статус', 'Бирка', 'Заметка'];
                 let csv = BOM + headers.join(';') + '\n';
                 equipment.forEach(item => {
                     const status = item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает';
                     const label = item.hasLabel === true ? 'Есть' : item.hasLabel === false ? 'НЕТ' : '-';
-                    const row = [item.invNumber, item.serialNumber || '', item.name, item.category, item.location || '', item.responsible || '', status, label, item.inventoryNote || '']
+                    const row = [item.invNumber, item.serialNumber || '', item.name, item.category, item.building || '', item.floor || '', item.location || '', item.responsible || '', status, label, item.inventoryNote || '']
                         .map(f => `"${String(f).replace(/"/g, '""')}"`).join(';');
                     csv += row + '\n';
                 });
@@ -1078,7 +1259,8 @@
                         if (json.directories) {
                             setDirectories(prev => ({
                                 rooms: [...new Set([...prev.rooms, ...(json.directories.rooms || [])])].sort((a, b) => a.localeCompare(b, 'ru')),
-                                people: [...new Set([...prev.people, ...(json.directories.people || [])])].sort((a, b) => a.localeCompare(b, 'ru'))
+                                people: [...new Set([...prev.people, ...(json.directories.people || [])])].sort((a, b) => a.localeCompare(b, 'ru')),
+                                roomsWithBuilding: [...prev.roomsWithBuilding, ...(json.directories.roomsWithBuilding || [])]
                             }));
                         }
                         showToast(`📥 Импортировано: ${count}`);
@@ -1091,7 +1273,7 @@
             };
 
             const handleClearAll = () => showConfirm('Сбросить?', 'Удалить все данные?', () => {
-                setEquipment(prev => prev.map(i => ({ ...i, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', checkedAt: null })));
+                setEquipment(prev => prev.map(i => ({ ...i, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', building: '', floor: '', checkedAt: null })));
                 setConfirmModal(prev => ({ ...prev, open: false }));
                 showToast('🗑️ Сброшено');
             });
@@ -1099,7 +1281,7 @@
             const quickSearchResults = useMemo(() => {
                 if (!quickSearchModal.query) return [];
                 const q = quickSearchModal.query.toLowerCase();
-                return equipment.filter(item => [item.invNumber, item.name, item.serialNumber].join(' ').toLowerCase().includes(q)).slice(0, 20);
+                return equipment.filter(item => [item.invNumber, item.name, item.serialNumber, item.building, item.location].join(' ').toLowerCase().includes(q)).slice(0, 20);
             }, [quickSearchModal.query, equipment]);
 
             return (
@@ -1122,10 +1304,12 @@
                         setActiveCategory={setActiveCategory}
                         activeFilter={activeFilter}
                         setActiveFilter={setActiveFilter}
+                        activeBuilding={activeBuilding}
+                        setActiveBuilding={setActiveBuilding}
                     />
 
                     <main className="main-area flex-1 flex flex-col min-w-0 overflow-hidden">
-                        {/* Mobile header - only visible on mobile */}
+                        {/* Mobile header */}
                         <header className="mobile-header bg-white border-b border-gray-200 px-3 py-2.5 flex-col gap-2 flex-shrink-0">
                             <div className="flex items-center gap-2">
                                 <button onClick={() => setSidebarOpen(true)} className="touch-btn w-10 h-10 rounded-lg bg-gray-100 flex-shrink-0">
@@ -1141,16 +1325,12 @@
                                 </button>
                             </div>
                             <div className="flex items-center gap-2">
-                                <CategoryDropdown 
-                                    categories={categories}
-                                    activeCategory={activeCategory}
-                                    setActiveCategory={setActiveCategory}
-                                    stats={stats}
-                                />
+                                <Dropdown value={activeBuilding} options={buildingOptions} onChange={setActiveBuilding} />
+                                <Dropdown value={activeCategory} options={categoryOptions} onChange={setActiveCategory} />
                             </div>
                         </header>
 
-                        {/* Desktop header - only visible on desktop */}
+                        {/* Desktop header */}
                         <header className="desktop-header bg-white border-b border-gray-200 px-5 py-3 flex-shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="flex-1 relative max-w-sm">
@@ -1158,12 +1338,8 @@
                                     <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск..."
                                         className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none" />
                                 </div>
-                                <CategoryDropdown 
-                                    categories={categories}
-                                    activeCategory={activeCategory}
-                                    setActiveCategory={setActiveCategory}
-                                    stats={stats}
-                                />
+                                <Dropdown value={activeBuilding} options={buildingOptions} onChange={setActiveBuilding} />
+                                <Dropdown value={activeCategory} options={categoryOptions} onChange={setActiveCategory} />
                                 <div className="flex items-center gap-2 ml-auto">
                                     <button onClick={handleSave} className="touch-btn px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5">
                                         <Icons.Save /> <span className="hidden sm:inline">Сохранить</span>
@@ -1220,8 +1396,12 @@
                                 <span className="text-2xl">📋</span>
                             </div>
                             <h3 className="text-lg font-bold text-gray-800 mb-1">Инвентаризация</h3>
-                            <p className="text-sm text-gray-500 mb-4">ГКОУ СКОШИ №102</p>
-                            <p className="text-xs text-gray-400">Версия 4.0</p>
+                            <p className="text-sm text-gray-500 mb-2">ГКОУ СКОШИ №102</p>
+                            <div className="flex justify-center gap-4 text-xs text-gray-400 mb-4">
+                                <span>🏫 Нансена</span>
+                                <span>🏢 Ботаничка</span>
+                            </div>
+                            <p className="text-xs text-gray-400">Версия 5.0</p>
                         </div>
                     </Modal>
 
@@ -1249,7 +1429,7 @@
                         {detailsModal.item && (
                             <div className="space-y-4">
                                 <div className="p-3 bg-blue-50 rounded-lg">
-                                    <div className="flex items-center gap-2 mb-1">
+                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                                         <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs font-mono">{detailsModal.item.invNumber}</span>
                                         {detailsModal.item.isUserAdded && <span className="text-xs text-blue-600 font-semibold">Новое</span>}
                                     </div>
@@ -1271,8 +1451,36 @@
                                     </div>
                                 </div>
 
+                                {/* Building selection */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-500 mb-2">Здание</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button onClick={() => setDetailsForm(prev => ({ ...prev, building: 'Нансена' }))} 
+                                            className={`touch-btn py-2.5 rounded-lg font-semibold text-sm ${detailsForm.building === 'Нансена' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                            🏫 Нансена
+                                        </button>
+                                        <button onClick={() => setDetailsForm(prev => ({ ...prev, building: 'Ботаничка' }))} 
+                                            className={`touch-btn py-2.5 rounded-lg font-semibold text-sm ${detailsForm.building === 'Ботаничка' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                            🏢 Ботаничка
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Floor */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-500 mb-1">Этаж</label>
+                                    <div className="flex gap-2">
+                                        {['1', '2', '3', '4', '5'].map(f => (
+                                            <button key={f} onClick={() => setDetailsForm(prev => ({ ...prev, floor: f }))}
+                                                className={`touch-btn flex-1 py-2 rounded-lg font-semibold text-sm ${detailsForm.floor === f ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                                {f}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 <AutocompleteInput label="Серийный номер" value={detailsForm.serialNumber} onChange={v => setDetailsForm(prev => ({ ...prev, serialNumber: v }))} suggestions={[]} placeholder="S/N" />
-                                <AutocompleteInput label="Кабинет" value={detailsForm.location} onChange={v => setDetailsForm(prev => ({ ...prev, location: v }))} suggestions={directories.rooms} placeholder="Выберите" />
+                                <AutocompleteInput label="Кабинет" value={detailsForm.location} onChange={v => setDetailsForm(prev => ({ ...prev, location: v }))} suggestions={filteredRooms} placeholder="Номер кабинета" />
                                 <AutocompleteInput label="Ответственный" value={detailsForm.responsible} onChange={v => setDetailsForm(prev => ({ ...prev, responsible: v }))} suggestions={directories.people} placeholder="ФИО" />
 
                                 <div>
@@ -1316,6 +1524,22 @@
                                         placeholder="ДД.ММ.ГГГГ" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
                                 </div>
                             </div>
+                            
+                            {/* Building in edit form */}
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-500 mb-2">Здание</label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button type="button" onClick={() => setEditForm(prev => ({ ...prev, building: 'Нансена' }))} 
+                                        className={`touch-btn py-2.5 rounded-lg font-semibold text-sm ${editForm.building === 'Нансена' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                        🏫 Нансена
+                                    </button>
+                                    <button type="button" onClick={() => setEditForm(prev => ({ ...prev, building: 'Ботаничка' }))} 
+                                        className={`touch-btn py-2.5 rounded-lg font-semibold text-sm ${editForm.building === 'Ботаничка' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                        🏢 Ботаничка
+                                    </button>
+                                </div>
+                            </div>
+                            
                             <div>
                                 <label className="block text-xs font-semibold text-gray-500 mb-1">Категория *</label>
                                 <select value={editForm.category} onChange={e => setEditForm(prev => ({ ...prev, category: e.target.value }))}
@@ -1338,7 +1562,7 @@
 
                     <Modal isOpen={quickSearchModal.open} onClose={() => setQuickSearchModal({ open: false, query: '' })} title="Быстрый поиск" size="md">
                         <input type="text" value={quickSearchModal.query} onChange={e => setQuickSearchModal(prev => ({ ...prev, query: e.target.value }))}
-                            placeholder="Номер или название..." className="w-full px-4 py-3 border border-gray-200 rounded-lg font-mono mb-4" autoFocus />
+                            placeholder="Номер, название или здание..." className="w-full px-4 py-3 border border-gray-200 rounded-lg font-mono mb-4" autoFocus />
                         <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
                             {quickSearchResults.length === 0 ? (
                                 <div className="p-8 text-center text-gray-400 text-sm">Начните вводить...</div>
@@ -1350,7 +1574,14 @@
                                             {item.writeOff ? '📝' : item.checked ? '✓' : '⏳'}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="font-mono font-bold text-blue-600 text-sm">{item.invNumber}</div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-mono font-semibold text-blue-600 text-sm">{item.invNumber}</span>
+                                                {item.building && (
+                                                    <span className={`text-xs px-1.5 py-0.5 rounded ${item.building === 'Нансена' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+                                                        {item.building === 'Нансена' ? '🏫' : '🏢'}
+                                                    </span>
+                                                )}
+                                            </div>
                                             <div className="text-xs text-gray-500 truncate">{item.name}</div>
                                         </div>
                                     </button>
@@ -1359,23 +1590,43 @@
                         </div>
                     </Modal>
 
-                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '' })} title="Кабинеты" size="sm">
-                        <div className="flex gap-2 mb-4">
-                            <input type="text" value={roomsModal.newRoom} onChange={e => setRoomsModal(prev => ({ ...prev, newRoom: e.target.value }))}
-                                onKeyDown={e => e.key === 'Enter' && addToDirectory('rooms', roomsModal.newRoom)}
-                                placeholder="Новый кабинет..." className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
-                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="touch-btn px-4 py-2.5 bg-green-600 text-white rounded-lg font-bold">+</button>
+                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '', newRoomBuilding: 'Нансена' })} title="Кабинеты" size="md">
+                        <div className="space-y-3 mb-4">
+                            <div className="grid grid-cols-2 gap-2">
+                                <button onClick={() => setRoomsModal(prev => ({ ...prev, newRoomBuilding: 'Нансена' }))}
+                                    className={`touch-btn py-2 rounded-lg font-semibold text-sm ${roomsModal.newRoomBuilding === 'Нансена' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                    🏫 Нансена
+                                </button>
+                                <button onClick={() => setRoomsModal(prev => ({ ...prev, newRoomBuilding: 'Ботаничка' }))}
+                                    className={`touch-btn py-2 rounded-lg font-semibold text-sm ${roomsModal.newRoomBuilding === 'Ботаничка' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                    🏢 Ботаничка
+                                </button>
+                            </div>
+                            <div className="flex gap-2">
+                                <input type="text" value={roomsModal.newRoom} onChange={e => setRoomsModal(prev => ({ ...prev, newRoom: e.target.value }))}
+                                    onKeyDown={e => e.key === 'Enter' && addToDirectory('rooms', roomsModal.newRoom, roomsModal.newRoomBuilding)}
+                                    placeholder="Новый кабинет..." className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                                <button onClick={() => addToDirectory('rooms', roomsModal.newRoom, roomsModal.newRoomBuilding)} className="touch-btn px-4 py-2.5 bg-green-600 text-white rounded-lg font-bold">+</button>
+                            </div>
                         </div>
                         <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
                             {directories.rooms.length === 0 ? (
                                 <div className="p-6 text-center text-gray-400 text-sm">Пусто</div>
                             ) : (
-                                directories.rooms.map((room, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 p-3 border-b border-gray-50">
-                                        <span className="flex-1 text-sm">{room}</span>
-                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="touch-btn p-2 bg-red-100 text-red-600 rounded-lg text-xs">🗑️</button>
-                                    </div>
-                                ))
+                                directories.rooms.map((room, idx) => {
+                                    const roomBuilding = directories.roomsWithBuilding.find(r => r.name === room)?.building;
+                                    return (
+                                        <div key={idx} className="flex items-center gap-2 p-3 border-b border-gray-50">
+                                            {roomBuilding && (
+                                                <span className={`text-sm ${roomBuilding === 'Нансена' ? 'text-blue-500' : 'text-green-500'}`}>
+                                                    {roomBuilding === 'Нансена' ? '🏫' : '🏢'}
+                                                </span>
+                                            )}
+                                            <span className="flex-1 text-sm">{room}</span>
+                                            <button onClick={() => removeFromDirectory('rooms', idx)} className="touch-btn p-2 bg-red-100 text-red-600 rounded-lg text-xs">🗑️</button>
+                                        </div>
+                                    );
+                                })
                             )}
                         </div>
                     </Modal>
@@ -1413,8 +1664,13 @@
                                     {equipment.filter(i => i.inventoryNote?.trim()).map(item => (
                                         <button key={item.id} onClick={() => { setNotesModal({ open: false }); openDetails(item); }}
                                             className="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                                            <div className="flex items-center gap-2 mb-1">
+                                            <div className="flex items-center gap-2 mb-1 flex-wrap">
                                                 <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs font-mono">{item.invNumber}</span>
+                                                {item.building && (
+                                                    <span className={`text-xs px-1.5 py-0.5 rounded ${item.building === 'Нансена' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+                                                        {item.building === 'Нансена' ? '🏫' : '🏢'} {item.building}
+                                                    </span>
+                                                )}
                                                 <span className={`px-2 py-0.5 rounded text-xs font-semibold ${item.writeOff ? 'bg-red-100 text-red-600' : item.checked ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>
                                                     {item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает'}
                                                 </span>
