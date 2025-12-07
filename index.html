@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Инвентаризация - ГКОУ СКОШИ №102</title>
+    <title>РРЅРІРµРЅС‚Р°СЂРёР·Р°С†РёСЏ - Р“РљРћРЈ РЎРљРћРЁР в„–102</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -20,14 +20,14 @@
                     },
                     colors: {
                         bank: {
-                            primary: '#0f172a',
-                            secondary: '#1e293b',
-                            accent: '#3b82f6',
-                            success: '#10b981',
-                            warning: '#f59e0b',
-                            danger: '#ef4444',
-                            light: '#f8fafc',
-                            dark: '#0f172a',
+                            primary: '#1a365d',
+                            secondary: '#2c5282',
+                            accent: '#3182ce',
+                            success: '#38a169',
+                            warning: '#d69e2e',
+                            danger: '#e53e3e',
+                            light: '#f7fafc',
+                            dark: '#1a202c',
                         }
                     }
                 }
@@ -49,22 +49,22 @@
         
         body { 
             font-family: 'Inter', system-ui, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #0f172a;
+            background: #f7fafc; 
+            color: #1a202c;
             line-height: 1.5;
             overflow: hidden;
             height: 100dvh;
         }
         
-        /* Status bar */
+        /* Status bar - thin strip */
         .status-bar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: env(safe-area-inset-top, 20px);
+            height: 4px;
             z-index: 9999;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #111827;
         }
         
         /* App container */
@@ -74,10 +74,9 @@
         }
         
         /* Scrollbar */
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 2px; }
         
         /* Content scroll */
         .content-scroll {
@@ -88,12 +87,13 @@
             overscroll-behavior: contain;
         }
         
-        /* Modal */
+        /* Modal - simplified for performance */
         .modal-overlay {
             display: flex;
             align-items: flex-start;
             justify-content: center;
             padding: 3vh 16px 16px;
+            /* Removed backdrop-filter: blur() - causes lag on iPad */
         }
         
         /* Touch button */
@@ -103,96 +103,83 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.15s ease;
         }
-        .touch-btn:active { transform: scale(0.96); }
+        .touch-btn:active { transform: scale(0.98); }
         
         /* Status badges */
         .status-badge {
             padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.7rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.75rem;
             display: inline-flex;
             align-items: center;
             gap: 4px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: 0.025em;
         }
         .status-checked {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
+            background: #c6f6d5;
+            color: #276749;
         }
         .status-pending {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
+            background: #feebc8;
+            color: #975a16;
         }
         .status-writeoff {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
+            background: #fed7d7;
+            color: #c53030;
         }
         
         /* Category colors */
-        .cat-audio { border-left-color: #a855f7; }
-        .cat-interactive { border-left-color: #3b82f6; }
-        .cat-printers { border-left-color: #06b6d4; }
-        .cat-tv { border-left-color: #10b981; }
-        .cat-default { border-left-color: #64748b; }
+        .cat-audio { border-left-color: #805ad5; }
+        .cat-interactive { border-left-color: #3182ce; }
+        .cat-printers { border-left-color: #00b5d8; }
+        .cat-tv { border-left-color: #38a169; }
+        .cat-default { border-left-color: #718096; }
         
         .category-divider {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            background: #1a365d;
             color: white;
-            padding: 14px 18px;
-            border-radius: 12px;
-            margin: 24px 0 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 20px 0 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 700;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-weight: 600;
+            font-size: 0.875rem;
         }
         .category-divider:first-child { margin-top: 0; }
         
         /* Card */
         .card-shadow {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.06);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
         }
         .card-shadow:hover {
-            box-shadow: 0 12px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
         }
         
-        /* Note indicator */
+        /* Note indicator - contained within card, no z-index issues */
         .note-indicator {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 10px;
-            height: 10px;
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #3182ce;
             border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
-            animation: pulse 2s infinite;
+            /* No z-index - stays within card stacking context */
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        
-        /* Equipment card */
+        /* Cards should create stacking context */
         .equipment-card {
             position: relative;
-            isolation: isolate;
-            background: white;
-            border-radius: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            isolation: isolate; /* Creates new stacking context */
         }
         
-        /* Modal z-index */
+        /* Modal z-index hierarchy */
         .modal-base {
             position: fixed;
             inset: 0;
@@ -200,8 +187,7 @@
             align-items: flex-start;
             justify-content: center;
             padding: 3vh 16px 16px;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.5);
         }
         .modal-z-500 { z-index: 500; }
         .modal-z-600 { z-index: 600; }
@@ -210,42 +196,14 @@
         
         /* Modal animation */
         .modal-animate {
-            animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: modalIn 0.2s ease-out;
         }
         @keyframes modalIn {
-            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Responsive - iPhone 14 Pro Max (430x932) */
-        @media (max-width: 430px) {
-            .nav-rail { display: none !important; }
-            .filter-panel { 
-                position: fixed;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                width: 85vw;
-                max-width: 320px;
-                z-index: 500;
-                transform: translateX(-100%);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 4px 0 24px rgba(0,0,0,0.2);
-            }
-            .filter-panel.open { transform: translateX(0); }
-            .mobile-header { display: flex !important; }
-            .main-area { margin-left: 0 !important; }
-        }
-        
-        /* iPad Pro 9.7" (1024x768) */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .nav-rail { width: 64px; }
-            .nav-rail button { width: 44px; height: 44px; }
-            .filter-panel { width: 240px; }
-            .quick-stat-card { padding: 10px 6px; }
-            .quick-stat-value { font-size: 1.35rem; }
-        }
-        
+        /* Responsive - iPad Pro 9.7" is 1024x768 */
         @media (max-width: 768px) {
             .nav-rail { display: none !important; }
             .filter-panel { 
@@ -256,8 +214,8 @@
                 width: 300px;
                 z-index: 500;
                 transform: translateX(-100%);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 4px 0 24px rgba(0,0,0,0.2);
+                transition: transform 0.3s ease;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.15);
             }
             .filter-panel.open { transform: translateX(0); }
             .mobile-header { display: flex !important; }
@@ -269,71 +227,52 @@
             .mobile-overlay { display: none !important; }
         }
         
-        /* Quick stat */
+        /* Tablet (iPad Pro 9.7" = 1024x768) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .nav-rail { width: 56px; }
+            .nav-rail button { width: 40px; height: 40px; }
+            .filter-panel { width: 220px; }
+            .quick-stat-card { padding: 8px 4px; }
+            .quick-stat-value { font-size: 1.25rem; }
+        }
+        
+        /* Quick stat - vertical */
         .quick-stat-card {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 14px 10px;
-            border-radius: 12px;
+            padding: 12px 8px;
+            border-radius: 8px;
             cursor: pointer;
             border: 2px solid transparent;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            background: white;
+            transition: all 0.15s ease;
         }
         .quick-stat-card:hover {
             border-color: #e2e8f0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         .quick-stat-card.active {
-            border-color: #3b82f6;
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            border-color: #3182ce;
+            background: #ebf8ff;
         }
         .quick-stat-value {
-            font-size: 1.75rem;
-            font-weight: 800;
+            font-size: 1.5rem;
+            font-weight: 700;
             line-height: 1;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .quick-stat-label {
-            font-size: 0.65rem;
-            font-weight: 700;
+            font-size: 0.625rem;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #64748b;
+            color: #718096;
         }
         
-        /* Filter panel */
+        /* Filter panel performance */
         .filter-panel {
             will-change: transform;
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-        }
-        
-        /* Nav rail */
-        .nav-rail {
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-        }
-        
-        /* Gradient backgrounds */
-        .gradient-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .gradient-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-        
-        .gradient-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-        
-        /* Main content bg */
-        .main-content-bg {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         }
     </style>
 </head>
@@ -358,7 +297,7 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Icons
+        // Icons (SVG)
         const Icons = {
             Home: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
             Building: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
@@ -375,26 +314,32 @@
             Clock: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
         };
 
-        // Initial data (сокращенные данные для примера, вставьте полные данные из вашего файла)
+        // Initial data
         const initialEquipment = [
-            {id:"item_0",name:"МФУ групповое, цветное OKI MC563dn",invNumber:"1101340057",date:"29.12.2017",note:"оргтехника",category:"Принтеры и МФУ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_1",name:"Принтер групповой Epson WorkForce Pro WF-M5190DW",invNumber:"1101340077",date:"22.03.2018",note:"оргтехника",category:"Принтеры и МФУ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_2",name:"Акустическая система для аудитории",invNumber:"1101340084",date:"30.03.2018",note:"оргтехника",category:"Аудиооборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_3",name:"Акустическая система для аудитории",invNumber:"1101340095",date:"30.03.2018",note:"оргтехника",category:"Аудиооборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_4",name:"Интерактивное устройство IRBIS",invNumber:"0101340042",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_5",name:"Интерактивное устройство IRBIS",invNumber:"0101340043",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_415",name:"Интерактивная панель 86 дюймов",invNumber:"БД-50",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {id:"item_416",name:"Интерактивная панель 86 дюймов",invNumber:"БД-51",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_0",name:"РњР¤РЈ РіСЂСѓРїРїРѕРІРѕРµ, С†РІРµС‚РЅРѕРµ OKI MC563dn",invNumber:"1101340057",date:"29.12.2017",note:"РѕСЂРіС‚РµС…РЅРёРєР°",category:"РџСЂРёРЅС‚РµСЂС‹ Рё РњР¤РЈ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_1",name:"РџСЂРёРЅС‚РµСЂ РіСЂСѓРїРїРѕРІРѕР№ Epson WorkForce Pro WF-M5190DW",invNumber:"1101340077",date:"22.03.2018",note:"РѕСЂРіС‚РµС…РЅРёРєР°",category:"РџСЂРёРЅС‚РµСЂС‹ Рё РњР¤РЈ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_2",name:"РђРєСѓСЃС‚РёС‡РµСЃРєР°СЏ СЃРёСЃС‚РµРјР° РґР»СЏ Р°СѓРґРёС‚РѕСЂРёРё",invNumber:"1101340084",date:"30.03.2018",note:"РѕСЂРіС‚РµС…РЅРёРєР°",category:"РђСѓРґРёРѕРѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_3",name:"РђРєСѓСЃС‚РёС‡РµСЃРєР°СЏ СЃРёСЃС‚РµРјР° РґР»СЏ Р°СѓРґРёС‚РѕСЂРёРё",invNumber:"1101340095",date:"30.03.2018",note:"РѕСЂРіС‚РµС…РЅРёРєР°",category:"РђСѓРґРёРѕРѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_4",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ СѓСЃС‚СЂРѕР№СЃС‚РІРѕ IRBIS",invNumber:"0101340042",date:"23.12.2020",note:"РѕСЂРіС‚РµС…РЅРёРєР°",category:"РўРµР»РµРІРёР·РѕСЂС‹",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_5",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ СѓСЃС‚СЂРѕР№СЃС‚РІРѕ IRBIS",invNumber:"0101340043",date:"23.12.2020",note:"РѕСЂРіС‚РµС…РЅРёРєР°",category:"РўРµР»РµРІРёР·РѕСЂС‹",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_415",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РїР°РЅРµР»СЊ 86 РґСЋР№РјРѕРІ",invNumber:"Р‘Р”-50",date:"03.10.2022",note:"",category:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_416",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РїР°РЅРµР»СЊ 86 РґСЋР№РјРѕРІ",invNumber:"Р‘Р”-51",date:"03.10.2022",note:"",category:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_417",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РїР°РЅРµР»СЊ 86 РґСЋР№РјРѕРІ",invNumber:"Р‘Р”-52",date:"03.10.2022",note:"",category:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_418",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РїР°РЅРµР»СЊ 86 РґСЋР№РјРѕРІ",invNumber:"Р‘Р”-53",date:"03.10.2022",note:"",category:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_419",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РїР°РЅРµР»СЊ 86 РґСЋР№РјРѕРІ",invNumber:"Р‘Р”-54",date:"03.10.2022",note:"",category:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_420",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РїР°РЅРµР»СЊ 86 РґСЋР№РјРѕРІ",invNumber:"Р‘Р”-55",date:"03.10.2022",note:"",category:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_421",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РїР°РЅРµР»СЊ 86 РґСЋР№РјРѕРІ",invNumber:"Р‘Р”-56",date:"03.10.2022",note:"",category:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
+            {id:"item_422",name:"РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РїР°РЅРµР»СЊ ICL InfoRay",invNumber:"Р‘Р”-57",date:"03.10.2022",note:"",category:"РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
         ];
 
         // Category config
         const categoryConfig = {
-            "Аудиооборудование": { icon: "🔊", colorClass: "cat-audio", color: "#a855f7" },
-            "Интерактивное оборудование": { icon: "📱", colorClass: "cat-interactive", color: "#3b82f6" },
-            "Принтеры и МФУ": { icon: "🖨️", colorClass: "cat-printers", color: "#06b6d4" },
-            "Телевизоры": { icon: "📺", colorClass: "cat-tv", color: "#10b981" },
+            "РђСѓРґРёРѕРѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ": { icon: "рџ”Љ", colorClass: "cat-audio", color: "#805ad5" },
+            "РРЅС‚РµСЂР°РєС‚РёРІРЅРѕРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ": { icon: "рџ“±", colorClass: "cat-interactive", color: "#3182ce" },
+            "РџСЂРёРЅС‚РµСЂС‹ Рё РњР¤РЈ": { icon: "рџ–ЁпёЏ", colorClass: "cat-printers", color: "#00b5d8" },
+            "РўРµР»РµРІРёР·РѕСЂС‹": { icon: "рџ“є", colorClass: "cat-tv", color: "#38a169" },
         };
-        const defaultCatConfig = { icon: "📦", colorClass: "cat-default", color: "#64748b" };
+        const defaultCatConfig = { icon: "рџ“¦", colorClass: "cat-default", color: "#718096" };
 
         // Progress Ring
         const ProgressRing = ({ percent, size = 64 }) => {
@@ -407,17 +352,11 @@
                 <div className="relative" style={{ width: size, height: size }}>
                     <svg className="transform -rotate-90" width={size} height={size}>
                         <circle stroke="#e2e8f0" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2} />
-                        <circle stroke="url(#gradient)" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2}
+                        <circle stroke="#3182ce" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2}
                             strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
-                        <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#3b82f6" />
-                                <stop offset="100%" stopColor="#8b5cf6" />
-                            </linearGradient>
-                        </defs>
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-lg font-extrabold text-gray-800">{percent}%</span>
+                        <span className="text-lg font-bold text-gray-800">{percent}%</span>
                     </div>
                 </div>
             );
@@ -425,92 +364,185 @@
 
         // Navigation Rail
         const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenNotes }) => (
-            <div className="nav-rail w-16 flex flex-col items-center py-4 flex-shrink-0">
-                <button onClick={onShowInfo} className="w-12 h-12 rounded-xl flex items-center justify-center mb-6 gradient-primary shadow-lg" title="О программе">
+            <div className="nav-rail w-16 bg-gray-900 flex flex-col items-center py-4 flex-shrink-0">
+                <button onClick={onShowInfo} className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mb-6" title="Рћ РїСЂРѕРіСЂР°РјРјРµ">
                     <span className="text-white font-bold text-sm">102</span>
                 </button>
                 <div className="flex-1 flex flex-col items-center gap-2">
-                    <button onClick={onGoHome} className="touch-btn w-12 h-12 rounded-xl bg-white/10 text-white hover:bg-white/20" title="Главная">
+                    <button onClick={onGoHome} className="touch-btn w-10 h-10 rounded-lg bg-gray-800 text-white" title="Р“Р»Р°РІРЅР°СЏ">
                         <Icons.Home />
                     </button>
-                    <button onClick={onOpenRooms} className="touch-btn w-12 h-12 rounded-xl text-gray-400 hover:bg-white/10 hover:text-white" title="Кабинеты">
+                    <button onClick={onOpenRooms} className="touch-btn w-10 h-10 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white" title="РљР°Р±РёРЅРµС‚С‹">
                         <Icons.Building />
                     </button>
-                    <button onClick={onOpenPeople} className="touch-btn w-12 h-12 rounded-xl text-gray-400 hover:bg-white/10 hover:text-white" title="Сотрудники">
+                    <button onClick={onOpenPeople} className="touch-btn w-10 h-10 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white" title="РЎРѕС‚СЂСѓРґРЅРёРєРё">
                         <Icons.Users />
                     </button>
-                    <button onClick={onOpenNotes} className="touch-btn w-12 h-12 rounded-xl text-gray-400 hover:bg-white/10 hover:text-white" title="Все заметки">
-                        <span className="text-lg">📝</span>
+                    <button onClick={onOpenNotes} className="touch-btn w-10 h-10 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white" title="Р’СЃРµ Р·Р°РјРµС‚РєРё">
+                        <span className="text-lg">рџ“ќ</span>
                     </button>
                 </div>
-                <button onClick={onAddEquipment} className="touch-btn w-12 h-12 rounded-xl gradient-success text-white shadow-lg" title="Добавить">
+                <button onClick={onAddEquipment} className="touch-btn w-10 h-10 rounded-lg bg-green-600 text-white" title="Р”РѕР±Р°РІРёС‚СЊ">
                     <Icons.Plus />
                 </button>
             </div>
         );
 
-        // Остальная часть кода сохраняется (FilterPanel, EquipmentCard, Modal и т.д.)
-        // Для краткости показываю только обновленную часть с сеткой карточек
+        // Filter Panel
+        const FilterPanel = ({ isOpen, onClose, stats, categories, activeCategory, setActiveCategory, activeFilter, setActiveFilter }) => {
+            const percent = stats.total > 0 ? Math.round((stats.checked / stats.total) * 100) : 0;
 
-        // Equipment Card - обновленный дизайн
+            return (
+                <>
+                    <div className={`mobile-overlay fixed inset-0 bg-black/40 z-400 ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} />
+                    <div className={`filter-panel w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 ${isOpen ? 'open' : ''}`}>
+                        <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center lg:hidden">
+                            <Icons.X />
+                        </button>
+                        
+                        <div className="p-4 border-b border-gray-100">
+                            <h1 className="text-base font-bold text-gray-900">РРЅРІРµРЅС‚Р°СЂРёР·Р°С†РёСЏ</h1>
+                            <p className="text-xs text-gray-500">Р“РљРћРЈ РЎРљРћРЁР в„–102</p>
+                        </div>
+
+                        <div className="p-4 border-b border-gray-100">
+                            <div className="flex items-center gap-4">
+                                <ProgressRing percent={percent} size={56} />
+                                <div className="flex-1">
+                                    <div className="text-xs text-gray-500 uppercase font-semibold mb-1">РџСЂРѕРіСЂРµСЃСЃ</div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-600">РџСЂРѕРІРµСЂРµРЅРѕ</span>
+                                        <span className="font-semibold text-green-600">{stats.checked}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-600">РћСЃС‚Р°Р»РѕСЃСЊ</span>
+                                        <span className="font-semibold text-amber-600">{stats.pending}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 p-3 border-b border-gray-100">
+                            <div onClick={() => setActiveFilter(activeFilter === 'writeoff' ? 'all' : 'writeoff')}
+                                className={`quick-stat-card bg-red-50 ${activeFilter === 'writeoff' ? 'active' : ''}`}>
+                                <div className="quick-stat-value text-red-600">{stats.writeOff}</div>
+                                <div className="quick-stat-label">РЎРїРёСЃР°РЅРёРµ</div>
+                            </div>
+                            <div onClick={() => setActiveFilter(activeFilter === 'nolabel' ? 'all' : 'nolabel')}
+                                className={`quick-stat-card bg-amber-50 ${activeFilter === 'nolabel' ? 'active' : ''}`}>
+                                <div className="quick-stat-value text-amber-600">{stats.noLabel}</div>
+                                <div className="quick-stat-label">Р‘РµР· Р±РёСЂРєРё</div>
+                            </div>
+                            <div onClick={() => setActiveFilter(activeFilter === 'serial' ? 'all' : 'serial')}
+                                className={`quick-stat-card bg-green-50 ${activeFilter === 'serial' ? 'active' : ''}`}>
+                                <div className="quick-stat-value text-green-600">{stats.withSerial}</div>
+                                <div className="quick-stat-label">РЎ СЃРµСЂРёР№РЅРёРєРѕРј</div>
+                            </div>
+                            <div onClick={() => setActiveFilter(activeFilter === 'new' ? 'all' : 'new')}
+                                className={`quick-stat-card bg-blue-50 ${activeFilter === 'new' ? 'active' : ''}`}>
+                                <div className="quick-stat-value text-blue-600">{stats.new}</div>
+                                <div className="quick-stat-label">РќРѕРІС‹Рµ</div>
+                            </div>
+                        </div>
+
+                        <div className="p-3 border-b border-gray-100">
+                            <div className="text-xs font-semibold text-gray-400 uppercase mb-2">РЎС‚Р°С‚СѓСЃ</div>
+                            <div className="space-y-1">
+                                {[
+                                    { id: 'all', label: 'Р’СЃРµ', count: stats.total },
+                                    { id: 'unchecked', label: 'РћР¶РёРґР°СЋС‚', count: stats.pending },
+                                    { id: 'checked', label: 'РџСЂРѕРІРµСЂРµРЅРѕ', count: stats.checked },
+                                    { id: 'notes', label: 'РЎ Р·Р°РјРµС‚РєР°РјРё', count: stats.withNotes },
+                                ].map(f => (
+                                    <button key={f.id} onClick={() => { setActiveFilter(f.id); onClose(); }}
+                                        className={`touch-btn w-full flex items-center gap-2 px-3 rounded-lg text-sm
+                                            ${activeFilter === f.id ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
+                                        <span className="flex-1 text-left">{f.label}</span>
+                                        <span className={`text-xs font-medium px-2 py-0.5 rounded ${activeFilter === f.id ? 'bg-white/20' : 'bg-gray-100'}`}>{f.count}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto p-3 custom-scroll">
+                            <div className="text-xs font-semibold text-gray-400 uppercase mb-2">РљР°С‚РµРіРѕСЂРёРё</div>
+                            <div className="space-y-1">
+                                {categories.map(cat => {
+                                    const config = categoryConfig[cat] || defaultCatConfig;
+                                    return (
+                                        <button key={cat} onClick={() => { setActiveCategory(cat); onClose(); }}
+                                            className={`touch-btn w-full flex items-center gap-2 px-3 rounded-lg text-sm
+                                                ${activeCategory === cat ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
+                                            <span>{cat === 'Р’СЃРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ' ? 'рџ“‹' : config.icon}</span>
+                                            <span className="flex-1 text-left truncate">{cat}</span>
+                                            <span className={`text-xs font-medium px-2 py-0.5 rounded ${activeCategory === cat ? 'bg-white/20' : 'bg-gray-100'}`}>
+                                                {cat === 'Р’СЃРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ' ? stats.total : stats.byCategory[cat] || 0}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </>
+            );
+        };
+
+        // Equipment Card
         const EquipmentCard = React.memo(({ item, onView, onCheck }) => {
             const isProcessed = item.checked || item.writeOff;
             const hasNote = !!item.inventoryNote?.trim();
             const config = categoryConfig[item.category] || defaultCatConfig;
 
             const infoParts = [];
-            if (item.location) infoParts.push(`📍 ${item.location}`);
-            if (item.responsible) infoParts.push(`👤 ${item.responsible}`);
+            if (item.location) infoParts.push(`рџ“Ќ ${item.location}`);
+            if (item.responsible) infoParts.push(`рџ‘¤ ${item.responsible}`);
             if (item.serialNumber) infoParts.push(`S/N: ${item.serialNumber}`);
 
             return (
-                <div className={`equipment-card p-5 card-shadow border-l-4 ${item.writeOff ? 'border-l-red-500' : item.checked ? 'border-l-green-500' : 'border-l-blue-400'}`}>
+                <div className={`equipment-card bg-white rounded-xl p-4 card-shadow border-l-4 transition-all
+                    ${item.writeOff ? 'border-l-red-500' : item.checked ? 'border-l-green-500' : 'border-l-gray-300'}`}>
                     
-                    {hasNote && <div className="note-indicator" title="Есть заметка" />}
+                    {hasNote && <div className="note-indicator" title="Р•СЃС‚СЊ Р·Р°РјРµС‚РєР°" />}
                     
-                    <div className="flex items-start gap-3 mb-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-xl shadow-md
-                            ${item.writeOff ? 'bg-gradient-to-br from-red-400 to-red-600 text-white' : item.checked ? 'bg-gradient-to-br from-green-400 to-green-600 text-white' : 'bg-gradient-to-br from-blue-100 to-blue-200'}`}>
-                            {item.writeOff ? '📝' : item.checked ? '✓' : config.icon}
+                    <div className="flex items-start gap-3 mb-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-lg
+                            ${item.writeOff ? 'bg-red-100' : item.checked ? 'bg-green-100' : 'bg-gray-100'}`}>
+                            {item.writeOff ? 'рџ“ќ' : item.checked ? 'вњ“' : config.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap mb-2">
-                                <span className="px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-xs font-mono font-bold shadow-sm">{item.invNumber}</span>
-                                {item.isUserAdded && <span title="Новое" className="w-2.5 h-2.5 bg-blue-500 rounded-full shadow-sm" />}
-                                {item.hasLabel === false && <span title="Без бирки" className="w-2.5 h-2.5 bg-amber-500 rounded-full shadow-sm" />}
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-mono font-semibold">{item.invNumber}</span>
+                                {item.isUserAdded && <span title="РќРѕРІРѕРµ" className="w-2 h-2 bg-blue-500 rounded-full" />}
+                                {item.hasLabel === false && <span title="Р‘РµР· Р±РёСЂРєРё" className="w-2 h-2 bg-amber-500 rounded-full" />}
                             </div>
-                            <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-1">{item.name}</h3>
-                            <p className="text-xs text-gray-500">{item.category}</p>
+                            <h3 className="font-medium text-gray-800 text-sm leading-snug line-clamp-2">{item.name}</h3>
                         </div>
                     </div>
 
-                    {infoParts.length > 0 && (
-                        <div className="text-xs text-gray-600 mb-3 space-y-1">
-                            {infoParts.map((part, idx) => (
-                                <div key={idx} className="flex items-center gap-1">
-                                    <span>{part}</span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-3 flex-wrap">
                         <span className={`status-badge ${item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending'}`}>
-                            {item.writeOff ? '📝 Списание' : item.checked ? '✓ Проверено' : '⏳ Ожидает'}
+                            {item.writeOff ? 'РЎРїРёСЃР°РЅРёРµ' : item.checked ? 'РџСЂРѕРІРµСЂРµРЅРѕ' : 'РћР¶РёРґР°РµС‚'}
                         </span>
+                        {infoParts.length > 0 && (
+                            <span className="text-gray-400">вЂў</span>
+                        )}
+                        {infoParts.map((part, idx) => (
+                            <span key={idx}>{part}</span>
+                        ))}
                     </div>
 
                     <div className="flex gap-2 pt-3 border-t border-gray-100">
-                        <button onClick={() => onView(item)} className="touch-btn flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold shadow-sm">
-                            Просмотр
+                        <button onClick={() => onView(item)} className="touch-btn flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-medium">
+                            РџСЂРѕСЃРјРѕС‚СЂ
                         </button>
                         {!isProcessed ? (
-                            <button onClick={() => onCheck(item)} className="touch-btn flex-1 py-2.5 gradient-success text-white rounded-lg text-xs font-semibold shadow-md">
-                                ✓ Проверить
+                            <button onClick={() => onCheck(item)} className="touch-btn flex-1 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-medium">
+                                вњ“ РџСЂРѕРІРµСЂРёС‚СЊ
                             </button>
                         ) : (
-                            <button onClick={() => onCheck(item, true)} className="touch-btn flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-xs font-semibold shadow-sm">
-                                ↩ Отменить
+                            <button onClick={() => onCheck(item, true)} className="touch-btn flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-xs font-medium">
+                                в†© РћС‚РјРµРЅРёС‚СЊ
                             </button>
                         )}
                     </div>
@@ -518,12 +550,730 @@
             );
         });
 
-        // В части рендера карточек измените сетку на:
-        // <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
+        // Modal
+        const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
+            if (!isOpen) return null;
+            const sizeClass = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg' }[size];
+            
+            return (
+                <div className="modal-base modal-z-600" onClick={onClose}>
+                    <div className={`modal-animate bg-white rounded-xl shadow-xl w-full ${sizeClass}`} onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                            <h2 className="text-base font-semibold text-gray-800">{title}</h2>
+                            <button onClick={onClose} className="touch-btn w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-400">
+                                <Icons.X />
+                            </button>
+                        </div>
+                        <div className="p-4 max-h-[60vh] overflow-y-auto custom-scroll">{children}</div>
+                    </div>
+                </div>
+            );
+        };
 
-        // Добавьте остальной код из вашего файла...
-        // (FilterPanel, Modal, ConfirmModal, Toast, AutocompleteInput, App component)
-        
+        // Confirm Modal
+        const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
+            if (!isOpen) return null;
+            return (
+                <div className="modal-base modal-z-700" onClick={onClose}>
+                    <div className="modal-animate bg-white rounded-xl shadow-xl w-full max-w-xs p-5 text-center" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
+                        <p className="text-sm text-gray-500 mb-5">{message}</p>
+                        <div className="flex gap-3">
+                            <button onClick={onClose} className="touch-btn flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm">РћС‚РјРµРЅР°</button>
+                            <button onClick={onConfirm} className="touch-btn flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm">Р”Р°</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Toast
+        const Toast = ({ message, isVisible, onClose }) => {
+            useEffect(() => { if (isVisible) { const t = setTimeout(onClose, 2500); return () => clearTimeout(t); } }, [isVisible, onClose]);
+            if (!isVisible) return null;
+            return (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-3 bg-gray-800 text-white rounded-lg shadow-lg z-800 text-sm font-medium">
+                    {message}
+                </div>
+            );
+        };
+
+        // Autocomplete Input
+        const AutocompleteInput = ({ value, onChange, suggestions, placeholder, label }) => {
+            const [showDropdown, setShowDropdown] = useState(false);
+            const filtered = useMemo(() => {
+                if (!value) return suggestions.slice(0, 5);
+                return suggestions.filter(s => s.toLowerCase().includes(value.toLowerCase())).slice(0, 5);
+            }, [value, suggestions]);
+
+            return (
+                <div className="relative">
+                    {label && <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>}
+                    <input type="text" value={value} onChange={e => onChange(e.target.value)}
+                        onFocus={() => setShowDropdown(true)} onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+                        placeholder={placeholder} className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+                    {showDropdown && filtered.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                            {filtered.map((item, idx) => (
+                                <button key={idx} type="button" onMouseDown={() => { onChange(item); setShowDropdown(false); }}
+                                    className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm border-b border-gray-50 last:border-0">
+                                    {item}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Main App
+        const App = () => {
+            const contentRef = useRef(null);
+            
+            const [equipment, setEquipment] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('inv_102_data_v11');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        return initialEquipment.map(item => {
+                            const savedItem = parsed.find(p => p.id === item.id);
+                            return savedItem ? { ...item, ...savedItem } : item;
+                        }).concat(parsed.filter(p => p.isUserAdded && !initialEquipment.find(i => i.id === p.id)));
+                    }
+                } catch (e) { console.error(e); }
+                return initialEquipment;
+            });
+
+            const [directories, setDirectories] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('inv_102_dirs_v11');
+                    return saved ? JSON.parse(saved) : { rooms: [], people: [] };
+                } catch (e) { return { rooms: [], people: [] }; }
+            });
+
+            const [sidebarOpen, setSidebarOpen] = useState(false);
+            const [activeCategory, setActiveCategory] = useState('Р’СЃРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ');
+            const [activeFilter, setActiveFilter] = useState('all');
+            const [searchQuery, setSearchQuery] = useState('');
+            const [toast, setToast] = useState({ visible: false, message: '' });
+            const [confirmModal, setConfirmModal] = useState({ open: false, title: '', message: '', onConfirm: null });
+            const [detailsModal, setDetailsModal] = useState({ open: false, item: null });
+            const [editModal, setEditModal] = useState({ open: false, item: null, isNew: false });
+            const [labelModal, setLabelModal] = useState({ open: false, item: null });
+            const [serialModal, setSerialModal] = useState({ open: false, item: null, serial: '' });
+            const [quickSearchModal, setQuickSearchModal] = useState({ open: false, query: '' });
+            const [roomsModal, setRoomsModal] = useState({ open: false, newRoom: '' });
+            const [peopleModal, setPeopleModal] = useState({ open: false, newPerson: '' });
+            const [infoModal, setInfoModal] = useState({ open: false });
+            const [notesModal, setNotesModal] = useState({ open: false });
+
+            const [detailsForm, setDetailsForm] = useState({ serialNumber: '', location: '', responsible: '', inventoryNote: '', hasLabel: null });
+            const [editForm, setEditForm] = useState({ name: '', invNumber: '', date: '', category: '', newCategory: '', note: '' });
+
+            useEffect(() => { localStorage.setItem('inv_102_data_v11', JSON.stringify(equipment)); }, [equipment]);
+            useEffect(() => { localStorage.setItem('inv_102_dirs_v11', JSON.stringify(directories)); }, [directories]);
+
+            const stats = useMemo(() => ({
+                total: equipment.length,
+                checked: equipment.filter(i => i.checked || i.writeOff).length,
+                pending: equipment.filter(i => !i.checked && !i.writeOff).length,
+                writeOff: equipment.filter(i => i.writeOff).length,
+                noLabel: equipment.filter(i => i.hasLabel === false).length,
+                withSerial: equipment.filter(i => i.serialNumber?.trim()).length,
+                withNotes: equipment.filter(i => i.inventoryNote?.trim()).length,
+                new: equipment.filter(i => i.isUserAdded).length,
+                byCategory: equipment.reduce((acc, i) => { acc[i.category] = (acc[i.category] || 0) + 1; return acc; }, {}),
+            }), [equipment]);
+
+            const categories = useMemo(() => {
+                const others = [...new Set(equipment.map(i => i.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
+                return ['Р’СЃРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ', ...others];
+            }, [equipment]);
+
+            const filteredEquipment = useMemo(() => equipment.filter(item => {
+                if (activeCategory !== 'Р’СЃРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ' && item.category !== activeCategory) return false;
+                
+                switch (activeFilter) {
+                    case 'checked': if (!item.checked && !item.writeOff) return false; break;
+                    case 'unchecked': if (item.checked || item.writeOff) return false; break;
+                    case 'writeoff': if (!item.writeOff) return false; break;
+                    case 'nolabel': if (item.hasLabel !== false) return false; break;
+                    case 'serial': if (!item.serialNumber?.trim()) return false; break;
+                    case 'notes': if (!item.inventoryNote?.trim()) return false; break;
+                    case 'new': if (!item.isUserAdded) return false; break;
+                }
+                
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    const s = [item.invNumber, item.name, item.serialNumber, item.location, item.responsible].join(' ').toLowerCase();
+                    if (!s.includes(q)) return false;
+                }
+                
+                return true;
+            }), [equipment, activeCategory, activeFilter, searchQuery]);
+
+            const groupedEquipment = useMemo(() => filteredEquipment.reduce((acc, item) => {
+                const cat = item.category || 'РџСЂРѕС‡РµРµ';
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push(item);
+                return acc;
+            }, {}), [filteredEquipment]);
+
+            const showToast = useCallback((msg) => setToast({ visible: true, message: msg }), []);
+            const showConfirm = useCallback((title, message, onConfirm) => setConfirmModal({ open: true, title, message, onConfirm }), []);
+
+            const goHome = useCallback(() => {
+                setActiveCategory('Р’СЃРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ');
+                setActiveFilter('all');
+                setSearchQuery('');
+                setSidebarOpen(false);
+                contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+            }, []);
+
+            const startCheckProcess = useCallback((item) => {
+                if (item.hasLabel === null) {
+                    setLabelModal({ open: true, item });
+                } else if (!item.serialNumber?.trim()) {
+                    setSerialModal({ open: true, item, serial: '' });
+                } else {
+                    setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: true, writeOff: false, checkedAt: new Date().toISOString() } : i));
+                    showToast('вњ“ РџСЂРѕРІРµСЂРµРЅРѕ');
+                }
+            }, [showToast]);
+
+            const handleLabelAnswer = useCallback((hasLabel) => {
+                const item = labelModal.item;
+                setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, hasLabel } : i));
+                setLabelModal({ open: false, item: null });
+                if (!item.serialNumber?.trim()) {
+                    setSerialModal({ open: true, item: { ...item, hasLabel }, serial: '' });
+                } else {
+                    setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: true, writeOff: false, checkedAt: new Date().toISOString() } : i));
+                    showToast('вњ“ РџСЂРѕРІРµСЂРµРЅРѕ');
+                }
+            }, [labelModal.item, showToast]);
+
+            const handleSerialSave = useCallback(() => {
+                const item = serialModal.item;
+                const serial = serialModal.serial.trim();
+                setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, serialNumber: serial, checked: true, writeOff: false, checkedAt: new Date().toISOString() } : i));
+                setSerialModal({ open: false, item: null, serial: '' });
+                showToast('вњ“ РџСЂРѕРІРµСЂРµРЅРѕ');
+            }, [serialModal, showToast]);
+
+            const handleSerialSkip = useCallback(() => {
+                const item = serialModal.item;
+                setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: true, writeOff: false, checkedAt: new Date().toISOString() } : i));
+                setSerialModal({ open: false, item: null, serial: '' });
+                showToast('вњ“ РџСЂРѕРІРµСЂРµРЅРѕ');
+            }, [serialModal.item, showToast]);
+
+            const handleCheck = useCallback((item, undo = false) => {
+                if (undo) {
+                    showConfirm('РћС‚РјРµРЅРёС‚СЊ?', 'РЎРЅСЏС‚СЊ РѕС‚РјРµС‚РєСѓ РїСЂРѕРІРµСЂРєРё?', () => {
+                        setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: false, writeOff: false, checkedAt: null } : i));
+                        setConfirmModal(prev => ({ ...prev, open: false }));
+                        showToast('в†© РћС‚РјРµРЅРµРЅРѕ');
+                    });
+                } else {
+                    startCheckProcess(item);
+                }
+            }, [showConfirm, startCheckProcess, showToast]);
+
+            const handleWriteOff = useCallback((item) => {
+                showConfirm('РЎРїРёСЃР°С‚СЊ?', item.name, () => {
+                    setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, writeOff: true, checked: false, checkedAt: new Date().toISOString(), hasLabel: i.hasLabel === null ? true : i.hasLabel } : i));
+                    setConfirmModal(prev => ({ ...prev, open: false }));
+                    setDetailsModal({ open: false, item: null });
+                    showToast('рџ“ќ РЎРїРёСЃР°РЅРѕ');
+                });
+            }, [showConfirm, showToast]);
+
+            const openDetails = useCallback((item) => {
+                setDetailsForm({
+                    serialNumber: item.serialNumber || '',
+                    location: item.location || '',
+                    responsible: item.responsible || '',
+                    inventoryNote: item.inventoryNote || '',
+                    hasLabel: item.hasLabel
+                });
+                setDetailsModal({ open: true, item });
+            }, []);
+
+            const saveDetails = useCallback(() => {
+                const item = detailsModal.item;
+                setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, ...detailsForm } : i));
+                
+                if (detailsForm.location && !directories.rooms.includes(detailsForm.location)) {
+                    setDirectories(prev => ({ ...prev, rooms: [...prev.rooms, detailsForm.location].sort((a, b) => a.localeCompare(b, 'ru')) }));
+                }
+                if (detailsForm.responsible && !directories.people.includes(detailsForm.responsible)) {
+                    setDirectories(prev => ({ ...prev, people: [...prev.people, detailsForm.responsible].sort((a, b) => a.localeCompare(b, 'ru')) }));
+                }
+                
+                setDetailsModal({ open: false, item: null });
+                showToast('РЎРѕС…СЂР°РЅРµРЅРѕ');
+            }, [detailsModal.item, detailsForm, directories, showToast]);
+
+            const openEditModal = useCallback((item = null) => {
+                if (item) {
+                    setEditForm({ name: item.name, invNumber: item.invNumber, date: item.date || '', category: item.category, newCategory: '', note: item.note || '' });
+                    setEditModal({ open: true, item, isNew: false });
+                } else {
+                    setEditForm({ name: '', invNumber: '', date: new Date().toLocaleDateString('ru-RU'), category: '', newCategory: '', note: '' });
+                    setEditModal({ open: true, item: null, isNew: true });
+                }
+            }, []);
+
+            const saveEdit = useCallback(() => {
+                const { name, invNumber, date, category, newCategory, note } = editForm;
+                if (!name.trim()) { showToast('Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ'); return; }
+                if (!invNumber.trim()) { showToast('Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ'); return; }
+                const finalCategory = newCategory.trim() || category;
+                if (!finalCategory) { showToast('Р’С‹Р±РµСЂРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ'); return; }
+                
+                const duplicate = equipment.find(i => i.invNumber === invNumber && i.id !== editModal.item?.id);
+                if (duplicate) { showToast('РќРѕРјРµСЂ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚'); return; }
+
+                if (editModal.isNew) {
+                    const newItem = {
+                        id: 'item_' + Date.now(), name: name.trim(), invNumber: invNumber.trim(), date: date.trim(), category: finalCategory, note: note.trim(),
+                        checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', isUserAdded: true
+                    };
+                    setEquipment(prev => [...prev, newItem]);
+                    showToast('Р”РѕР±Р°РІР»РµРЅРѕ');
+                } else {
+                    setEquipment(prev => prev.map(i => i.id === editModal.item.id ? { ...i, name: name.trim(), invNumber: invNumber.trim(), date: date.trim(), category: finalCategory, note: note.trim() } : i));
+                    showToast('РЎРѕС…СЂР°РЅРµРЅРѕ');
+                }
+                setEditModal({ open: false, item: null, isNew: false });
+            }, [editForm, editModal, equipment, showToast]);
+
+            const addToDirectory = useCallback((type, value) => {
+                if (!value.trim()) return;
+                const key = type === 'rooms' ? 'rooms' : 'people';
+                if (directories[key].includes(value.trim())) { showToast('РЈР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚'); return; }
+                setDirectories(prev => ({ ...prev, [key]: [...prev[key], value.trim()].sort((a, b) => a.localeCompare(b, 'ru')) }));
+                if (type === 'rooms') setRoomsModal(prev => ({ ...prev, newRoom: '' }));
+                else setPeopleModal(prev => ({ ...prev, newPerson: '' }));
+                showToast('Р”РѕР±Р°РІР»РµРЅРѕ');
+            }, [directories, showToast]);
+
+            const removeFromDirectory = useCallback((type, idx) => {
+                const key = type === 'rooms' ? 'rooms' : 'people';
+                const item = directories[key][idx];
+                showConfirm('РЈРґР°Р»РёС‚СЊ?', item, () => {
+                    setDirectories(prev => ({ ...prev, [key]: prev[key].filter((_, i) => i !== idx) }));
+                    setConfirmModal(prev => ({ ...prev, open: false }));
+                    showToast('РЈРґР°Р»РµРЅРѕ');
+                });
+            }, [directories, showConfirm, showToast]);
+
+            const handleSave = () => showConfirm('РЎРѕС…СЂР°РЅРёС‚СЊ?', 'РЎРѕС…СЂР°РЅРёС‚СЊ РІСЃРµ РґР°РЅРЅС‹Рµ?', () => {
+                localStorage.setItem('inv_102_data_v11', JSON.stringify(equipment));
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                showToast('рџ’ѕ РЎРѕС…СЂР°РЅРµРЅРѕ');
+            });
+
+            const handleExportExcel = () => showConfirm('Excel?', 'РЎРєР°С‡Р°С‚СЊ CSV?', () => {
+                const BOM = '\uFEFF';
+                const headers = ['РРЅРІ.в„–', 'S/N', 'РќР°Р·РІР°РЅРёРµ', 'РљР°С‚РµРіРѕСЂРёСЏ', 'Р›РѕРєР°С†РёСЏ', 'РћС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№', 'РЎС‚Р°С‚СѓСЃ', 'Р‘РёСЂРєР°', 'Р—Р°РјРµС‚РєР°'];
+                let csv = BOM + headers.join(';') + '\n';
+                equipment.forEach(item => {
+                    const status = item.writeOff ? 'РЎРїРёСЃР°РЅРёРµ' : item.checked ? 'РџСЂРѕРІРµСЂРµРЅРѕ' : 'РћР¶РёРґР°РµС‚';
+                    const label = item.hasLabel === true ? 'Р•СЃС‚СЊ' : item.hasLabel === false ? 'РќР•Рў' : '-';
+                    const row = [item.invNumber, item.serialNumber || '', item.name, item.category, item.location || '', item.responsible || '', status, label, item.inventoryNote || '']
+                        .map(f => `"${String(f).replace(/"/g, '""')}"`).join(';');
+                    csv += row + '\n';
+                });
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `inventory_${new Date().toISOString().slice(0, 10)}.csv`;
+                link.click();
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                showToast('рџ“Љ РЎРєР°С‡Р°РЅРѕ');
+            });
+
+            const handleExportJSON = () => showConfirm('Р­РєСЃРїРѕСЂС‚?', 'РЎРєР°С‡Р°С‚СЊ СЂРµР·РµСЂРІРЅСѓСЋ РєРѕРїРёСЋ?', () => {
+                const data = JSON.stringify({ equipment, directories }, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `backup_${new Date().toISOString().slice(0, 10)}.json`;
+                link.click();
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                showToast('рџ“¤ Р­РєСЃРїРѕСЂС‚РёСЂРѕРІР°РЅРѕ');
+            });
+
+            const handleImportClick = () => showConfirm('РРјРїРѕСЂС‚?', 'Р—Р°РіСЂСѓР·РёС‚СЊ JSON?', () => {
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                document.getElementById('fileInput').click();
+            });
+
+            const handleImportJSON = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const json = JSON.parse(event.target.result);
+                        const imp = json.equipment || (Array.isArray(json) ? json : null);
+                        if (!imp) throw new Error('РќРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚');
+                        let count = 0;
+                        imp.forEach(impItem => {
+                            const existing = equipment.find(e => e.id === impItem.id);
+                            if (existing) {
+                                setEquipment(prev => prev.map(i => i.id === impItem.id ? { ...i, ...impItem } : i));
+                                count++;
+                            } else if (impItem.isUserAdded) {
+                                setEquipment(prev => [...prev, impItem]);
+                                count++;
+                            }
+                        });
+                        if (json.directories) {
+                            setDirectories(prev => ({
+                                rooms: [...new Set([...prev.rooms, ...(json.directories.rooms || [])])].sort((a, b) => a.localeCompare(b, 'ru')),
+                                people: [...new Set([...prev.people, ...(json.directories.people || [])])].sort((a, b) => a.localeCompare(b, 'ru'))
+                            }));
+                        }
+                        showToast(`рџ“Ґ РРјРїРѕСЂС‚РёСЂРѕРІР°РЅРѕ: ${count}`);
+                    } catch (err) {
+                        showToast('вќЊ РћС€РёР±РєР°');
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            };
+
+            const handleClearAll = () => showConfirm('РЎР±СЂРѕСЃРёС‚СЊ?', 'РЈРґР°Р»РёС‚СЊ РІСЃРµ РґР°РЅРЅС‹Рµ?', () => {
+                setEquipment(prev => prev.map(i => ({ ...i, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', checkedAt: null })));
+                setConfirmModal(prev => ({ ...prev, open: false }));
+                showToast('рџ—‘пёЏ РЎР±СЂРѕС€РµРЅРѕ');
+            });
+
+            const quickSearchResults = useMemo(() => {
+                if (!quickSearchModal.query) return [];
+                const q = quickSearchModal.query.toLowerCase();
+                return equipment.filter(item => [item.invNumber, item.name, item.serialNumber].join(' ').toLowerCase().includes(q)).slice(0, 20);
+            }, [quickSearchModal.query, equipment]);
+
+            return (
+                <div className="flex bg-gray-50" style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
+                    <NavRail 
+                        onOpenRooms={() => setRoomsModal({ ...roomsModal, open: true })}
+                        onOpenPeople={() => setPeopleModal({ ...peopleModal, open: true })}
+                        onAddEquipment={() => openEditModal()}
+                        onShowInfo={() => setInfoModal({ open: true })}
+                        onGoHome={goHome}
+                        onOpenNotes={() => setNotesModal({ open: true })}
+                    />
+
+                    <FilterPanel
+                        isOpen={sidebarOpen}
+                        onClose={() => setSidebarOpen(false)}
+                        stats={stats}
+                        categories={categories}
+                        activeCategory={activeCategory}
+                        setActiveCategory={setActiveCategory}
+                        activeFilter={activeFilter}
+                        setActiveFilter={setActiveFilter}
+                    />
+
+                    <main className="main-area flex-1 flex flex-col min-w-0 overflow-hidden">
+                        <header className="mobile-header hidden bg-white border-b border-gray-200 px-4 py-3 items-center gap-3 flex-shrink-0">
+                            <button onClick={() => setSidebarOpen(true)} className="touch-btn w-10 h-10 rounded-lg bg-gray-100">
+                                <Icons.Menu />
+                            </button>
+                            <div className="flex-1 relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Icons.Search /></span>
+                                <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="РџРѕРёСЃРє..."
+                                    className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                            </div>
+                        </header>
+
+                        <header className="bg-white border-b border-gray-200 px-5 py-3 flex-shrink-0">
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1 relative max-w-md">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Icons.Search /></span>
+                                    <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="РџРѕРёСЃРє..."
+                                        className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none" />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={handleSave} className="touch-btn px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-medium flex items-center gap-1.5">
+                                        <Icons.Save /> <span className="hidden sm:inline">РЎРѕС…СЂР°РЅРёС‚СЊ</span>
+                                    </button>
+                                    <button onClick={handleExportExcel} className="touch-btn p-2 bg-green-600 text-white rounded-lg" title="Excel">рџ“Љ</button>
+                                    <button onClick={handleExportJSON} className="touch-btn p-2 bg-gray-100 text-gray-600 rounded-lg" title="Р­РєСЃРїРѕСЂС‚"><Icons.Download /></button>
+                                    <button onClick={handleImportClick} className="touch-btn p-2 bg-gray-100 text-gray-600 rounded-lg" title="РРјРїРѕСЂС‚"><Icons.Upload /></button>
+                                    <button onClick={handleClearAll} className="touch-btn p-2 bg-gray-100 text-red-600 rounded-lg" title="РЎР±СЂРѕСЃ"><Icons.Trash /></button>
+                                </div>
+                            </div>
+                        </header>
+
+                        <div ref={contentRef} className="content-scroll p-5 custom-scroll">
+                            {Object.keys(groupedEquipment).length === 0 ? (
+                                <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                                    <div className="text-4xl mb-3">рџ“­</div>
+                                    <p className="text-base">РќРёС‡РµРіРѕ РЅРµ РЅР°Р№РґРµРЅРѕ</p>
+                                </div>
+                            ) : (
+                                Object.entries(groupedEquipment).sort((a, b) => a[0].localeCompare(b[0], 'ru')).map(([category, items]) => {
+                                    const config = categoryConfig[category] || defaultCatConfig;
+                                    const checkedCount = items.filter(i => i.checked || i.writeOff).length;
+                                    return (
+                                        <div key={category}>
+                                            <div className="category-divider" style={{ background: config.color }}>
+                                                <span className="flex items-center gap-2">
+                                                    <span>{config.icon}</span>
+                                                    <span>{category}</span>
+                                                </span>
+                                                <span className="bg-white/20 px-2.5 py-0.5 rounded text-xs">{checkedCount}/{items.length}</span>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                                {items.map(item => (
+                                                    <EquipmentCard key={item.id} item={item} onView={openDetails} onCheck={handleCheck} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                            <div className="h-16"></div>
+                        </div>
+                    </main>
+
+                    <button onClick={() => setQuickSearchModal({ open: true, query: '' })}
+                        className="fixed bottom-5 right-5 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center z-100 hover:bg-blue-700">
+                        рџ”Ќ
+                    </button>
+
+                    {/* Modals */}
+                    <Modal isOpen={infoModal.open} onClose={() => setInfoModal({ open: false })} title="Рћ РїСЂРѕРіСЂР°РјРјРµ" size="sm">
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                <span className="text-2xl">рџ“‹</span>
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-800 mb-1">РРЅРІРµРЅС‚Р°СЂРёР·Р°С†РёСЏ</h3>
+                            <p className="text-sm text-gray-500 mb-4">Р“РљРћРЈ РЎРљРћРЁР в„–102</p>
+                            <p className="text-xs text-gray-400">Р’РµСЂСЃРёСЏ 4.0</p>
+                        </div>
+                    </Modal>
+
+                    <Modal isOpen={labelModal.open} onClose={() => setLabelModal({ open: false, item: null })} title="РџСЂРѕРІРµСЂРєР° Р±РёСЂРєРё" size="sm">
+                        <p className="text-center text-gray-600 text-sm mb-4">Р‘РёСЂРєР° РµСЃС‚СЊ РЅР° РѕР±РѕСЂСѓРґРѕРІР°РЅРёРё?</p>
+                        <div className="space-y-2">
+                            <button onClick={() => handleLabelAnswer(true)} className="touch-btn w-full py-3 bg-green-500 text-white rounded-lg font-medium">вњ“ Р”Р°, РµСЃС‚СЊ</button>
+                            <button onClick={() => handleLabelAnswer(false)} className="touch-btn w-full py-3 bg-red-500 text-white rounded-lg font-medium">вњ— РќРµС‚ Р±РёСЂРєРё</button>
+                            <button onClick={() => setLabelModal({ open: false, item: null })} className="touch-btn w-full py-3 bg-gray-100 text-gray-600 rounded-lg font-medium">РћС‚РјРµРЅР°</button>
+                        </div>
+                    </Modal>
+
+                    <Modal isOpen={serialModal.open} onClose={() => setSerialModal({ open: false, item: null, serial: '' })} title="РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ" size="sm">
+                        <p className="text-center text-gray-600 text-sm mb-3">Р’РІРµРґРёС‚Рµ СЃРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ (РµСЃР»Рё РµСЃС‚СЊ)</p>
+                        <input type="text" value={serialModal.serial} onChange={e => setSerialModal(prev => ({ ...prev, serial: e.target.value }))}
+                            placeholder="S/N" className="w-full px-4 py-3 border border-gray-200 rounded-lg text-center font-mono mb-4" autoFocus />
+                        <div className="space-y-2">
+                            <button onClick={handleSerialSave} className="touch-btn w-full py-3 bg-green-500 text-white rounded-lg font-medium">РЎРѕС…СЂР°РЅРёС‚СЊ</button>
+                            <button onClick={handleSerialSkip} className="touch-btn w-full py-3 bg-blue-600 text-white rounded-lg font-medium">РџСЂРѕРїСѓСЃС‚РёС‚СЊ</button>
+                            <button onClick={() => setSerialModal({ open: false, item: null, serial: '' })} className="touch-btn w-full py-3 bg-gray-100 text-gray-600 rounded-lg font-medium">РћС‚РјРµРЅР°</button>
+                        </div>
+                    </Modal>
+
+                    <Modal isOpen={detailsModal.open} onClose={() => setDetailsModal({ open: false, item: null })} title="РљР°СЂС‚РѕС‡РєР° РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЏ" size="lg">
+                        {detailsModal.item && (
+                            <div className="space-y-4">
+                                <div className="p-3 bg-blue-50 rounded-lg">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs font-mono">{detailsModal.item.invNumber}</span>
+                                        {detailsModal.item.isUserAdded && <span className="text-xs text-blue-600">РќРѕРІРѕРµ</span>}
+                                    </div>
+                                    <h3 className="font-medium text-gray-800 text-sm">{detailsModal.item.name}</h3>
+                                    <p className="text-xs text-gray-500">{detailsModal.item.category}</p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-500 mb-2">Р‘РёСЂРєР°</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: true }))} 
+                                            className={`touch-btn py-2.5 rounded-lg font-medium text-sm ${detailsForm.hasLabel === true ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                            вњ“ Р•СЃС‚СЊ
+                                        </button>
+                                        <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: false }))} 
+                                            className={`touch-btn py-2.5 rounded-lg font-medium text-sm ${detailsForm.hasLabel === false ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                            вњ— РќРµС‚
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <AutocompleteInput label="РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ" value={detailsForm.serialNumber} onChange={v => setDetailsForm(prev => ({ ...prev, serialNumber: v }))} suggestions={[]} placeholder="S/N" />
+                                <AutocompleteInput label="РљР°Р±РёРЅРµС‚" value={detailsForm.location} onChange={v => setDetailsForm(prev => ({ ...prev, location: v }))} suggestions={directories.rooms} placeholder="Р’С‹Р±РµСЂРёС‚Рµ" />
+                                <AutocompleteInput label="РћС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№" value={detailsForm.responsible} onChange={v => setDetailsForm(prev => ({ ...prev, responsible: v }))} suggestions={directories.people} placeholder="Р¤РРћ" />
+
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">Р—Р°РјРµС‚РєРё</label>
+                                    <textarea value={detailsForm.inventoryNote} onChange={e => setDetailsForm(prev => ({ ...prev, inventoryNote: e.target.value }))}
+                                        placeholder="..." rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none" />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2 pt-3 border-t border-gray-100">
+                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openEditModal(detailsModal.item); }} className="touch-btn py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium text-sm">
+                                        Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ
+                                    </button>
+                                    <button onClick={() => handleWriteOff(detailsModal.item)} className="touch-btn py-2.5 bg-red-100 text-red-600 rounded-lg font-medium text-sm">
+                                        РЎРїРёСЃР°С‚СЊ
+                                    </button>
+                                </div>
+
+                                <button onClick={saveDetails} className="touch-btn w-full py-3 bg-blue-600 text-white rounded-lg font-medium">
+                                    РЎРѕС…СЂР°РЅРёС‚СЊ
+                                </button>
+                            </div>
+                        )}
+                    </Modal>
+
+                    <Modal isOpen={editModal.open} onClose={() => setEditModal({ open: false, item: null, isNew: false })} title={editModal.isNew ? 'Р”РѕР±Р°РІРёС‚СЊ' : 'Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ'} size="md">
+                        <div className="space-y-3">
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">РќР°Р·РІР°РЅРёРµ *</label>
+                                <input type="text" value={editForm.name} onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                                    placeholder="РќР°Р·РІР°РЅРёРµ" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">РРЅРІ. РЅРѕРјРµСЂ *</label>
+                                    <input type="text" value={editForm.invNumber} onChange={e => setEditForm(prev => ({ ...prev, invNumber: e.target.value }))}
+                                        placeholder="в„–" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">Р”Р°С‚Р°</label>
+                                    <input type="text" value={editForm.date} onChange={e => setEditForm(prev => ({ ...prev, date: e.target.value }))}
+                                        placeholder="Р”Р”.РњРњ.Р“Р“Р“Р“" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">РљР°С‚РµРіРѕСЂРёСЏ *</label>
+                                <select value={editForm.category} onChange={e => setEditForm(prev => ({ ...prev, category: e.target.value }))}
+                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm">
+                                    <option value="">Р’С‹Р±РµСЂРёС‚Рµ...</option>
+                                    {categories.filter(c => c !== 'Р’СЃРµ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ').map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">РќРѕРІР°СЏ РєР°С‚РµРіРѕСЂРёСЏ</label>
+                                <input type="text" value={editForm.newCategory} onChange={e => setEditForm(prev => ({ ...prev, newCategory: e.target.value }))}
+                                    placeholder="РР»Рё РІРІРµРґРёС‚Рµ РЅРѕРІСѓСЋ" className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                            </div>
+                            <div className="flex gap-2 pt-3">
+                                <button onClick={() => setEditModal({ open: false, item: null, isNew: false })} className="touch-btn flex-1 py-3 bg-gray-100 text-gray-600 rounded-lg font-medium">РћС‚РјРµРЅР°</button>
+                                <button onClick={saveEdit} className="touch-btn flex-1 py-3 bg-blue-600 text-white rounded-lg font-medium">РЎРѕС…СЂР°РЅРёС‚СЊ</button>
+                            </div>
+                        </div>
+                    </Modal>
+
+                    <Modal isOpen={quickSearchModal.open} onClose={() => setQuickSearchModal({ open: false, query: '' })} title="Р‘С‹СЃС‚СЂС‹Р№ РїРѕРёСЃРє" size="md">
+                        <input type="text" value={quickSearchModal.query} onChange={e => setQuickSearchModal(prev => ({ ...prev, query: e.target.value }))}
+                            placeholder="РќРѕРјРµСЂ РёР»Рё РЅР°Р·РІР°РЅРёРµ..." className="w-full px-4 py-3 border border-gray-200 rounded-lg font-mono mb-4" autoFocus />
+                        <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
+                            {quickSearchResults.length === 0 ? (
+                                <div className="p-8 text-center text-gray-400 text-sm">РќР°С‡РЅРёС‚Рµ РІРІРѕРґРёС‚СЊ...</div>
+                            ) : (
+                                quickSearchResults.map(item => (
+                                    <button key={item.id} onClick={() => { setQuickSearchModal({ open: false, query: '' }); openDetails(item); }}
+                                        className={`w-full text-left p-3 border-b border-gray-50 hover:bg-gray-50 flex items-center gap-3 ${item.checked ? 'bg-green-50' : item.writeOff ? 'bg-red-50' : ''}`}>
+                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${item.writeOff ? 'bg-red-500 text-white' : item.checked ? 'bg-green-500 text-white' : 'bg-amber-100 text-amber-600'}`}>
+                                            {item.writeOff ? 'рџ“ќ' : item.checked ? 'вњ“' : 'вЏі'}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-mono font-semibold text-blue-600 text-sm">{item.invNumber}</div>
+                                            <div className="text-xs text-gray-500 truncate">{item.name}</div>
+                                        </div>
+                                    </button>
+                                ))
+                            )}
+                        </div>
+                    </Modal>
+
+                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '' })} title="РљР°Р±РёРЅРµС‚С‹" size="sm">
+                        <div className="flex gap-2 mb-4">
+                            <input type="text" value={roomsModal.newRoom} onChange={e => setRoomsModal(prev => ({ ...prev, newRoom: e.target.value }))}
+                                onKeyDown={e => e.key === 'Enter' && addToDirectory('rooms', roomsModal.newRoom)}
+                                placeholder="РќРѕРІС‹Р№ РєР°Р±РёРЅРµС‚..." className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="touch-btn px-4 py-2.5 bg-green-600 text-white rounded-lg font-bold">+</button>
+                        </div>
+                        <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+                            {directories.rooms.length === 0 ? (
+                                <div className="p-6 text-center text-gray-400 text-sm">РџСѓСЃС‚Рѕ</div>
+                            ) : (
+                                directories.rooms.map((room, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 p-3 border-b border-gray-50">
+                                        <span className="flex-1 text-sm">{room}</span>
+                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="touch-btn p-2 bg-red-100 text-red-600 rounded-lg text-xs">рџ—‘пёЏ</button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </Modal>
+
+                    <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="РЎРѕС‚СЂСѓРґРЅРёРєРё" size="sm">
+                        <div className="flex gap-2 mb-4">
+                            <input type="text" value={peopleModal.newPerson} onChange={e => setPeopleModal(prev => ({ ...prev, newPerson: e.target.value }))}
+                                onKeyDown={e => e.key === 'Enter' && addToDirectory('people', peopleModal.newPerson)}
+                                placeholder="РќРѕРІРѕРµ Р¤РРћ..." className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                            <button onClick={() => addToDirectory('people', peopleModal.newPerson)} className="touch-btn px-4 py-2.5 bg-green-600 text-white rounded-lg font-bold">+</button>
+                        </div>
+                        <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+                            {directories.people.length === 0 ? (
+                                <div className="p-6 text-center text-gray-400 text-sm">РџСѓСЃС‚Рѕ</div>
+                            ) : (
+                                directories.people.map((person, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 p-3 border-b border-gray-50">
+                                        <span className="flex-1 text-sm">{person}</span>
+                                        <button onClick={() => removeFromDirectory('people', idx)} className="touch-btn p-2 bg-red-100 text-red-600 rounded-lg text-xs">рџ—‘пёЏ</button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </Modal>
+
+                    <Modal isOpen={notesModal.open} onClose={() => setNotesModal({ open: false })} title="рџ“ќ Р’СЃРµ Р·Р°РјРµС‚РєРё" size="lg">
+                        <div className="max-h-96 overflow-y-auto">
+                            {equipment.filter(i => i.inventoryNote?.trim()).length === 0 ? (
+                                <div className="p-8 text-center text-gray-400">
+                                    <div className="text-3xl mb-2">рџ“ќ</div>
+                                    <p className="text-sm">Р—Р°РјРµС‚РѕРє РїРѕРєР° РЅРµС‚</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {equipment.filter(i => i.inventoryNote?.trim()).map(item => (
+                                        <button key={item.id} onClick={() => { setNotesModal({ open: false }); openDetails(item); }}
+                                            className="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs font-mono">{item.invNumber}</span>
+                                                <span className={`px-2 py-0.5 rounded text-xs font-medium ${item.writeOff ? 'bg-red-100 text-red-600' : item.checked ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>
+                                                    {item.writeOff ? 'РЎРїРёСЃР°РЅРёРµ' : item.checked ? 'РџСЂРѕРІРµСЂРµРЅРѕ' : 'РћР¶РёРґР°РµС‚'}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm font-medium text-gray-800 mb-1 line-clamp-1">{item.name}</p>
+                                            <p className="text-xs text-gray-600 bg-white p-2 rounded border border-gray-200">{item.inventoryNote}</p>
+                                            {item.location && <p className="text-xs text-gray-400 mt-1">рџ“Ќ {item.location}</p>}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </Modal>
+
+                    <ConfirmModal isOpen={confirmModal.open} onClose={() => setConfirmModal(prev => ({ ...prev, open: false }))}
+                        onConfirm={confirmModal.onConfirm} title={confirmModal.title} message={confirmModal.message} />
+
+                    <Toast message={toast.message} isVisible={toast.visible} onClose={() => setToast(prev => ({ ...prev, visible: false }))} />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
