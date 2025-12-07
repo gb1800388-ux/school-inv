@@ -385,7 +385,7 @@
             {id:"item_3",name:"Акустическая система для аудитории",invNumber:"1101340095",date:"30.03.2018",note:"оргтехника",category:"Аудиооборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_4",name:"Интерактивное устройство IRBIS",invNumber:"0101340042",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_5",name:"Интерактивное устройство IRBIS",invNumber:"0101340043",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-            {"id": "item_6", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340044", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
+{"id": "item_6", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340044", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
 {"id": "item_7", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340045", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
 {"id": "item_8", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340046", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
 {"id": "item_9", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340047", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
@@ -1067,13 +1067,15 @@
             }, [isOpen]);
             
             const currentOption = options.find(o => o.value === value) || options[0];
+            // Don't show count on button for "All" options
+            const isAllOption = value === 'Все здания' || value === 'Все оборудование';
             
             return (
                 <div className="relative" ref={dropdownRef}>
                     <button className={`dropdown-btn ${isOpen ? 'open' : ''}`} onClick={() => setIsOpen(!isOpen)}>
                         {currentOption?.icon && <span className="item-icon">{currentOption.icon}</span>}
                         <span className="btn-name flex-1 text-left truncate">{currentOption?.label || ''}</span>
-                        {currentOption?.count !== undefined && <span className="item-count">{currentOption.count}</span>}
+                        {!isAllOption && currentOption?.count !== undefined && <span className="item-count">{currentOption.count}</span>}
                         <Icons.ChevronDown />
                     </button>
                     
