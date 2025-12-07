@@ -263,6 +263,109 @@
         .filter-panel {
             will-change: transform;
         }
+        
+        /* Category dropdown */
+        .category-dropdown {
+            position: relative;
+        }
+        .category-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #2d3748;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            min-width: 180px;
+            max-width: 280px;
+        }
+        .category-dropdown-btn:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+        .category-dropdown-btn.open {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+        .category-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 4px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 200;
+            max-height: 320px;
+            overflow-y: auto;
+            animation: dropdownIn 0.15s ease-out;
+        }
+        @keyframes dropdownIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .category-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            font-size: 0.875rem;
+            color: #4a5568;
+            cursor: pointer;
+            border-bottom: 1px solid #f7fafc;
+            transition: background 0.1s ease;
+        }
+        .category-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .category-dropdown-item:hover {
+            background: #f7fafc;
+        }
+        .category-dropdown-item.active {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            font-weight: 700;
+        }
+        .category-dropdown-item .cat-icon {
+            font-size: 1.125rem;
+        }
+        .category-dropdown-item .cat-count {
+            margin-left: auto;
+            padding: 2px 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .category-dropdown-item.active .cat-count {
+            background: #bee3f8;
+        }
+        
+        /* Mobile category button */
+        @media (max-width: 768px) {
+            .category-dropdown-btn {
+                min-width: unset;
+                max-width: unset;
+                padding: 8px 10px;
+            }
+            .category-dropdown-btn .cat-name {
+                max-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .category-dropdown-menu {
+                min-width: 260px;
+                right: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -571,6 +674,70 @@
             return (
                 <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-3 bg-gray-800 text-white rounded-lg shadow-lg z-800 text-sm font-semibold">
                     {message}
+                </div>
+            );
+        };
+
+        // Category Dropdown Component
+        const CategoryDropdown = ({ categories, activeCategory, setActiveCategory, stats }) => {
+            const [isOpen, setIsOpen] = useState(false);
+            const dropdownRef = useRef(null);
+            
+            useEffect(() => {
+                const handleClickOutside = (e) => {
+                    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                        setIsOpen(false);
+                    }
+                };
+                if (isOpen) {
+                    document.addEventListener('mousedown', handleClickOutside);
+                    document.addEventListener('touchstart', handleClickOutside);
+                }
+                return () => {
+                    document.removeEventListener('mousedown', handleClickOutside);
+                    document.removeEventListener('touchstart', handleClickOutside);
+                };
+            }, [isOpen]);
+            
+            const currentConfig = categoryConfig[activeCategory] || defaultCatConfig;
+            const currentIcon = activeCategory === 'Все оборудование' ? '📋' : currentConfig.icon;
+            const currentCount = activeCategory === 'Все оборудование' ? stats.total : stats.byCategory[activeCategory] || 0;
+            
+            return (
+                <div className="category-dropdown" ref={dropdownRef}>
+                    <button 
+                        className={`category-dropdown-btn ${isOpen ? 'open' : ''}`}
+                        onClick={() => setIsOpen(!isOpen)}
+                    >
+                        <span className="cat-icon">{currentIcon}</span>
+                        <span className="cat-name flex-1 text-left truncate">{activeCategory}</span>
+                        <span className="cat-count">{currentCount}</span>
+                        <svg className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    
+                    {isOpen && (
+                        <div className="category-dropdown-menu custom-scroll">
+                            {categories.map(cat => {
+                                const config = categoryConfig[cat] || defaultCatConfig;
+                                const icon = cat === 'Все оборудование' ? '📋' : config.icon;
+                                const count = cat === 'Все оборудование' ? stats.total : stats.byCategory[cat] || 0;
+                                
+                                return (
+                                    <div
+                                        key={cat}
+                                        className={`category-dropdown-item ${activeCategory === cat ? 'active' : ''}`}
+                                        onClick={() => { setActiveCategory(cat); setIsOpen(false); }}
+                                    >
+                                        <span className="cat-icon">{icon}</span>
+                                        <span className="flex-1 truncate">{cat}</span>
+                                        <span className="cat-count">{count}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
             );
         };
@@ -959,29 +1126,45 @@
 
                     <main className="main-area flex-1 flex flex-col min-w-0 overflow-hidden">
                         {/* Mobile header - only visible on mobile */}
-                        <header className="mobile-header bg-white border-b border-gray-200 px-4 py-3 items-center gap-3 flex-shrink-0">
-                            <button onClick={() => setSidebarOpen(true)} className="touch-btn w-10 h-10 rounded-lg bg-gray-100">
-                                <Icons.Menu />
-                            </button>
-                            <div className="flex-1 relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Icons.Search /></span>
-                                <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск..."
-                                    className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                        <header className="mobile-header bg-white border-b border-gray-200 px-3 py-2.5 flex-col gap-2 flex-shrink-0">
+                            <div className="flex items-center gap-2">
+                                <button onClick={() => setSidebarOpen(true)} className="touch-btn w-10 h-10 rounded-lg bg-gray-100 flex-shrink-0">
+                                    <Icons.Menu />
+                                </button>
+                                <div className="flex-1 relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Icons.Search /></span>
+                                    <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск..."
+                                        className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm" />
+                                </div>
+                                <button onClick={handleSave} className="touch-btn w-10 h-10 bg-blue-600 text-white rounded-lg flex-shrink-0">
+                                    <Icons.Save />
+                                </button>
                             </div>
-                            <button onClick={handleSave} className="touch-btn w-10 h-10 bg-blue-600 text-white rounded-lg">
-                                <Icons.Save />
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <CategoryDropdown 
+                                    categories={categories}
+                                    activeCategory={activeCategory}
+                                    setActiveCategory={setActiveCategory}
+                                    stats={stats}
+                                />
+                            </div>
                         </header>
 
                         {/* Desktop header - only visible on desktop */}
                         <header className="desktop-header bg-white border-b border-gray-200 px-5 py-3 flex-shrink-0">
                             <div className="flex items-center gap-3">
-                                <div className="flex-1 relative max-w-md">
+                                <div className="flex-1 relative max-w-sm">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Icons.Search /></span>
                                     <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск..."
                                         className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none" />
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <CategoryDropdown 
+                                    categories={categories}
+                                    activeCategory={activeCategory}
+                                    setActiveCategory={setActiveCategory}
+                                    stats={stats}
+                                />
+                                <div className="flex items-center gap-2 ml-auto">
                                     <button onClick={handleSave} className="touch-btn px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5">
                                         <Icons.Save /> <span className="hidden sm:inline">Сохранить</span>
                                     </button>
