@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -31,34 +31,28 @@
         }
         
         html { 
-            font-size: 17px; 
+            font-size: 15px; 
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
         
         body { 
             font-family: 'Inter', system-ui, sans-serif; 
             background: #f8fafc; 
-            color: #0f172a;
+            color: #1e293b;
             line-height: 1.5;
             overflow: hidden;
             height: 100dvh;
-            font-weight: 500;
-            letter-spacing: -0.01em;
         }
         
-        /* App container */
         .app-container {
             padding-top: env(safe-area-inset-top, 0px);
             height: 100dvh;
         }
         
-        /* Scrollbar */
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar { width: 3px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         
-        /* Content scroll */
         .content-scroll {
             flex: 1;
             overflow-y: auto;
@@ -67,131 +61,106 @@
             overscroll-behavior: contain;
         }
         
-        /* Touch button */
         .touch-btn {
-            min-height: 48px;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.15s ease;
-            font-weight: 600;
+            font-weight: 500;
         }
-        .touch-btn:active { transform: scale(0.97); }
+        .touch-btn:active { transform: scale(0.98); opacity: 0.9; }
         
-        /* Status badges */
         .status-badge {
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.02em;
         }
-        .status-checked {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            color: #065f46;
-        }
-        .status-pending {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: #92400e;
-        }
-        .status-writeoff {
-            background: linear-gradient(135deg, #fee2e2, #fecaca);
-            color: #b91c1c;
-        }
+        .status-checked { background: #dcfce7; color: #166534; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-writeoff { background: #fee2e2; color: #dc2626; }
         
-        /* Category divider */
-        .category-divider {
-            background: linear-gradient(135deg, #1e293b, #334155);
+        .category-header {
+            background: #1e293b;
             color: white;
-            padding: 16px 20px;
-            border-radius: 16px;
-            margin: 24px 0 16px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin: 16px 0 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 800;
-            font-size: 1.1rem;
-            letter-spacing: -0.02em;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            font-weight: 600;
+            font-size: 0.8rem;
         }
-        .category-divider:first-child { margin-top: 0; }
+        .category-header:first-child { margin-top: 0; }
         
-        /* Card */
-        .card-shadow {
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.04);
+        .card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.15s ease;
         }
-        .card-shadow:hover {
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            transform: translateY(-2px);
+        .card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         
-        /* Equipment card */
         .equipment-card {
             position: relative;
-            isolation: isolate;
-            transition: all 0.2s ease;
         }
         
-        /* Note indicator */
-        .note-indicator {
+        .note-dot {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 12px;
-            height: 12px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            top: 10px;
+            right: 10px;
+            width: 6px;
+            height: 6px;
+            background: #3b82f6;
             border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
         }
         
-        /* Modal z-index hierarchy */
         .modal-base {
             position: fixed;
             inset: 0;
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: 3vh 16px 16px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
+            padding: 5vh 16px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(2px);
         }
-        .modal-z-500 { z-index: 500; }
         .modal-z-600 { z-index: 600; }
         .modal-z-700 { z-index: 700; }
         .modal-z-800 { z-index: 800; }
         
-        /* Modal animation */
-        .modal-animate {
-            animation: modalIn 0.25s ease-out;
+        .modal-content {
+            animation: modalSlide 0.2s ease-out;
         }
-        @keyframes modalIn {
-            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         /* Responsive */
         @media (max-width: 768px) {
             .nav-rail { display: none !important; }
-            .filter-panel { 
+            .sidebar { 
                 position: fixed;
                 left: 0;
                 top: 0;
                 bottom: 0;
-                width: 320px;
+                width: 280px;
                 z-index: 500;
                 transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                box-shadow: 4px 0 30px rgba(0,0,0,0.2);
+                transition: transform 0.25s ease;
+                box-shadow: 2px 0 16px rgba(0,0,0,0.1);
             }
-            .filter-panel.open { transform: translateX(0); }
+            .sidebar.open { transform: translateX(0); }
             .mobile-header { display: flex !important; }
-            .main-area { margin-left: 0 !important; }
             .desktop-header { display: none !important; }
         }
         
@@ -201,112 +170,69 @@
             .desktop-header { display: flex !important; }
         }
         
-        /* Tablet */
         @media (min-width: 769px) and (max-width: 1024px) {
-            .nav-rail { width: 64px; }
-            .nav-rail button { width: 44px; height: 44px; }
-            .filter-panel { width: 260px; }
+            .nav-rail { width: 56px; }
+            .sidebar { width: 220px; }
         }
         
-        /* Quick stat - vertical */
-        .quick-stat-card {
+        .stat-pill {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 16px 12px;
-            border-radius: 16px;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
-            border: 3px solid transparent;
-            transition: all 0.2s ease;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
         }
-        .quick-stat-card:hover {
-            border-color: #e2e8f0;
-            transform: translateY(-2px);
-        }
-        .quick-stat-card.active {
-            border-color: #3b82f6;
-            background: linear-gradient(135deg, #eff6ff, #dbeafe);
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
-        }
-        .quick-stat-value {
-            font-size: 2rem;
-            font-weight: 900;
-            line-height: 1;
-            margin-bottom: 6px;
-            letter-spacing: -0.03em;
-        }
-        .quick-stat-label {
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
+        .stat-pill:hover { background: #f1f5f9; }
+        .stat-pill.active { 
+            border-color: #3b82f6; 
+            background: #eff6ff;
         }
         
-        /* Filter panel */
-        .filter-panel {
+        .sidebar {
             will-change: transform;
         }
         
-        /* Gradient buttons */
+        .input-field {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.15s ease;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
         .btn-primary {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: #2563eb;
             color: white;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
-        .btn-primary:hover {
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
-        }
+        .btn-primary:hover { background: #1d4ed8; }
         
         .btn-success {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
+            background: #16a34a;
             color: white;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
         }
+        .btn-success:hover { background: #15803d; }
         
         .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: #dc2626;
             color: white;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
         }
         
-        /* Input styles */
-        .input-modern {
-            font-size: 1rem;
-            font-weight: 500;
-            padding: 14px 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            transition: all 0.2s ease;
+        .btn-ghost {
+            background: #f1f5f9;
+            color: #475569;
         }
-        .input-modern:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-            outline: none;
-        }
-        
-        /* Big icon style */
-        .icon-box {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-        }
-        
-        /* Progress ring glow */
-        .progress-glow {
-            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
-        }
+        .btn-ghost:hover { background: #e2e8f0; }
     </style>
 </head>
 <body>
@@ -318,23 +244,22 @@
     <script type="text/babel">
         const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-        // Icons (SVG)
         const Icons = {
-            Home: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
-            Building: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
-            Users: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
-            Plus: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>,
-            Search: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
-            Save: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>,
-            Download: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>,
-            Upload: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>,
-            Trash: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
-            X: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>,
-            Menu: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>,
-            Check: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>,
+            Home: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
+            Building: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
+            Users: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+            Plus: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>,
+            Search: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
+            Save: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>,
+            Download: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>,
+            Upload: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>,
+            Trash: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
+            X: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>,
+            Menu: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>,
+            Check: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>,
+            ChevronRight: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>,
         };
 
-        // Initial data
         const initialEquipment = [
             {id:"item_0",name:"МФУ групповое, цветное OKI MC563dn",invNumber:"1101340057",date:"29.12.2017",note:"оргтехника",category:"Принтеры и МФУ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_1",name:"Принтер групповой Epson WorkForce Pro WF-M5190DW",invNumber:"1101340077",date:"22.03.2018",note:"оргтехника",category:"Принтеры и МФУ",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
@@ -352,157 +277,131 @@
             {id:"item_422",name:"Интерактивная панель ICL InfoRay",invNumber:"БД-57",date:"03.10.2022",note:"",category:"Интерактивное оборудование",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
         ];
 
-        // Category config
         const categoryConfig = {
-            "Аудиооборудование": { icon: "🔊", color: "#8b5cf6", bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
-            "Интерактивное оборудование": { icon: "📱", color: "#3b82f6", bg: "linear-gradient(135deg, #3b82f6, #2563eb)" },
-            "Принтеры и МФУ": { icon: "🖨️", color: "#06b6d4", bg: "linear-gradient(135deg, #06b6d4, #0891b2)" },
-            "Телевизоры": { icon: "📺", color: "#22c55e", bg: "linear-gradient(135deg, #22c55e, #16a34a)" },
+            "Аудиооборудование": { icon: "🔊", color: "#7c3aed" },
+            "Интерактивное оборудование": { icon: "📱", color: "#2563eb" },
+            "Принтеры и МФУ": { icon: "🖨", color: "#0891b2" },
+            "Телевизоры": { icon: "📺", color: "#059669" },
         };
-        const defaultCatConfig = { icon: "📦", color: "#64748b", bg: "linear-gradient(135deg, #64748b, #475569)" };
+        const defaultCatConfig = { icon: "📦", color: "#64748b" };
 
-        // Progress Ring
-        const ProgressRing = ({ percent, size = 80 }) => {
-            const strokeWidth = 8;
-            const radius = (size - strokeWidth) / 2;
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference - (percent / 100) * circumference;
-            
-            return (
-                <div className="relative progress-glow" style={{ width: size, height: size }}>
-                    <svg className="transform -rotate-90" width={size} height={size}>
-                        <circle stroke="#e2e8f0" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2} />
-                        <circle stroke="url(#progressGradient)" strokeWidth={strokeWidth} fill="transparent" r={radius} cx={size/2} cy={size/2}
-                            strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
-                        <defs>
-                            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="#3b82f6" />
-                                <stop offset="100%" stopColor="#8b5cf6" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-2xl font-black text-slate-800">{percent}%</span>
-                    </div>
+        // Progress Bar
+        const ProgressBar = ({ percent }) => (
+            <div className="flex items-center gap-3">
+                <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-blue-600 rounded-full transition-all duration-500" style={{ width: `${percent}%` }} />
                 </div>
-            );
-        };
+                <span className="text-sm font-semibold text-slate-700 w-10 text-right">{percent}%</span>
+            </div>
+        );
 
         // Navigation Rail
         const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenNotes }) => (
-            <div className="nav-rail w-20 bg-gradient-to-b from-slate-900 to-slate-800 flex flex-col items-center py-5 flex-shrink-0">
-                <button onClick={onShowInfo} className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-blue-500/30" title="О программе">
-                    <span className="text-white font-black text-lg">102</span>
+            <div className="nav-rail w-14 bg-slate-900 flex flex-col items-center py-3 flex-shrink-0">
+                <button onClick={onShowInfo} className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center mb-4" title="О программе">
+                    <span className="text-white font-semibold text-xs">102</span>
                 </button>
-                <div className="flex-1 flex flex-col items-center gap-3">
-                    <button onClick={onGoHome} className="touch-btn w-12 h-12 rounded-2xl bg-slate-700/50 text-white hover:bg-slate-700" title="Главная">
+                <div className="flex-1 flex flex-col items-center gap-1">
+                    <button onClick={onGoHome} className="touch-btn w-10 h-10 rounded-lg bg-slate-800 text-white" title="Главная">
                         <Icons.Home />
                     </button>
-                    <button onClick={onOpenRooms} className="touch-btn w-12 h-12 rounded-2xl text-slate-400 hover:bg-slate-700/50 hover:text-white" title="Кабинеты">
+                    <button onClick={onOpenRooms} className="touch-btn w-10 h-10 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white" title="Кабинеты">
                         <Icons.Building />
                     </button>
-                    <button onClick={onOpenPeople} className="touch-btn w-12 h-12 rounded-2xl text-slate-400 hover:bg-slate-700/50 hover:text-white" title="Сотрудники">
+                    <button onClick={onOpenPeople} className="touch-btn w-10 h-10 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white" title="Сотрудники">
                         <Icons.Users />
                     </button>
-                    <button onClick={onOpenNotes} className="touch-btn w-12 h-12 rounded-2xl text-slate-400 hover:bg-slate-700/50 hover:text-white" title="Заметки">
-                        <span className="text-2xl">📝</span>
+                    <button onClick={onOpenNotes} className="touch-btn w-10 h-10 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white text-base" title="Заметки">
+                        📝
                     </button>
                 </div>
-                <button onClick={onAddEquipment} className="touch-btn w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30" title="Добавить">
+                <button onClick={onAddEquipment} className="touch-btn w-10 h-10 rounded-lg bg-emerald-600 text-white" title="Добавить">
                     <Icons.Plus />
                 </button>
             </div>
         );
 
-        // Filter Panel
-        const FilterPanel = ({ isOpen, onClose, stats, categories, activeCategory, setActiveCategory, activeFilter, setActiveFilter }) => {
+        // Sidebar
+        const Sidebar = ({ isOpen, onClose, stats, categories, activeCategory, setActiveCategory, activeFilter, setActiveFilter }) => {
             const percent = stats.total > 0 ? Math.round((stats.checked / stats.total) * 100) : 0;
 
             return (
                 <>
-                    <div className={`mobile-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-400 ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} />
-                    <div className={`filter-panel w-80 bg-white flex flex-col flex-shrink-0 ${isOpen ? 'open' : ''}`}>
-                        <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center lg:hidden hover:bg-slate-200">
+                    <div className={`mobile-overlay fixed inset-0 bg-black/40 z-400 ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} />
+                    <div className={`sidebar w-56 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 ${isOpen ? 'open' : ''}`}>
+                        <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center lg:hidden">
                             <Icons.X />
                         </button>
                         
-                        <div className="p-5 border-b border-slate-100">
-                            <h1 className="text-xl font-black text-slate-900 tracking-tight">Инвентаризация</h1>
-                            <p className="text-sm font-semibold text-slate-500">ГКОУ СКОШИ №102</p>
+                        <div className="p-4 border-b border-slate-100">
+                            <h1 className="text-sm font-semibold text-slate-900">Инвентаризация</h1>
+                            <p className="text-xs text-slate-500">ГКОУ СКОШИ №102</p>
                         </div>
 
-                        <div className="p-5 border-b border-slate-100">
-                            <div className="flex items-center gap-5">
-                                <ProgressRing percent={percent} size={72} />
-                                <div className="flex-1">
-                                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Прогресс</div>
-                                    <div className="flex justify-between text-base mb-1">
-                                        <span className="font-semibold text-slate-600">Проверено</span>
-                                        <span className="font-black text-emerald-600">{stats.checked}</span>
-                                    </div>
-                                    <div className="flex justify-between text-base">
-                                        <span className="font-semibold text-slate-600">Осталось</span>
-                                        <span className="font-black text-amber-600">{stats.pending}</span>
-                                    </div>
+                        <div className="p-4 border-b border-slate-100">
+                            <div className="flex items-baseline justify-between mb-2">
+                                <span className="text-xs text-slate-500">Прогресс</span>
+                                <span className="text-xs text-slate-600"><b className="text-emerald-600">{stats.checked}</b> / {stats.total}</span>
+                            </div>
+                            <ProgressBar percent={percent} />
+                        </div>
+
+                        <div className="p-3 border-b border-slate-100">
+                            <div className="flex flex-wrap gap-1.5">
+                                <div onClick={() => setActiveFilter(activeFilter === 'writeoff' ? 'all' : 'writeoff')}
+                                    className={`stat-pill ${activeFilter === 'writeoff' ? 'active' : ''}`}>
+                                    <span className="text-red-600 font-semibold">{stats.writeOff}</span>
+                                    <span className="text-slate-500">списание</span>
+                                </div>
+                                <div onClick={() => setActiveFilter(activeFilter === 'nolabel' ? 'all' : 'nolabel')}
+                                    className={`stat-pill ${activeFilter === 'nolabel' ? 'active' : ''}`}>
+                                    <span className="text-amber-600 font-semibold">{stats.noLabel}</span>
+                                    <span className="text-slate-500">без бирки</span>
+                                </div>
+                                <div onClick={() => setActiveFilter(activeFilter === 'serial' ? 'all' : 'serial')}
+                                    className={`stat-pill ${activeFilter === 'serial' ? 'active' : ''}`}>
+                                    <span className="text-emerald-600 font-semibold">{stats.withSerial}</span>
+                                    <span className="text-slate-500">с S/N</span>
+                                </div>
+                                <div onClick={() => setActiveFilter(activeFilter === 'notes' ? 'all' : 'notes')}
+                                    className={`stat-pill ${activeFilter === 'notes' ? 'active' : ''}`}>
+                                    <span className="text-blue-600 font-semibold">{stats.withNotes}</span>
+                                    <span className="text-slate-500">заметки</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3 p-4 border-b border-slate-100">
-                            <div onClick={() => setActiveFilter(activeFilter === 'writeoff' ? 'all' : 'writeoff')}
-                                className={`quick-stat-card ${activeFilter === 'writeoff' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-red-500">{stats.writeOff}</div>
-                                <div className="quick-stat-label">Списание</div>
-                            </div>
-                            <div onClick={() => setActiveFilter(activeFilter === 'nolabel' ? 'all' : 'nolabel')}
-                                className={`quick-stat-card ${activeFilter === 'nolabel' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-amber-500">{stats.noLabel}</div>
-                                <div className="quick-stat-label">Без бирки</div>
-                            </div>
-                            <div onClick={() => setActiveFilter(activeFilter === 'serial' ? 'all' : 'serial')}
-                                className={`quick-stat-card ${activeFilter === 'serial' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-emerald-500">{stats.withSerial}</div>
-                                <div className="quick-stat-label">С серийником</div>
-                            </div>
-                            <div onClick={() => setActiveFilter(activeFilter === 'new' ? 'all' : 'new')}
-                                className={`quick-stat-card ${activeFilter === 'new' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-blue-500">{stats.new}</div>
-                                <div className="quick-stat-label">Новые</div>
-                            </div>
-                        </div>
-
-                        <div className="p-4 border-b border-slate-100">
-                            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Статус</div>
-                            <div className="space-y-2">
+                        <div className="p-3 border-b border-slate-100">
+                            <div className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Статус</div>
+                            <div className="space-y-0.5">
                                 {[
                                     { id: 'all', label: 'Все', count: stats.total },
-                                    { id: 'unchecked', label: 'Ожидают', count: stats.pending },
+                                    { id: 'unchecked', label: 'Ожидают проверки', count: stats.pending },
                                     { id: 'checked', label: 'Проверено', count: stats.checked },
-                                    { id: 'notes', label: 'С заметками', count: stats.withNotes },
                                 ].map(f => (
                                     <button key={f.id} onClick={() => { setActiveFilter(f.id); onClose(); }}
-                                        className={`touch-btn w-full flex items-center gap-3 px-4 rounded-xl text-base
-                                            ${activeFilter === f.id ? 'btn-primary' : 'text-slate-700 hover:bg-slate-50'}`}>
-                                        <span className="flex-1 text-left font-semibold">{f.label}</span>
-                                        <span className={`text-sm font-bold px-3 py-1 rounded-lg ${activeFilter === f.id ? 'bg-white/20' : 'bg-slate-100'}`}>{f.count}</span>
+                                        className={`touch-btn w-full flex items-center gap-2 px-3 rounded-md text-sm min-h-[36px]
+                                            ${activeFilter === f.id ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>
+                                        <span className="flex-1 text-left">{f.label}</span>
+                                        <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${activeFilter === f.id ? 'bg-white/20' : 'bg-slate-100'}`}>{f.count}</span>
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-4 custom-scroll">
-                            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Категории</div>
-                            <div className="space-y-2">
+                        <div className="flex-1 overflow-y-auto p-3 custom-scroll">
+                            <div className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Категории</div>
+                            <div className="space-y-0.5">
                                 {categories.map(cat => {
                                     const config = categoryConfig[cat] || defaultCatConfig;
                                     return (
                                         <button key={cat} onClick={() => { setActiveCategory(cat); onClose(); }}
-                                            className={`touch-btn w-full flex items-center gap-3 px-4 rounded-xl text-base
-                                                ${activeCategory === cat ? 'btn-primary' : 'text-slate-700 hover:bg-slate-50'}`}>
-                                            <span className="text-xl">{cat === 'Все оборудование' ? '📋' : config.icon}</span>
-                                            <span className="flex-1 text-left font-semibold truncate">{cat}</span>
-                                            <span className={`text-sm font-bold px-3 py-1 rounded-lg ${activeCategory === cat ? 'bg-white/20' : 'bg-slate-100'}`}>
-                                                {cat === 'Все оборудование' ? stats.total : stats.byCategory[cat] || 0}
+                                            className={`touch-btn w-full flex items-center gap-2 px-3 rounded-md text-sm min-h-[36px]
+                                                ${activeCategory === cat ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>
+                                            <span className="text-sm">{cat === 'Все' ? '📋' : config.icon}</span>
+                                            <span className="flex-1 text-left truncate">{cat}</span>
+                                            <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${activeCategory === cat ? 'bg-white/20' : 'bg-slate-100'}`}>
+                                                {cat === 'Все' ? stats.total : stats.byCategory[cat] || 0}
                                             </span>
                                         </button>
                                     );
@@ -520,51 +419,42 @@
             const hasNote = !!item.inventoryNote?.trim();
             const config = categoryConfig[item.category] || defaultCatConfig;
 
-            const infoParts = [];
-            if (item.location) infoParts.push(`📍 ${item.location}`);
-            if (item.responsible) infoParts.push(`👤 ${item.responsible}`);
-            if (item.serialNumber) infoParts.push(`S/N: ${item.serialNumber}`);
-
             return (
-                <div className={`equipment-card bg-white rounded-2xl p-5 card-shadow border-l-4 
-                    ${item.writeOff ? 'border-l-red-500' : item.checked ? 'border-l-emerald-500' : 'border-l-slate-300'}`}>
+                <div className={`equipment-card card p-3 border-l-2 ${item.writeOff ? 'border-l-red-500' : item.checked ? 'border-l-emerald-500' : 'border-l-slate-300'}`}>
+                    {hasNote && <div className="note-dot" />}
                     
-                    {hasNote && <div className="note-indicator" title="Есть заметка" />}
-                    
-                    <div className="flex items-start gap-4 mb-4">
-                        <div className={`icon-box flex-shrink-0
-                            ${item.writeOff ? 'bg-red-100' : item.checked ? 'bg-emerald-100' : 'bg-slate-100'}`}>
-                            {item.writeOff ? '📝' : item.checked ? '✓' : config.icon}
+                    <div className="flex items-start gap-3 mb-2">
+                        <div className={`w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0 text-base
+                            ${item.writeOff ? 'bg-red-50' : item.checked ? 'bg-emerald-50' : 'bg-slate-50'}`}>
+                            {item.writeOff ? '📝' : item.checked ? <Icons.Check /> : config.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap mb-2">
-                                <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg text-sm font-bold font-mono shadow-sm">{item.invNumber}</span>
-                                {item.isUserAdded && <span title="Новое" className="w-3 h-3 bg-blue-500 rounded-full shadow-sm shadow-blue-500/50" />}
-                                {item.hasLabel === false && <span title="Без бирки" className="w-3 h-3 bg-amber-500 rounded-full shadow-sm shadow-amber-500/50" />}
+                            <div className="flex items-center gap-2 mb-0.5">
+                                <span className="px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-mono font-medium">{item.invNumber}</span>
+                                {item.isUserAdded && <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" title="Новое" />}
+                                {item.hasLabel === false && <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" title="Без бирки" />}
                             </div>
-                            <h3 className="font-bold text-slate-800 text-base leading-snug line-clamp-2">{item.name}</h3>
+                            <h3 className="text-sm text-slate-800 leading-snug line-clamp-2">{item.name}</h3>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 text-sm text-slate-500 mb-4 flex-wrap">
+                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-3">
                         <span className={`status-badge ${item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending'}`}>
                             {item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает'}
                         </span>
-                        {infoParts.map((part, idx) => (
-                            <span key={idx} className="font-medium">{part}</span>
-                        ))}
+                        {item.location && <span>📍 {item.location}</span>}
                     </div>
 
-                    <div className="flex gap-3 pt-4 border-t border-slate-100">
-                        <button onClick={() => onView(item)} className="touch-btn flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold">
-                            Просмотр
+                    <div className="flex gap-2">
+                        <button onClick={() => onView(item)} className="touch-btn flex-1 py-2 btn-ghost rounded-md text-xs font-medium">
+                            Подробнее
                         </button>
                         {!isProcessed ? (
-                            <button onClick={() => onCheck(item)} className="touch-btn flex-1 py-3 btn-success rounded-xl text-sm font-bold">
+                            <button onClick={() => onCheck(item)} className="touch-btn flex-1 py-2 btn-success rounded-md text-xs font-medium">
                                 ✓ Проверить
                             </button>
                         ) : (
-                            <button onClick={() => onCheck(item, true)} className="touch-btn flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-bold">
+                            <button onClick={() => onCheck(item, true)} className="touch-btn flex-1 py-2 btn-ghost rounded-md text-xs font-medium">
                                 ↩ Отменить
                             </button>
                         )}
@@ -580,14 +470,14 @@
             
             return (
                 <div className="modal-base modal-z-600" onClick={onClose}>
-                    <div className={`modal-animate bg-white rounded-3xl shadow-2xl w-full ${sizeClass}`} onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                            <h2 className="text-xl font-black text-slate-800">{title}</h2>
-                            <button onClick={onClose} className="touch-btn w-10 h-10 rounded-xl hover:bg-slate-100 text-slate-400">
+                    <div className={`modal-content bg-white rounded-lg shadow-xl w-full ${sizeClass}`} onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                            <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
+                            <button onClick={onClose} className="touch-btn w-8 h-8 rounded-md hover:bg-slate-100 text-slate-400 min-h-0">
                                 <Icons.X />
                             </button>
                         </div>
-                        <div className="p-6 max-h-[65vh] overflow-y-auto custom-scroll">{children}</div>
+                        <div className="p-4 max-h-[65vh] overflow-y-auto custom-scroll">{children}</div>
                     </div>
                 </div>
             );
@@ -598,12 +488,12 @@
             if (!isOpen) return null;
             return (
                 <div className="modal-base modal-z-700" onClick={onClose}>
-                    <div className="modal-animate bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center" onClick={e => e.stopPropagation()}>
-                        <h3 className="text-2xl font-black text-slate-800 mb-2">{title}</h3>
-                        <p className="text-base font-medium text-slate-500 mb-6">{message}</p>
+                    <div className="modal-content bg-white rounded-lg shadow-xl w-full max-w-xs p-5 text-center" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-base font-semibold text-slate-800 mb-1">{title}</h3>
+                        <p className="text-sm text-slate-500 mb-5">{message}</p>
                         <div className="flex gap-3">
-                            <button onClick={onClose} className="touch-btn flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold text-base">Отмена</button>
-                            <button onClick={onConfirm} className="touch-btn flex-1 py-4 btn-primary rounded-2xl font-bold text-base">Да</button>
+                            <button onClick={onClose} className="touch-btn flex-1 py-2.5 btn-ghost rounded-md font-medium text-sm">Отмена</button>
+                            <button onClick={onConfirm} className="touch-btn flex-1 py-2.5 btn-primary rounded-md font-medium text-sm">Да</button>
                         </div>
                     </div>
                 </div>
@@ -615,7 +505,7 @@
             useEffect(() => { if (isVisible) { const t = setTimeout(onClose, 2500); return () => clearTimeout(t); } }, [isVisible, onClose]);
             if (!isVisible) return null;
             return (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 bg-slate-900 text-white rounded-2xl shadow-2xl z-800 text-base font-bold">
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-slate-900 text-white rounded-lg shadow-lg z-800 text-sm font-medium">
                     {message}
                 </div>
             );
@@ -631,15 +521,15 @@
 
             return (
                 <div className="relative">
-                    {label && <label className="block text-sm font-bold text-slate-500 mb-2">{label}</label>}
+                    {label && <label className="block text-xs font-medium text-slate-500 mb-1">{label}</label>}
                     <input type="text" value={value} onChange={e => onChange(e.target.value)}
                         onFocus={() => setShowDropdown(true)} onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-                        placeholder={placeholder} className="w-full input-modern" />
+                        placeholder={placeholder} className="input-field" />
                     {showDropdown && filtered.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-slate-100 rounded-2xl shadow-xl z-50 overflow-hidden">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-50">
                             {filtered.map((item, idx) => (
                                 <button key={idx} type="button" onMouseDown={() => { onChange(item); setShowDropdown(false); }}
-                                    className="w-full text-left px-4 py-3 hover:bg-slate-50 text-base font-medium border-b border-slate-50 last:border-0">
+                                    className="w-full text-left px-3 py-2 hover:bg-slate-50 text-sm border-b border-slate-50 last:border-0">
                                     {item}
                                 </button>
                             ))}
@@ -655,7 +545,7 @@
             
             const [equipment, setEquipment] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('inv_102_data_v11');
+                    const saved = localStorage.getItem('inv_102_data_v12');
                     if (saved) {
                         const parsed = JSON.parse(saved);
                         return initialEquipment.map(item => {
@@ -669,13 +559,13 @@
 
             const [directories, setDirectories] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('inv_102_dirs_v11');
+                    const saved = localStorage.getItem('inv_102_dirs_v12');
                     return saved ? JSON.parse(saved) : { rooms: [], people: [] };
                 } catch (e) { return { rooms: [], people: [] }; }
             });
 
             const [sidebarOpen, setSidebarOpen] = useState(false);
-            const [activeCategory, setActiveCategory] = useState('Все оборудование');
+            const [activeCategory, setActiveCategory] = useState('Все');
             const [activeFilter, setActiveFilter] = useState('all');
             const [searchQuery, setSearchQuery] = useState('');
             const [toast, setToast] = useState({ visible: false, message: '' });
@@ -693,8 +583,8 @@
             const [detailsForm, setDetailsForm] = useState({ serialNumber: '', location: '', responsible: '', inventoryNote: '', hasLabel: null });
             const [editForm, setEditForm] = useState({ name: '', invNumber: '', date: '', category: '', newCategory: '', note: '' });
 
-            useEffect(() => { localStorage.setItem('inv_102_data_v11', JSON.stringify(equipment)); }, [equipment]);
-            useEffect(() => { localStorage.setItem('inv_102_dirs_v11', JSON.stringify(directories)); }, [directories]);
+            useEffect(() => { localStorage.setItem('inv_102_data_v12', JSON.stringify(equipment)); }, [equipment]);
+            useEffect(() => { localStorage.setItem('inv_102_dirs_v12', JSON.stringify(directories)); }, [directories]);
 
             const stats = useMemo(() => ({
                 total: equipment.length,
@@ -710,11 +600,11 @@
 
             const categories = useMemo(() => {
                 const others = [...new Set(equipment.map(i => i.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
-                return ['Все оборудование', ...others];
+                return ['Все', ...others];
             }, [equipment]);
 
             const filteredEquipment = useMemo(() => equipment.filter(item => {
-                if (activeCategory !== 'Все оборудование' && item.category !== activeCategory) return false;
+                if (activeCategory !== 'Все' && item.category !== activeCategory) return false;
                 
                 switch (activeFilter) {
                     case 'checked': if (!item.checked && !item.writeOff) return false; break;
@@ -746,7 +636,7 @@
             const showConfirm = useCallback((title, message, onConfirm) => setConfirmModal({ open: true, title, message, onConfirm }), []);
 
             const goHome = useCallback(() => {
-                setActiveCategory('Все оборудование');
+                setActiveCategory('Все');
                 setActiveFilter('all');
                 setSearchQuery('');
                 setSidebarOpen(false);
@@ -793,10 +683,10 @@
 
             const handleCheck = useCallback((item, undo = false) => {
                 if (undo) {
-                    showConfirm('Отменить?', 'Снять отметку проверки?', () => {
+                    showConfirm('Отменить проверку?', 'Снять отметку о проверке?', () => {
                         setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: false, writeOff: false, checkedAt: null } : i));
                         setConfirmModal(prev => ({ ...prev, open: false }));
-                        showToast('↩ Отменено');
+                        showToast('Отменено');
                     });
                 } else {
                     startCheckProcess(item);
@@ -804,11 +694,11 @@
             }, [showConfirm, startCheckProcess, showToast]);
 
             const handleWriteOff = useCallback((item) => {
-                showConfirm('Списать?', item.name, () => {
+                showConfirm('Списать оборудование?', item.name, () => {
                     setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, writeOff: true, checked: false, checkedAt: new Date().toISOString(), hasLabel: i.hasLabel === null ? true : i.hasLabel } : i));
                     setConfirmModal(prev => ({ ...prev, open: false }));
                     setDetailsModal({ open: false, item: null });
-                    showToast('📝 Списано');
+                    showToast('Отмечено на списание');
                 });
             }, [showConfirm, showToast]);
 
@@ -851,7 +741,7 @@
             const saveEdit = useCallback(() => {
                 const { name, invNumber, date, category, newCategory, note } = editForm;
                 if (!name.trim()) { showToast('Введите название'); return; }
-                if (!invNumber.trim()) { showToast('Введите номер'); return; }
+                if (!invNumber.trim()) { showToast('Введите инв. номер'); return; }
                 const finalCategory = newCategory.trim() || category;
                 if (!finalCategory) { showToast('Выберите категорию'); return; }
                 
@@ -864,7 +754,7 @@
                         checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', isUserAdded: true
                     };
                     setEquipment(prev => [...prev, newItem]);
-                    showToast('Добавлено');
+                    showToast('Оборудование добавлено');
                 } else {
                     setEquipment(prev => prev.map(i => i.id === editModal.item.id ? { ...i, name: name.trim(), invNumber: invNumber.trim(), date: date.trim(), category: finalCategory, note: note.trim() } : i));
                     showToast('Сохранено');
@@ -892,19 +782,18 @@
                 });
             }, [directories, showConfirm, showToast]);
 
-            const handleSave = () => showConfirm('Сохранить?', 'Сохранить все данные?', () => {
-                localStorage.setItem('inv_102_data_v11', JSON.stringify(equipment));
-                setConfirmModal(prev => ({ ...prev, open: false }));
-                showToast('💾 Сохранено');
-            });
+            const handleSave = () => {
+                localStorage.setItem('inv_102_data_v12', JSON.stringify(equipment));
+                showToast('💾 Данные сохранены');
+            };
 
-            const handleExportExcel = () => showConfirm('Excel?', 'Скачать CSV?', () => {
+            const handleExportExcel = () => {
                 const BOM = '\uFEFF';
-                const headers = ['Инв.№', 'S/N', 'Название', 'Категория', 'Локация', 'Ответственный', 'Статус', 'Бирка', 'Заметка'];
+                const headers = ['Инв.№', 'S/N', 'Название', 'Категория', 'Кабинет', 'Ответственный', 'Статус', 'Бирка', 'Заметка'];
                 let csv = BOM + headers.join(';') + '\n';
                 equipment.forEach(item => {
                     const status = item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает';
-                    const label = item.hasLabel === true ? 'Есть' : item.hasLabel === false ? 'НЕТ' : '-';
+                    const label = item.hasLabel === true ? 'Есть' : item.hasLabel === false ? 'Нет' : '-';
                     const row = [item.invNumber, item.serialNumber || '', item.name, item.category, item.location || '', item.responsible || '', status, label, item.inventoryNote || '']
                         .map(f => `"${String(f).replace(/"/g, '""')}"`).join(';');
                     csv += row + '\n';
@@ -914,25 +803,20 @@
                 link.href = URL.createObjectURL(blob);
                 link.download = `inventory_${new Date().toISOString().slice(0, 10)}.csv`;
                 link.click();
-                setConfirmModal(prev => ({ ...prev, open: false }));
-                showToast('📊 Скачано');
-            });
+                showToast('📊 Экспорт завершён');
+            };
 
-            const handleExportJSON = () => showConfirm('Экспорт?', 'Скачать резервную копию?', () => {
+            const handleExportJSON = () => {
                 const data = JSON.stringify({ equipment, directories }, null, 2);
                 const blob = new Blob([data], { type: 'application/json' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
                 link.download = `backup_${new Date().toISOString().slice(0, 10)}.json`;
                 link.click();
-                setConfirmModal(prev => ({ ...prev, open: false }));
-                showToast('📤 Экспортировано');
-            });
+                showToast('📤 Резервная копия создана');
+            };
 
-            const handleImportClick = () => showConfirm('Импорт?', 'Загрузить JSON?', () => {
-                setConfirmModal(prev => ({ ...prev, open: false }));
-                document.getElementById('fileInput').click();
-            });
+            const handleImportClick = () => document.getElementById('fileInput').click();
 
             const handleImportJSON = (e) => {
                 const file = e.target.files[0];
@@ -962,23 +846,23 @@
                         }
                         showToast(`📥 Импортировано: ${count}`);
                     } catch (err) {
-                        showToast('❌ Ошибка');
+                        showToast('❌ Ошибка импорта');
                     }
                 };
                 reader.readAsText(file);
                 e.target.value = '';
             };
 
-            const handleClearAll = () => showConfirm('Сбросить?', 'Удалить все данные?', () => {
+            const handleClearAll = () => showConfirm('Сбросить все данные?', 'Это действие нельзя отменить', () => {
                 setEquipment(prev => prev.map(i => ({ ...i, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', checkedAt: null })));
                 setConfirmModal(prev => ({ ...prev, open: false }));
-                showToast('🗑️ Сброшено');
+                showToast('Данные сброшены');
             });
 
             const quickSearchResults = useMemo(() => {
                 if (!quickSearchModal.query) return [];
                 const q = quickSearchModal.query.toLowerCase();
-                return equipment.filter(item => [item.invNumber, item.name, item.serialNumber].join(' ').toLowerCase().includes(q)).slice(0, 20);
+                return equipment.filter(item => [item.invNumber, item.name, item.serialNumber].join(' ').toLowerCase().includes(q)).slice(0, 15);
             }, [quickSearchModal.query, equipment]);
 
             return (
@@ -992,7 +876,7 @@
                         onOpenNotes={() => setNotesModal({ open: true })}
                     />
 
-                    <FilterPanel
+                    <Sidebar
                         isOpen={sidebarOpen}
                         onClose={() => setSidebarOpen(false)}
                         stats={stats}
@@ -1003,47 +887,45 @@
                         setActiveFilter={setActiveFilter}
                     />
 
-                    <main className="main-area flex-1 flex flex-col min-w-0 overflow-hidden">
-                        {/* Мобильный header */}
-                        <header className="mobile-header bg-white border-b border-slate-200 px-4 py-4 items-center gap-4 flex-shrink-0">
-                            <button onClick={() => setSidebarOpen(true)} className="touch-btn w-12 h-12 rounded-2xl bg-slate-100">
+                    <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+                        <header className="mobile-header bg-white border-b border-slate-200 px-4 py-3 items-center gap-3 flex-shrink-0">
+                            <button onClick={() => setSidebarOpen(true)} className="touch-btn w-10 h-10 rounded-md btn-ghost min-h-0">
                                 <Icons.Menu />
                             </button>
                             <div className="flex-1 relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
                                 <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск..."
-                                    className="w-full pl-12 pr-4 input-modern" />
+                                    className="w-full pl-9 pr-3 input-field" />
                             </div>
-                            <button onClick={handleSave} className="touch-btn w-12 h-12 rounded-2xl btn-primary">
+                            <button onClick={handleSave} className="touch-btn w-10 h-10 rounded-md btn-primary min-h-0">
                                 <Icons.Save />
                             </button>
                         </header>
 
-                        {/* Десктопный header */}
-                        <header className="desktop-header bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0">
-                            <div className="flex items-center gap-4">
-                                <div className="flex-1 relative max-w-lg">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
+                        <header className="desktop-header bg-white border-b border-slate-200 px-5 py-3 flex-shrink-0">
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1 relative max-w-sm">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Icons.Search /></span>
                                     <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Поиск по номеру, названию..."
-                                        className="w-full pl-12 pr-4 input-modern" />
+                                        className="w-full pl-9 pr-3 input-field" />
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <button onClick={handleSave} className="touch-btn px-5 py-3 btn-primary rounded-2xl text-base flex items-center gap-2">
-                                        <Icons.Save /> <span className="hidden lg:inline font-bold">Сохранить</span>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={handleSave} className="touch-btn px-3 py-2 btn-primary rounded-md text-sm font-medium flex items-center gap-1.5 min-h-0">
+                                        <Icons.Save /> Сохранить
                                     </button>
-                                    <button onClick={handleExportExcel} className="touch-btn w-12 h-12 btn-success rounded-2xl text-xl" title="Excel">📊</button>
-                                    <button onClick={handleExportJSON} className="touch-btn w-12 h-12 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl" title="Экспорт"><Icons.Download /></button>
-                                    <button onClick={handleImportClick} className="touch-btn w-12 h-12 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl" title="Импорт"><Icons.Upload /></button>
-                                    <button onClick={handleClearAll} className="touch-btn w-12 h-12 bg-red-50 hover:bg-red-100 text-red-500 rounded-2xl" title="Сброс"><Icons.Trash /></button>
+                                    <button onClick={handleExportExcel} className="touch-btn w-9 h-9 btn-success rounded-md min-h-0 text-sm" title="Excel">📊</button>
+                                    <button onClick={handleExportJSON} className="touch-btn w-9 h-9 btn-ghost rounded-md min-h-0" title="Экспорт"><Icons.Download /></button>
+                                    <button onClick={handleImportClick} className="touch-btn w-9 h-9 btn-ghost rounded-md min-h-0" title="Импорт"><Icons.Upload /></button>
+                                    <button onClick={handleClearAll} className="touch-btn w-9 h-9 btn-ghost text-red-600 rounded-md min-h-0" title="Сброс"><Icons.Trash /></button>
                                 </div>
                             </div>
                         </header>
 
-                        <div ref={contentRef} className="content-scroll p-6 custom-scroll">
+                        <div ref={contentRef} className="content-scroll p-4 custom-scroll">
                             {Object.keys(groupedEquipment).length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-full text-slate-400">
-                                    <div className="text-6xl mb-4">📭</div>
-                                    <p className="text-xl font-bold">Ничего не найдено</p>
+                                    <div className="text-4xl mb-3">📭</div>
+                                    <p className="text-sm">Ничего не найдено</p>
                                 </div>
                             ) : (
                                 Object.entries(groupedEquipment).sort((a, b) => a[0].localeCompare(b[0], 'ru')).map(([category, items]) => {
@@ -1051,14 +933,14 @@
                                     const checkedCount = items.filter(i => i.checked || i.writeOff).length;
                                     return (
                                         <div key={category}>
-                                            <div className="category-divider" style={{ background: config.bg }}>
-                                                <span className="flex items-center gap-3">
-                                                    <span className="text-2xl">{config.icon}</span>
+                                            <div className="category-header" style={{ background: config.color }}>
+                                                <span className="flex items-center gap-2">
+                                                    <span>{config.icon}</span>
                                                     <span>{category}</span>
                                                 </span>
-                                                <span className="bg-white/20 px-4 py-1.5 rounded-xl text-base font-bold">{checkedCount}/{items.length}</span>
+                                                <span className="bg-white/20 px-2 py-0.5 rounded text-xs">{checkedCount}/{items.length}</span>
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                                                 {items.map(item => (
                                                     <EquipmentCard key={item.id} item={item} onView={openDetails} onCheck={handleCheck} />
                                                 ))}
@@ -1072,228 +954,220 @@
                     </main>
 
                     <button onClick={() => setQuickSearchModal({ open: true, query: '' })}
-                        className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full shadow-xl shadow-blue-500/40 flex items-center justify-center z-100 hover:scale-105 transition-transform">
-                        <span className="text-2xl">🔍</span>
+                        className="fixed bottom-5 right-5 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center z-100 hover:bg-blue-700 text-lg">
+                        🔍
                     </button>
 
                     {/* Modals */}
                     <Modal isOpen={infoModal.open} onClose={() => setInfoModal({ open: false })} title="О программе" size="sm">
-                        <div className="text-center">
-                            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
-                                <span className="text-4xl">📋</span>
+                        <div className="text-center py-4">
+                            <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                <span className="text-2xl">📋</span>
                             </div>
-                            <h3 className="text-2xl font-black text-slate-800 mb-2">Инвентаризация</h3>
-                            <p className="text-lg font-semibold text-slate-500 mb-4">ГКОУ СКОШИ №102</p>
-                            <p className="text-base font-bold text-slate-400">Версия 5.0</p>
+                            <h3 className="text-base font-semibold text-slate-800 mb-1">Инвентаризация</h3>
+                            <p className="text-sm text-slate-500 mb-3">ГКОУ СКОШИ №102</p>
+                            <p className="text-xs text-slate-400">Версия 5.0</p>
                         </div>
                     </Modal>
 
                     <Modal isOpen={labelModal.open} onClose={() => setLabelModal({ open: false, item: null })} title="Проверка бирки" size="sm">
-                        <div className="text-center mb-6">
-                            <div className="text-6xl mb-4">🏷️</div>
-                            <p className="text-lg font-semibold text-slate-600">Бирка есть на оборудовании?</p>
-                        </div>
-                        <div className="space-y-3">
-                            <button onClick={() => handleLabelAnswer(true)} className="touch-btn w-full py-4 btn-success rounded-2xl text-lg font-bold">✓ Да, есть</button>
-                            <button onClick={() => handleLabelAnswer(false)} className="touch-btn w-full py-4 btn-danger rounded-2xl text-lg font-bold">✗ Нет бирки</button>
-                            <button onClick={() => setLabelModal({ open: false, item: null })} className="touch-btn w-full py-4 bg-slate-100 text-slate-600 rounded-2xl text-lg font-bold">Отмена</button>
+                        <p className="text-center text-slate-600 text-sm mb-4">Инвентарная бирка на оборудовании?</p>
+                        <div className="space-y-2">
+                            <button onClick={() => handleLabelAnswer(true)} className="touch-btn w-full py-3 btn-success rounded-md font-medium">✓ Есть бирка</button>
+                            <button onClick={() => handleLabelAnswer(false)} className="touch-btn w-full py-3 btn-danger rounded-md font-medium">✗ Нет бирки</button>
+                            <button onClick={() => setLabelModal({ open: false, item: null })} className="touch-btn w-full py-3 btn-ghost rounded-md font-medium">Отмена</button>
                         </div>
                     </Modal>
 
                     <Modal isOpen={serialModal.open} onClose={() => setSerialModal({ open: false, item: null, serial: '' })} title="Серийный номер" size="sm">
-                        <div className="text-center mb-4">
-                            <div className="text-5xl mb-3">🔢</div>
-                            <p className="text-base font-semibold text-slate-500">Введите серийный номер (если есть)</p>
-                        </div>
+                        <p className="text-center text-slate-600 text-sm mb-3">Введите серийный номер (если есть)</p>
                         <input type="text" value={serialModal.serial} onChange={e => setSerialModal(prev => ({ ...prev, serial: e.target.value }))}
-                            placeholder="S/N" className="w-full input-modern text-center font-mono text-lg mb-5" autoFocus />
-                        <div className="space-y-3">
-                            <button onClick={handleSerialSave} className="touch-btn w-full py-4 btn-success rounded-2xl text-lg font-bold">Сохранить</button>
-                            <button onClick={handleSerialSkip} className="touch-btn w-full py-4 btn-primary rounded-2xl text-lg font-bold">Пропустить</button>
-                            <button onClick={() => setSerialModal({ open: false, item: null, serial: '' })} className="touch-btn w-full py-4 bg-slate-100 text-slate-600 rounded-2xl text-lg font-bold">Отмена</button>
+                            placeholder="S/N" className="input-field text-center font-mono mb-4" autoFocus />
+                        <div className="space-y-2">
+                            <button onClick={handleSerialSave} className="touch-btn w-full py-3 btn-success rounded-md font-medium">Сохранить</button>
+                            <button onClick={handleSerialSkip} className="touch-btn w-full py-3 btn-primary rounded-md font-medium">Пропустить</button>
+                            <button onClick={() => setSerialModal({ open: false, item: null, serial: '' })} className="touch-btn w-full py-3 btn-ghost rounded-md font-medium">Отмена</button>
                         </div>
                     </Modal>
 
                     <Modal isOpen={detailsModal.open} onClose={() => setDetailsModal({ open: false, item: null })} title="Карточка оборудования" size="lg">
                         {detailsModal.item && (
-                            <div className="space-y-5">
-                                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <span className="px-4 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-base font-bold font-mono">{detailsModal.item.invNumber}</span>
-                                        {detailsModal.item.isUserAdded && <span className="text-base font-bold text-blue-500">Новое</span>}
+                            <div className="space-y-4">
+                                <div className="p-3 bg-slate-50 rounded-md border border-slate-100">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="px-2 py-0.5 bg-slate-800 text-white rounded text-xs font-mono">{detailsModal.item.invNumber}</span>
+                                        {detailsModal.item.isUserAdded && <span className="text-xs text-blue-600">Новое</span>}
                                     </div>
-                                    <h3 className="font-bold text-slate-800 text-lg">{detailsModal.item.name}</h3>
-                                    <p className="text-base font-semibold text-slate-500">{detailsModal.item.category}</p>
+                                    <h3 className="text-sm text-slate-800">{detailsModal.item.name}</h3>
+                                    <p className="text-xs text-slate-500">{detailsModal.item.category}</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-bold text-slate-500 mb-3">Бирка</label>
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <label className="block text-xs font-medium text-slate-500 mb-2">Бирка</label>
+                                    <div className="grid grid-cols-2 gap-2">
                                         <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: true }))} 
-                                            className={`touch-btn py-4 rounded-2xl font-bold text-lg ${detailsForm.hasLabel === true ? 'btn-success' : 'bg-slate-100 text-slate-600'}`}>
+                                            className={`touch-btn py-2.5 rounded-md font-medium text-sm ${detailsForm.hasLabel === true ? 'btn-success' : 'btn-ghost'}`}>
                                             ✓ Есть
                                         </button>
                                         <button onClick={() => setDetailsForm(prev => ({ ...prev, hasLabel: false }))} 
-                                            className={`touch-btn py-4 rounded-2xl font-bold text-lg ${detailsForm.hasLabel === false ? 'btn-danger' : 'bg-slate-100 text-slate-600'}`}>
+                                            className={`touch-btn py-2.5 rounded-md font-medium text-sm ${detailsForm.hasLabel === false ? 'btn-danger' : 'btn-ghost'}`}>
                                             ✗ Нет
                                         </button>
                                     </div>
                                 </div>
 
                                 <AutocompleteInput label="Серийный номер" value={detailsForm.serialNumber} onChange={v => setDetailsForm(prev => ({ ...prev, serialNumber: v }))} suggestions={[]} placeholder="S/N" />
-                                <AutocompleteInput label="Кабинет" value={detailsForm.location} onChange={v => setDetailsForm(prev => ({ ...prev, location: v }))} suggestions={directories.rooms} placeholder="Выберите" />
+                                <AutocompleteInput label="Кабинет" value={detailsForm.location} onChange={v => setDetailsForm(prev => ({ ...prev, location: v }))} suggestions={directories.rooms} placeholder="Выберите или введите" />
                                 <AutocompleteInput label="Ответственный" value={detailsForm.responsible} onChange={v => setDetailsForm(prev => ({ ...prev, responsible: v }))} suggestions={directories.people} placeholder="ФИО" />
 
                                 <div>
-                                    <label className="block text-sm font-bold text-slate-500 mb-2">Заметки</label>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Заметка</label>
                                     <textarea value={detailsForm.inventoryNote} onChange={e => setDetailsForm(prev => ({ ...prev, inventoryNote: e.target.value }))}
-                                        placeholder="..." rows={3} className="w-full input-modern resize-none" />
+                                        placeholder="Комментарий..." rows={2} className="input-field resize-none" />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
-                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openEditModal(detailsModal.item); }} className="touch-btn py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold text-base">
-                                        ✏️ Редактировать
+                                <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
+                                    <button onClick={() => { setDetailsModal({ open: false, item: null }); openEditModal(detailsModal.item); }} className="touch-btn py-2.5 btn-ghost rounded-md font-medium text-sm">
+                                        Редактировать
                                     </button>
-                                    <button onClick={() => handleWriteOff(detailsModal.item)} className="touch-btn py-4 bg-red-50 text-red-500 rounded-2xl font-bold text-base">
-                                        📝 Списать
+                                    <button onClick={() => handleWriteOff(detailsModal.item)} className="touch-btn py-2.5 bg-red-50 text-red-600 rounded-md font-medium text-sm">
+                                        Списать
                                     </button>
                                 </div>
 
-                                <button onClick={saveDetails} className="touch-btn w-full py-4 btn-primary rounded-2xl text-lg font-bold">
-                                    💾 Сохранить
+                                <button onClick={saveDetails} className="touch-btn w-full py-3 btn-primary rounded-md font-medium">
+                                    Сохранить
                                 </button>
                             </div>
                         )}
                     </Modal>
 
                     <Modal isOpen={editModal.open} onClose={() => setEditModal({ open: false, item: null, isNew: false })} title={editModal.isNew ? 'Новое оборудование' : 'Редактирование'} size="md">
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             <div>
-                                <label className="block text-sm font-bold text-slate-500 mb-2">Название *</label>
+                                <label className="block text-xs font-medium text-slate-500 mb-1">Название *</label>
                                 <input type="text" value={editForm.name} onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                                    placeholder="Название оборудования" className="w-full input-modern" />
+                                    placeholder="Название оборудования" className="input-field" />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-sm font-bold text-slate-500 mb-2">Инв. номер *</label>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Инв. номер *</label>
                                     <input type="text" value={editForm.invNumber} onChange={e => setEditForm(prev => ({ ...prev, invNumber: e.target.value }))}
-                                        placeholder="№" className="w-full input-modern font-mono" />
+                                        placeholder="№" className="input-field font-mono" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-bold text-slate-500 mb-2">Дата</label>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Дата</label>
                                     <input type="text" value={editForm.date} onChange={e => setEditForm(prev => ({ ...prev, date: e.target.value }))}
-                                        placeholder="ДД.ММ.ГГГГ" className="w-full input-modern" />
+                                        placeholder="ДД.ММ.ГГГГ" className="input-field" />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-slate-500 mb-2">Категория *</label>
+                                <label className="block text-xs font-medium text-slate-500 mb-1">Категория *</label>
                                 <select value={editForm.category} onChange={e => setEditForm(prev => ({ ...prev, category: e.target.value }))}
-                                    className="w-full input-modern">
+                                    className="input-field">
                                     <option value="">Выберите...</option>
-                                    {categories.filter(c => c !== 'Все оборудование').map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                    {categories.filter(c => c !== 'Все').map(cat => <option key={cat} value={cat}>{cat}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-slate-500 mb-2">Новая категория</label>
+                                <label className="block text-xs font-medium text-slate-500 mb-1">Или новая категория</label>
                                 <input type="text" value={editForm.newCategory} onChange={e => setEditForm(prev => ({ ...prev, newCategory: e.target.value }))}
-                                    placeholder="Или введите новую" className="w-full input-modern" />
+                                    placeholder="Введите новую категорию" className="input-field" />
                             </div>
-                            <div className="flex gap-3 pt-4">
-                                <button onClick={() => setEditModal({ open: false, item: null, isNew: false })} className="touch-btn flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-base">Отмена</button>
-                                <button onClick={saveEdit} className="touch-btn flex-1 py-4 btn-primary rounded-2xl font-bold text-base">Сохранить</button>
+                            <div className="flex gap-2 pt-3">
+                                <button onClick={() => setEditModal({ open: false, item: null, isNew: false })} className="touch-btn flex-1 py-3 btn-ghost rounded-md font-medium">Отмена</button>
+                                <button onClick={saveEdit} className="touch-btn flex-1 py-3 btn-primary rounded-md font-medium">Сохранить</button>
                             </div>
                         </div>
                     </Modal>
 
                     <Modal isOpen={quickSearchModal.open} onClose={() => setQuickSearchModal({ open: false, query: '' })} title="Быстрый поиск" size="md">
                         <input type="text" value={quickSearchModal.query} onChange={e => setQuickSearchModal(prev => ({ ...prev, query: e.target.value }))}
-                            placeholder="Номер или название..." className="w-full input-modern font-mono mb-5" autoFocus />
-                        <div className="max-h-72 overflow-y-auto border-2 border-slate-100 rounded-2xl">
+                            placeholder="Номер или название..." className="input-field font-mono mb-4" autoFocus />
+                        <div className="max-h-64 overflow-y-auto border border-slate-200 rounded-md">
                             {quickSearchResults.length === 0 ? (
-                                <div className="p-10 text-center text-slate-400">
-                                    <div className="text-4xl mb-2">🔍</div>
-                                    <p className="text-base font-semibold">Начните вводить...</p>
-                                </div>
+                                <div className="p-8 text-center text-slate-400 text-sm">Начните вводить для поиска</div>
                             ) : (
                                 quickSearchResults.map(item => (
                                     <button key={item.id} onClick={() => { setQuickSearchModal({ open: false, query: '' }); openDetails(item); }}
-                                        className={`w-full text-left p-4 border-b border-slate-50 hover:bg-slate-50 flex items-center gap-4 ${item.checked ? 'bg-emerald-50' : item.writeOff ? 'bg-red-50' : ''}`}>
-                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold ${item.writeOff ? 'bg-red-500 text-white' : item.checked ? 'bg-emerald-500 text-white' : 'bg-amber-100 text-amber-600'}`}>
+                                        className={`w-full text-left p-3 border-b border-slate-50 hover:bg-slate-50 flex items-center gap-3 ${item.checked ? 'bg-emerald-50' : item.writeOff ? 'bg-red-50' : ''}`}>
+                                        <div className={`w-8 h-8 rounded-md flex items-center justify-center text-xs ${item.writeOff ? 'bg-red-500 text-white' : item.checked ? 'bg-emerald-500 text-white' : 'bg-amber-100 text-amber-600'}`}>
                                             {item.writeOff ? '📝' : item.checked ? '✓' : '⏳'}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="font-mono font-black text-blue-600 text-base">{item.invNumber}</div>
-                                            <div className="text-base font-medium text-slate-500 truncate">{item.name}</div>
+                                            <div className="font-mono font-medium text-slate-700 text-sm">{item.invNumber}</div>
+                                            <div className="text-xs text-slate-500 truncate">{item.name}</div>
                                         </div>
+                                        <Icons.ChevronRight />
                                     </button>
                                 ))
                             )}
                         </div>
                     </Modal>
 
-                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '' })} title="🏢 Кабинеты" size="sm">
-                        <div className="flex gap-3 mb-5">
+                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '' })} title="Кабинеты" size="sm">
+                        <div className="flex gap-2 mb-4">
                             <input type="text" value={roomsModal.newRoom} onChange={e => setRoomsModal(prev => ({ ...prev, newRoom: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && addToDirectory('rooms', roomsModal.newRoom)}
-                                placeholder="Новый кабинет..." className="flex-1 input-modern" />
-                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="touch-btn w-14 h-14 btn-success rounded-2xl text-2xl font-black">+</button>
+                                placeholder="Новый кабинет..." className="flex-1 input-field" />
+                            <button onClick={() => addToDirectory('rooms', roomsModal.newRoom)} className="touch-btn px-4 btn-success rounded-md font-bold min-h-0">+</button>
                         </div>
-                        <div className="max-h-56 overflow-y-auto border-2 border-slate-100 rounded-2xl">
+                        <div className="max-h-48 overflow-y-auto border border-slate-200 rounded-md">
                             {directories.rooms.length === 0 ? (
-                                <div className="p-8 text-center text-slate-400 text-base font-semibold">Пусто</div>
+                                <div className="p-6 text-center text-slate-400 text-sm">Список пуст</div>
                             ) : (
                                 directories.rooms.map((room, idx) => (
-                                    <div key={idx} className="flex items-center gap-3 p-4 border-b border-slate-50">
-                                        <span className="flex-1 text-base font-semibold">{room}</span>
-                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="touch-btn w-10 h-10 bg-red-50 text-red-500 rounded-xl text-lg">🗑️</button>
+                                    <div key={idx} className="flex items-center gap-2 p-3 border-b border-slate-50">
+                                        <span className="flex-1 text-sm">{room}</span>
+                                        <button onClick={() => removeFromDirectory('rooms', idx)} className="touch-btn p-2 bg-red-50 text-red-600 rounded-md text-xs min-h-0">🗑</button>
                                     </div>
                                 ))
                             )}
                         </div>
                     </Modal>
 
-                    <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="👥 Сотрудники" size="sm">
-                        <div className="flex gap-3 mb-5">
+                    <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="Сотрудники" size="sm">
+                        <div className="flex gap-2 mb-4">
                             <input type="text" value={peopleModal.newPerson} onChange={e => setPeopleModal(prev => ({ ...prev, newPerson: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && addToDirectory('people', peopleModal.newPerson)}
-                                placeholder="Новое ФИО..." className="flex-1 input-modern" />
-                            <button onClick={() => addToDirectory('people', peopleModal.newPerson)} className="touch-btn w-14 h-14 btn-success rounded-2xl text-2xl font-black">+</button>
+                                placeholder="ФИО..." className="flex-1 input-field" />
+                            <button onClick={() => addToDirectory('people', peopleModal.newPerson)} className="touch-btn px-4 btn-success rounded-md font-bold min-h-0">+</button>
                         </div>
-                        <div className="max-h-56 overflow-y-auto border-2 border-slate-100 rounded-2xl">
+                        <div className="max-h-48 overflow-y-auto border border-slate-200 rounded-md">
                             {directories.people.length === 0 ? (
-                                <div className="p-8 text-center text-slate-400 text-base font-semibold">Пусто</div>
+                                <div className="p-6 text-center text-slate-400 text-sm">Список пуст</div>
                             ) : (
                                 directories.people.map((person, idx) => (
-                                    <div key={idx} className="flex items-center gap-3 p-4 border-b border-slate-50">
-                                        <span className="flex-1 text-base font-semibold">{person}</span>
-                                        <button onClick={() => removeFromDirectory('people', idx)} className="touch-btn w-10 h-10 bg-red-50 text-red-500 rounded-xl text-lg">🗑️</button>
+                                    <div key={idx} className="flex items-center gap-2 p-3 border-b border-slate-50">
+                                        <span className="flex-1 text-sm">{person}</span>
+                                        <button onClick={() => removeFromDirectory('people', idx)} className="touch-btn p-2 bg-red-50 text-red-600 rounded-md text-xs min-h-0">🗑</button>
                                     </div>
                                 ))
                             )}
                         </div>
                     </Modal>
 
-                    <Modal isOpen={notesModal.open} onClose={() => setNotesModal({ open: false })} title="📝 Все заметки" size="lg">
+                    <Modal isOpen={notesModal.open} onClose={() => setNotesModal({ open: false })} title="Все заметки" size="lg">
                         <div className="max-h-96 overflow-y-auto">
                             {equipment.filter(i => i.inventoryNote?.trim()).length === 0 ? (
-                                <div className="p-12 text-center text-slate-400">
-                                    <div className="text-5xl mb-3">📝</div>
-                                    <p className="text-lg font-bold">Заметок пока нет</p>
+                                <div className="p-8 text-center text-slate-400">
+                                    <div className="text-3xl mb-2">📝</div>
+                                    <p className="text-sm">Заметок пока нет</p>
                                 </div>
                             ) : (
-                                <div className="space-y-4">
+                                <div className="space-y-2">
                                     {equipment.filter(i => i.inventoryNote?.trim()).map(item => (
                                         <button key={item.id} onClick={() => { setNotesModal({ open: false }); openDetails(item); }}
-                                            className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl transition-colors">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <span className="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm font-bold font-mono">{item.invNumber}</span>
-                                                <span className={`px-3 py-1 rounded-lg text-sm font-bold ${item.writeOff ? 'bg-red-100 text-red-600' : item.checked ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
+                                            className="w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-md transition-colors">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="px-1.5 py-0.5 bg-slate-800 text-white rounded text-xs font-mono">{item.invNumber}</span>
+                                                <span className={`status-badge ${item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending'}`}>
                                                     {item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает'}
                                                 </span>
                                             </div>
-                                            <p className="text-base font-bold text-slate-800 mb-2 line-clamp-1">{item.name}</p>
-                                            <p className="text-base text-slate-600 bg-white p-3 rounded-xl border border-slate-200">{item.inventoryNote}</p>
-                                            {item.location && <p className="text-sm font-semibold text-slate-400 mt-2">📍 {item.location}</p>}
+                                            <p className="text-sm text-slate-800 mb-1 line-clamp-1">{item.name}</p>
+                                            <p className="text-xs text-slate-600 bg-white p-2 rounded border border-slate-200">{item.inventoryNote}</p>
+                                            {item.location && <p className="text-xs text-slate-400 mt-1">📍 {item.location}</p>}
                                         </button>
                                     ))}
                                 </div>
