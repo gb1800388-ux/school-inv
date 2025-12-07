@@ -347,6 +347,116 @@
         }
         .step-dot.active { background: #3182ce; transform: scale(1.2); }
         .step-dot.completed { background: #38a169; }
+
+        .nav-btn {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            font-size: 1.1rem;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.1); }
+        .nav-btn.active { background: rgba(255,255,255,0.2); }
+        .nav-btn-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            min-width: 16px;
+            height: 16px;
+            background: #e53e3e;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+        .floor-section {
+            margin-bottom: 8px;
+        }
+        .floor-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .floor-header:hover { background: #edf2f7; }
+        .floor-rooms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 8px 12px;
+        }
+        .room-chip {
+            padding: 4px 10px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .room-chip:hover { background: #cbd5e0; }
+        .room-chip.active { background: #3182ce; color: white; }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .recent-item:hover { background: #f7fafc; }
+
+        .problem-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: #fef3c7;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .problem-item:hover { background: #fde68a; }
+        .problem-item.critical { background: #fee2e2; }
+        .problem-item.critical:hover { background: #fecaca; }
+
+        .sidebar-section {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .sidebar-section-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #a0aec0;
+            margin-bottom: 8px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+        }
     </style>
 </head>
 <body>
@@ -372,7 +482,6 @@
             ChevronDown: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>,
         };
 
-        // Building config with floors
         const buildingsConfig = {
             "Нансена": { icon: "🏫", color: "#3182ce", colorClass: "nansen", floors: ['1', '2', '3'] },
             "Ботаничка": { icon: "🏢", color: "#38a169", colorClass: "botanica", floors: ['1', '2'] },
@@ -385,415 +494,6 @@
             {id:"item_3",name:"Акустическая система для аудитории",invNumber:"1101340095",date:"30.03.2018",note:"оргтехника",category:"Аудиооборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_4",name:"Интерактивное устройство IRBIS",invNumber:"0101340042",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_5",name:"Интерактивное устройство IRBIS",invNumber:"0101340043",date:"23.12.2020",note:"оргтехника",category:"Телевизоры",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
-{"id": "item_6", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340044", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_7", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340045", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_8", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340046", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_9", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340047", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_10", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340048", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_11", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340049", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_12", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340051", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_13", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340052", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_14", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340053", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_15", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340054", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_16", "name": "Маршрутизатор Cisco (IRS4331/K9)", "invNumber": "0101340055", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_17", "name": "Сервер Depo Storm3400Q2M", "invNumber": "0101340056", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Серверное оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_18", "name": "Коммутатор тип 2 Cisco (WS-C2960RX-48FPS-L)", "invNumber": "0101340058", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_19", "name": "Коммутатор тип 4 Cisco (WS-C2960RX-24PS-L)", "invNumber": "0101340059", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_20", "name": "Коммутатор тип 4 Cisco (WS-C2960RX-24PS-L)", "invNumber": "0101340060", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_21", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340077", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_22", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340078", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_23", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340079", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_24", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340080", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_25", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340081", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_26", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340082", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_27", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340089", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_28", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340090", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_29", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340091", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_30", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340092", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_31", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340083", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_32", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340084", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_33", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340085", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_34", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340086", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_35", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340087", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_36", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340088", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_37", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340009", "date": "07.05.2019", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_38", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340017", "date": "07.05.2019", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_39", "name": "Многофункциональное устройство HP LaserJetProM428fdn (W1A32A)", "invNumber": "0101340156", "date": "24.10.2019", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_40", "name": "Специализированное интерактивное устройство Nextouch by Promethean Next Panel84-86", "invNumber": "0101340161", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_41", "name": "Специализированное интерактивное устройство Nextouch by Promethean Next Panel84-86", "invNumber": "0101340162", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "98,17", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_42", "name": "Специализированное интерактивное устройство Nextouch by Promethean Next Panel84-86", "invNumber": "0101340163", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_43", "name": "ЖК телевизор LG", "invNumber": "1040081871", "date": "01.04.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_44", "name": "Телевизор ЖК", "invNumber": "1040806112", "date": "08.06.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_45", "name": "Телевизор SONY KDL46 ЕХ 402", "invNumber": "1040082003", "date": "18.04.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_46", "name": "Рулонный ламинатор", "invNumber": "1040801078", "date": "20.11.2009", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (Павлов Ботаничка)", "category": "Ламинаторы", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_47", "name": "Ноутбук Acer TM5760-2354G32M", "invNumber": "1341380677", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_48", "name": "Ноутбук Acer TM5760-2354G32M", "invNumber": "1341380676", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_49", "name": "Ноутбук Acer TM5760-2354G32M", "invNumber": "1341380678", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_50", "name": "Ноутбук Acer TM5760-2354G32M", "invNumber": "1341380675", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_51", "name": "Ноутбук Acer TM5760-2354G32M", "invNumber": "1341380681", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_52", "name": "Ноутбук Acer TM5760-2354G32M", "invNumber": "1341380679", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_53", "name": "Ноутбук Acer TM5760-2354G32M", "invNumber": "1341380680", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_54", "name": "Вал металлический нагревательный", "invNumber": "1043000007", "date": "08.04.2011", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Прочее оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_55", "name": "Ноутбук HP Probook 4535s", "invNumber": "1341380665", "date": "15.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_56", "name": "Многофункциональное устройство \"Canon iR 1133 A\"", "invNumber": "4101340105", "date": "20.06.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_57", "name": "Телевизор LED MYSTERY MTV-4828LTA2", "invNumber": "2101340020", "date": "05.05.2014", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_58", "name": "Ноутбук HP ProBook", "invNumber": "1341380379", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_59", "name": "Ноутбук HP ProBook", "invNumber": "1341380395", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_60", "name": "Ноутбук HP ProBook", "invNumber": "1341380391", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_61", "name": "Ноутбук HP ProBook", "invNumber": "1341380397", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_62", "name": "Ноутбук", "invNumber": "1060819749", "date": "04.07.2012", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_63", "name": "Телевизор LCD/LED 15\"-30\"Akai LEA-15А 15М", "invNumber": "4101340032", "date": "05.12.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_64", "name": "DVD-театр с полочной акустикой Samsung HT -E350K", "invNumber": "4101340035", "date": "05.12.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Музыкальное оборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_65", "name": "Принтер HP LJ P 1102", "invNumber": "1101340001", "date": "15.02.2016", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_66", "name": "Копировально-множительный аппарат Canon iR 1133 A", "invNumber": "1101340002", "date": "15.02.2016", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_67", "name": "Принтер HP LJ P 1102", "invNumber": "1101340003", "date": "15.02.2016", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_68", "name": "Принтер HP LJ P 1102", "invNumber": "1101340004", "date": "15.02.2016", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_69", "name": "Принтер HP LJ P 1102", "invNumber": "1101340005", "date": "15.02.2016", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_70", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340054", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_71", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340055", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_72", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340056", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Компьютеры и моноблоки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_73", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340057", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Компьютеры и моноблоки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_74", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340060", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Компьютеры и моноблоки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_75", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340061", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_76", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340062", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_77", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340063", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_78", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340065", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Компьютеры и моноблоки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_79", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340066", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_80", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340067", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_81", "name": "Моноблок Acer Veriton Z2610G ( с предусмотренным программным обеспечением)", "invNumber": "4101340068", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_82", "name": "МФУ Canon imageRUNNER 1133A", "invNumber": "4101340069", "date": "28.11.2012", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_83", "name": "Коммутатор Ethernet WS-C2960-24ТС-L", "invNumber": "4101340126", "date": "29.10.2014", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_84", "name": "Коммутатор Ethernet WS-C2960-24ТС-L", "invNumber": "4101340127", "date": "29.10.2014", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_85", "name": "Коммутатор Etherne WS-C2960-24ТС-L", "invNumber": "4101340128", "date": "29.10.2014", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_86", "name": "Коммутатор Ethernet WS-C2960-48ТС-L", "invNumber": "4101340129", "date": "29.10.2014", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_87", "name": "Ноутбук", "invNumber": "1060819755", "date": "04.07.2012", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_88", "name": "Ноутбук", "invNumber": "1060819757", "date": "04.07.2012", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_89", "name": "Ноутбук", "invNumber": "1060819759", "date": "04.07.2012", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_90", "name": "Ноутбук", "invNumber": "1060819761", "date": "04.07.2012", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_91", "name": "Принтер лазерный цветной Samsung", "invNumber": "1060819764", "date": "10.01.2012", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_92", "name": "Табло \"бегущая строка\"", "invNumber": "1060819741", "date": "30.12.2011", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Информационные табло", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_93", "name": "Широкопол. кабел.тел.сеть", "invNumber": "1040080507-1", "date": "04.10.2010", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Прочее оборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_94", "name": "Ламинатор Bulros 3304", "invNumber": "11013400000009", "date": "04.10.2010", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника (Воробьев Нансена) СПИСАТЬ", "category": "Ламинаторы", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_95", "name": "Пульт микшер. с проц.эфф.", "invNumber": "1040080020", "date": "31.03.2004", "condition": "Введено в эксплуатацию", "term": "180", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Аудиооборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_96", "name": "Лазерный принтер HP \"LaserJet P1102\" А4 1200*600", "invNumber": "1061980018", "date": "29.02.2012", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_97", "name": "Лазерный принтер HP \"LaserJet P1102\" А4 1200*600", "invNumber": "1061980019", "date": "29.02.2012", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_98", "name": "Лазерный принтер HP \"LaserJet P1102\" А4 1200*600", "invNumber": "1061980020", "date": "29.02.2012", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_99", "name": "Лазерный принтер HP \"LaserJet P1102\" А4 1200*600", "invNumber": "1061980021", "date": "29.02.2012", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_100", "name": "Лазерный принтер HP \"LaserJet P1102\" А4 1200*600", "invNumber": "1061980022", "date": "29.02.2012", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_101", "name": "Лазерный принтер HP \"LaserJet P1102\" А4 1200*600", "invNumber": "1061980023", "date": "29.02.2012", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_102", "name": "Монитор ЖК Samsung", "invNumber": "1060819763", "date": "10.01.2012", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Мониторы и экраны", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_103", "name": "Ноутбук", "invNumber": "1060819746", "date": "04.07.2012", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_104", "name": "Ноутбук", "invNumber": "1060819748", "date": "04.07.2012", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_105", "name": "Ноутбук HP ProBook", "invNumber": "1341380378", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_106", "name": "Ноутбук HP ProBook", "invNumber": "1341380387", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_107", "name": "Комплект коррекцинно-разв. оборудования Набор психолога \"Пертра\"", "invNumber": "1040081837", "date": "11.11.2010", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Прочее оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_108", "name": "Магнитофон \"Sony\"", "invNumber": "1040080391", "date": "07.01.2000", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Музыкальное оборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_109", "name": "Источник бесперебойного питания IPPON Back Comfo P", "invNumber": "4101340014", "date": "28.05.2012", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Электропитание", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_110", "name": "Ламинатор Dahie 70453", "invNumber": "0000000001", "date": "07.06.2012", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника (Варюхина Ботаничка)", "category": "Ламинаторы", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_111", "name": "Телевизор LED BBK 29\" 29 LED-6094/T2C белый HD READY DVD USB DVB-T2", "invNumber": "4101340134", "date": "09.06.2014", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_112", "name": "Блок для двухстороннего копирования \"Canon iR 2016\"", "invNumber": "4101340110", "date": "26.09.2013", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Прочее оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_113", "name": "Многофункциональное устройство Epson L550", "invNumber": "4101340112", "date": "01.10.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_114", "name": "Принтер HP LaserJet P1102", "invNumber": "4101340113", "date": "01.10.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_115", "name": "Сканер Epson GT-S85N", "invNumber": "4101340111", "date": "01.10.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сканеры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_116", "name": "Ноутбук HP Probook 4535s", "invNumber": "1341380647", "date": "15.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_117", "name": "Принтер HP LJP 1102", "invNumber": "4101360069", "date": "20.06.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_118", "name": "Усилитель Soundking", "invNumber": "1040080572", "date": "30.12.2006", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Аудиооборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_119", "name": "Ноутбук HP Probook 4535s", "invNumber": "1341380661", "date": "15.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_120", "name": "Ноутбук HP Probook 4535s", "invNumber": "1341380653", "date": "15.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Ноутбуки", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_121", "name": "Ноутбук Acer TM5760-2354G32M", "invNumber": "1341380683", "date": "13.03.2013", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Ноутбуки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_122", "name": "Видеокамера Sony", "invNumber": "1040080507-1.", "date": "26.12.2006", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Видеооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_123", "name": "Сканер Canon LIDE 25", "invNumber": "1040080498", "date": "26.12.2006", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Сканеры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_124", "name": "Видеомагнитофон DVD-DF-815ОК", "invNumber": "1040080452", "date": "26.02.2006", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Видеооборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_125", "name": "Муз.центр Микро", "invNumber": "1040080104", "date": "02.12.2008", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Музыкальное оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_126", "name": "Телевизор SONY KDL46 ЕХ 402", "invNumber": "1060082002", "date": "18.04.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_127", "name": "Телевизор ЖК SAMSUNG", "invNumber": "1060081862", "date": "09.02.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_128", "name": "Концентратор сетевой", "invNumber": "1040060066", "date": "01.03.2003", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_129", "name": "Телевизор Samsung", "invNumber": "11013400000008", "date": "28.12.2009", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_130", "name": "Радиосистема", "invNumber": "104001016", "date": "04.03.2011", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_131", "name": "Сканер Canon LIDE 25", "invNumber": "1040080494", "date": "26.12.2006", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Сканеры", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_132", "name": "Динамич.вокальный микрофон", "invNumber": "104001017", "date": "04.03.2011", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Аудиооборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_133", "name": "Ап-т копир. Canon \"iR2016\"", "invNumber": "1040080463", "date": "30.07.2006", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Прочее оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_134", "name": "Проектор Hitachi СР-Х1250", "invNumber": "1040080564", "date": "30.12.2006", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника", "category": "Проекторы", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_135", "name": "Ламинатор", "invNumber": "1043000008", "date": "08.04.2011", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника (Варюхина Ботаничка)", "category": "Ламинаторы", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_136", "name": "Наушники", "invNumber": "104001019", "date": "04.03.2011", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Прочее оборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_137", "name": "Пульт микшерн. Behringer", "invNumber": "1040080575", "date": "30.12.2006", "condition": "Введено в эксплуатацию", "term": "180", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Аудиооборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_138", "name": "Радиосистема AKG WMS40 PRO для речевого сопровож", "invNumber": "1040080638", "date": "21.09.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Аудиооборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_139", "name": "Телевизор SONY KDL40 ЕХ 402", "invNumber": "1040082000", "date": "18.04.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_140", "name": "Телевизор ЖК 37 SAMSUNG LE", "invNumber": "104081697", "date": "25.03.2010", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_141", "name": "Экран настенный с элект/прив.", "invNumber": "1040080565", "date": "30.12.2006", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Мониторы и экраны", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_142", "name": "Монитор", "invNumber": "1040081864", "date": "01.04.2011", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Мониторы и экраны", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_143", "name": "Синтезатор (интерактивная рабочая станция)", "invNumber": "104008010", "date": "09.06.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Интерактивное оборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_144", "name": "Телевизор ЖК 37 SAMSUNG LE", "invNumber": "104081696", "date": "25.03.2010", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_145", "name": "Магнитола Панасоник 2х4,5 Вт", "invNumber": "1040081699", "date": "24.03.2009", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Музыкальное оборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_146", "name": "Телевизор SONY KDL46 ЕХ 402", "invNumber": "1040082001", "date": "18.04.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_147", "name": "Телевизор ЖК 37 SAMSUNG LE", "invNumber": "104081698", "date": "25.03.2010", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_148", "name": "Эквалайзер графический", "invNumber": "11013400000006", "date": "21.09.2011", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Прочее оборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_149", "name": "ЖК телевизор 22", "invNumber": "1040801059", "date": "25.12.2008", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Телевизоры", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_150", "name": "Принтер лазерн. HP 1010", "invNumber": "1040080443", "date": "12.04.2005", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_151", "name": "Динамич.вокальный микрофон", "invNumber": "104001018", "date": "04.03.2011", "condition": "Введено в эксплуатацию", "term": "120", "wear": "100,00", "note": "оргтехника (СПИСАТЬ)", "category": "Аудиооборудование", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_152", "name": "Блок диммерный", "invNumber": "1040080597", "date": "31.12.2006", "condition": "Введено в эксплуатацию", "term": "180", "wear": "100,00", "note": "оргтехника", "category": "Прочее оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_153", "name": "Шредер (уничтожитель документов) Office Kit S218 5-й уровень секретности объем корзины 30 л", "invNumber": "11013400000093", "date": "24.02.2025", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (кадры)", "category": "Уничтожители документов", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_154", "name": "Режущий плоттер", "invNumber": "1040082004", "date": "03.10.2011", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника (Ботаничка) СПИСАТЬ", "category": "Плоттеры", "writeOff": true, "checked": false, "inventoryNote": ""},
-{"id": "item_155", "name": "Акустика портативная JBL Partybox Stage 320 240Вт 45-20000Гц", "invNumber": "11013400000116", "date": "12.09.2025", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Прочее оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_156", "name": "Компьютер HP Pavilion 23-b201er (E3H55EA) Core i3-3240/4G/500G/DVD-SMulti/23\" FHD/NV GT710A 1G/WiFi/Win8 wired kb&mouse", "invNumber": "2101340021", "date": "24.10.2014", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Компьютеры и моноблоки", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_157", "name": "Автоматизированное рабочее место (системный блок, монитор, клавиатура, мышь)", "invNumber": "11013400000100", "date": "24.03.2025", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Мониторы и экраны", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_158", "name": "Автоматизированное рабочее место (системный блок, монитор, клавиатура, мышь)", "invNumber": "11013400000101", "date": "24.03.2025", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Мониторы и экраны", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_159", "name": "Автоматизированное рабочее место (системный блок, монитор, клавиатура, мышь)", "invNumber": "11013400000102", "date": "24.03.2025", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Мониторы и экраны", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_160", "name": "Автоматизированное рабочее место (системный блок, монитор, клавиатура, мышь)", "invNumber": "11013400000103", "date": "24.03.2025", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Мониторы и экраны", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_161", "name": "Автоматизированное рабочее место (системный блок, монитор, клавиатура, мышь)", "invNumber": "11013400000104", "date": "24.03.2025", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Мониторы и экраны", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_162", "name": "Автоматизированное рабочее место (системный блок, монитор, клавиатура, мышь)", "invNumber": "11013400000105", "date": "24.03.2025", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Мониторы и экраны", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_163", "name": "Универсальное спортивное табло для игровых видов спорта /6080/ Импульс-721-D21x6-D15x7-R", "invNumber": "11013400000108", "date": "13.05.2025", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника (спортзал)", "category": "Информационные табло", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_164", "name": "Телефон IP Yealink SIP-T43U", "invNumber": "11013400000087", "date": "27.01.2025", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телефония", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_165", "name": "Чиллер S&A CW-3000TG", "invNumber": "11013400000090", "date": "10.02.2025", "condition": "Введено в эксплуатацию", "term": "24", "wear": "100,00", "note": "оргтехника", "category": "Специализированное оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_166", "name": "Стол интерактивный детский UTS Kids 43, 1107х596х695 мм", "invNumber": "11013400000065", "date": "26.11.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "18,33", "note": "оргтехника", "category": "Интерактивное оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_167", "name": "Стол интерактивный детский UTS Kids 43, 1107х596х695 мм", "invNumber": "11013400000066", "date": "26.11.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "18,33", "note": "оргтехника", "category": "Интерактивное оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_168", "name": "3D принтер Creality CR-K1 Max", "invNumber": "11013400000067", "date": "28.11.2024", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_169", "name": "Система акустическая BEHRINGER B115D", "invNumber": "11013400000077", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_170", "name": "Система акустическая BEHRINGER B115D", "invNumber": "11013400000078", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_171", "name": "Микшерный пульт Behringer QX2222USB", "invNumber": "11013400000079", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_172", "name": "Радиосистема с головным микрофоном цифровая Arthur Forty U-9900B", "invNumber": "11013400000080", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_173", "name": "Система беспроводная микрофонная NOIR-audio U-5400-4HS4", "invNumber": "11013400000081", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_174", "name": "Радиосистема Arthur Forty U-9700C PSC (UHF)", "invNumber": "11013400000082", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_175", "name": "Вокальная двухканальная радиосистема SHURE BLX288E/B58 M17", "invNumber": "11013400000083", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_176", "name": "8-канальная система звукоусиления Behringer PPA2000BT", "invNumber": "11013400000084", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "16,67", "note": "оргтехника", "category": "Прочее оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_177", "name": "Радиосистема Behringer ULM302MIC", "invNumber": "11013400000085", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_178", "name": "Радиосистема Behringer ULM302MIC", "invNumber": "11013400000086", "date": "24.12.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_179", "name": "Режущий плоттер Vicsign VSQ330", "invNumber": "11013400000005", "date": "16.05.2024", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника (Ботаничка) АН", "category": "Плоттеры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_180", "name": "Пол интерактивный \"Чудознайка\" в корпусе ИНП4915 Interactive Project", "invNumber": "11013400000024", "date": "22.10.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "20,00", "note": "оргтехника", "category": "Интерактивное оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_181", "name": "Многофункциональное устройство (МФУ) Катюша М247е", "invNumber": "11013400000025", "date": "16.10.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "20,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_182", "name": "Многофункциональное устройство (МФУ) Sindoh C332е", "invNumber": "11013400000028", "date": "16.10.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "20,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_183", "name": "Многофункциональное устройство (МФУ) Катюша М247е", "invNumber": "11013400000029", "date": "16.10.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "20,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_184", "name": "Многофункциональное устройство (МФУ) Катюша М247е", "invNumber": "11013400000030", "date": "16.10.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "20,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_185", "name": "Многофункциональное устройство (МФУ) Катюша М247е", "invNumber": "11013400000032", "date": "01.11.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "18,33", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_186", "name": "Многофункциональное устройство (МФУ) Катюша М247е", "invNumber": "11013400000033", "date": "01.11.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "18,33", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_187", "name": "Многофункциональное устройство (МФУ) Катюша М247е", "invNumber": "11013400000034", "date": "01.11.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "18,33", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_188", "name": "Мультимедиа проектор тип 2 - Лазерный проектор Panasonic PT-MZ770E", "invNumber": "0101340191", "date": "08.11.2021", "condition": "Введено в эксплуатацию", "term": "60", "wear": "78,33", "note": "оргтехника", "category": "Проекторы", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_189", "name": "Синтезатор Yamaha PSR-E473 с адаптером питания", "invNumber": "0101340218", "date": "24.11.2023", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Музыкальное оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_190", "name": "Многофункциональное устройство (МФУ) Sindoh D332e", "invNumber": "0101340229", "date": "15.02.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "33,33", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_191", "name": "Комплекс программно-аппаратный ИнфоЗвонок \"Ф2 СИСТЕМЫ\" F2С Тип1 – 3ТО, черный.", "invNumber": "0101340224", "date": "31.01.2024", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Прочее оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_192", "name": "Многофункциональное устройство (МФУ) Sindoh C300", "invNumber": "0101340225", "date": "15.02.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "33,33", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_193", "name": "Многофункциональное устройство (МФУ) Sindoh C300", "invNumber": "0101340226", "date": "15.02.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "33,33", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_194", "name": "Многофункциональное устройство (МФУ) Sindoh C300", "invNumber": "0101340227", "date": "15.02.2024", "condition": "Введено в эксплуатацию", "term": "60", "wear": "33,33", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_195", "name": "Устройство коммуникационное GoTalk 20+", "invNumber": "0101340185", "date": "10.06.2021", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_196", "name": "Устройство коммуникационное GoTalk 20+", "invNumber": "0101340186", "date": "10.06.2021", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_197", "name": "Устройство коммуникационное GoTalk 20+", "invNumber": "0101340187", "date": "10.06.2021", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_198", "name": "Устройство коммуникационное GoTalk 20+", "invNumber": "0101340188", "date": "10.06.2021", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_199", "name": "Принтер HP Laser Jet P2055d", "invNumber": "0101340189", "date": "13.07.2021", "condition": "Введено в эксплуатацию", "term": "84", "wear": "100,00", "note": "оргтехника", "category": "Принтеры и МФУ", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_200", "name": "Микрофонная радиосистема ТИП 2 Радиосистема VOLTA US-102", "invNumber": "0101340177", "date": "17.05.2021", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_201", "name": "Микрофонная радиосистема ТИП 4 VOLTA US-102Н", "invNumber": "0101340178", "date": "17.05.2021", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_202", "name": "Комплект системы видеоконтроля и видеонаблюдения", "invNumber": "0101340195", "date": "25.05.2022", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Прочее оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_203", "name": "Электроакустическая аппаратура для коррекции VERBOTON G30L", "invNumber": "0101340192", "date": "13.12.2021", "condition": "Введено в эксплуатацию", "term": "84", "wear": "54,76", "note": "оргтехника", "category": "Аудиооборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_204", "name": "Мультимедийный интерактивный коррекционно-развивающий логопедический стол", "invNumber": "0101340194", "date": "04.02.2022", "condition": "Введено в эксплуатацию", "term": "60", "wear": "73,33", "note": "оргтехника", "category": "Интерактивное оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_205", "name": "Устройство коммуникационное", "invNumber": "0101340200", "date": "23.10.2022", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_206", "name": "Устройство коммуникационное", "invNumber": "0101340201", "date": "23.10.2022", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_207", "name": "Устройство коммуникационное", "invNumber": "0101340202", "date": "23.10.2022", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_208", "name": "Устройство коммуникационное", "invNumber": "0101340203", "date": "23.10.2022", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_209", "name": "Устройство коммуникационное", "invNumber": "0101340204", "date": "23.10.2022", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_210", "name": "Устройство коммуникационное", "invNumber": "0101340205", "date": "23.10.2022", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_211", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340164", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_212", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340165", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_213", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340166", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "36", "wear": "100,00", "note": "оргтехника", "category": "Сетевое оборудование", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_214", "name": "Специализированное интерактивное устройство IRBIS (AIO86N3C)", "invNumber": "0101340167", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_215", "name": "Специализированное интерактивное устройство IRBIS (AIO86N3C)", "invNumber": "0101340168", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_216", "name": "Специализированное интерактивное устройство IRBIS (AIO86N3C)", "invNumber": "0101340169", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_217", "name": "Специализированное интерактивное устройство IRBIS (AIO86N3C)", "invNumber": "0101340170", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_218", "name": "Специализированное интерактивное устройство IRBIS (AIO86N3C)", "invNumber": "0101340171", "date": "23.12.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Телевизоры", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_219", "name": "Школьный информатор", "invNumber": "0101340172", "date": "28.07.2020", "condition": "Введено в эксплуатацию", "term": "60", "wear": "100,00", "note": "оргтехника", "category": "Информационные табло", "writeOff": false, "checked": false, "inventoryNote": ""},
-{"id": "item_220", "name": "МФУ XeroxVersaLinkC7025", "invNumber": "0101340158", "date": "24.10.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_221", "name": "МФУ XeroxVersaLinkC7025", "invNumber": "0101340159", "date": "24.10.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_222", "name": "МФУ XeroxAltaLink B8075", "invNumber": "0101340160", "date": "24.10.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_223", "name": "МФУ HP LaserJetProM428fdn", "invNumber": "0101340151", "date": "24.10.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_224", "name": "МФУ HP LaserJetProM428fdn", "invNumber": "0101340152", "date": "24.10.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_225", "name": "МФУ HP LaserJetProM428fdn", "invNumber": "0101340153", "date": "24.10.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_226", "name": "МФУ HP LaserJetProM428fdn", "invNumber": "0101340154", "date": "24.10.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_227", "name": "МФУ HP LaserJetProM428fdn", "invNumber": "0101340155", "date": "24.10.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_228", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340018", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_229", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340019", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_230", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340020", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_231", "name": "Специализированное интерактивное устройство IRBIS (AIO86F3B)", "invNumber": "0101340041", "date": "23.12.2020", "category": "Телевизоры", "writeOff": false},
-{"id": "item_232", "name": "МФУ А 3 монохромное", "invNumber": "0101340001", "date": "29.03.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_233", "name": "МФУ А4 сетевое ч/б", "invNumber": "0101340002", "date": "29.03.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_234", "name": "МФУ А4 сетевое ч/б", "invNumber": "0101340003", "date": "29.03.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_235", "name": "МФУ А4 сетевое ч/б", "invNumber": "0101340004", "date": "29.03.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_236", "name": "МФУ А4 сетевое ч/б", "invNumber": "0101340005", "date": "29.03.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_237", "name": "МФУ А4 сетевое ч/б", "invNumber": "0101340006", "date": "29.03.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_238", "name": "МФУ А4 сетевое ч/б", "invNumber": "0101340007", "date": "29.03.2019", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_239", "name": "Лазерный принтер НР Laser jetP1102", "invNumber": "1101340015", "date": "07.07.2016", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_240", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340010", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_241", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340011", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_242", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340012", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_243", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340013", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_244", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340014", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_245", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340039", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_246", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340040", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_247", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340033", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_248", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340034", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_249", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340035", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_250", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340036", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_251", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340037", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_252", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340038", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_253", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340027", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_254", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340028", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_255", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340029", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_256", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340030", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_257", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340031", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_258", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340032", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_259", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340021", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_260", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340022", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_261", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340023", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_262", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340024", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_263", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340025", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_264", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340026", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_265", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340015", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_266", "name": "Стационарное АРМ Тип 1 (Моноблок)", "invNumber": "0101340016", "date": "07.05.2019", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_267", "name": "Мини-АТС", "invNumber": "1101340110", "date": "16.07.2018", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_268", "name": "Специализированное интерактивное устройство IRBIS (AIO86N3C)", "invNumber": "0101340093", "date": "23.12.2020", "category": "Телевизоры", "writeOff": false},
-{"id": "item_269", "name": "Специализированное интерактивное устройство IRBIS (AIO86F3B)", "invNumber": "0101340094", "date": "23.12.2020", "category": "Телевизоры", "writeOff": false},
-{"id": "item_270", "name": "Специализированное интерактивное устройство IRBIS (AIO86F3B)", "invNumber": "0101340095", "date": "23.12.2020", "category": "Телевизоры", "writeOff": false},
-{"id": "item_271", "name": "Специализированное интерактивное устройство IRBIS (AIO86F3B)", "invNumber": "0101340096", "date": "23.12.2020", "category": "Телевизоры", "writeOff": false},
-{"id": "item_272", "name": "Специализированное интерактивное устройство IRBIS (AIO86F3B)", "invNumber": "0101340097", "date": "23.12.2020", "category": "Телевизоры", "writeOff": false},
-{"id": "item_273", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340098", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_274", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340099", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_275", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340100", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_276", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340101", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_277", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340102", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": true, "note": "СПИСАТЬ"},
-{"id": "item_278", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340103", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_279", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340104", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_280", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340105", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_281", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340107", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_282", "name": "Ноутбук HP ProBook 440 G 4 (1LT65ES#ACB)", "invNumber": "0101340108", "date": "23.12.2020", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_283", "name": "Сервер Depo Storm3400Q2M", "invNumber": "0101340110", "date": "23.12.2020", "category": "Серверное оборудование", "writeOff": false},
-{"id": "item_284", "name": "Коммутатор тип 2 Cisco (WS-C2960RX-48FPS-L)", "invNumber": "0101340112", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_285", "name": "Коммутатор тип 4 Cisco (WS-C2960RX-24PS-L)", "invNumber": "0101340113", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_286", "name": "Коммутатор тип 4 Cisco (WS-C2960RX-24PS-L)", "invNumber": "0101340114", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_287", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340115", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_288", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340116", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_289", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340117", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_290", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340118", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_291", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340119", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_292", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340120", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_293", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340145", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_294", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340139", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_295", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340140", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_296", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340141", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_297", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340142", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_298", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340143", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_299", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340144", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_300", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340133", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_301", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340134", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_302", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340135", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_303", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340136", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_304", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340137", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_305", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340138", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_306", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340127", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_307", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340128", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_308", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340129", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_309", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340130", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_310", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340131", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_311", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340132", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_312", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340121", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_313", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340122", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_314", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340123", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_315", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340124", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_316", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340125", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_317", "name": "Точка беспроводного доступа Cisco (AIR-CAP2702I-R-K9)", "invNumber": "0101340126", "date": "23.12.2020", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_318", "name": "Принтер групповой, монохромный, Epson WorkForce Pro WF-M5190DW", "invNumber": "1101340076", "date": "22.03.2018", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_319", "name": "Акустическая система для аудитории", "invNumber": "1101340081", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": true, "note": "СПИСАТЬ"},
-{"id": "item_320", "name": "Акустическая система для аудитории", "invNumber": "1101340082", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": true, "note": "СПИСАТЬ"},
-{"id": "item_321", "name": "Акустическая система для аудитории", "invNumber": "1101340083", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": true, "note": "СПИСАТЬ"},
-{"id": "item_322", "name": "Акустическая система для аудитории", "invNumber": "1101340085", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": false},
-{"id": "item_323", "name": "Акустическая система для аудитории", "invNumber": "1101340086", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": false},
-{"id": "item_324", "name": "Акустическая система для аудитории", "invNumber": "1101340087", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": false},
-{"id": "item_325", "name": "Акустическая система для аудитории", "invNumber": "1101340088", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": true, "note": "СПИСАТЬ"},
-{"id": "item_326", "name": "Акустическая система для аудитории", "invNumber": "1101340089", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": false},
-{"id": "item_327", "name": "Акустическая система для аудитории", "invNumber": "1101340092", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": false},
-{"id": "item_328", "name": "Акустическая система для аудитории", "invNumber": "1101340093", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": false},
-{"id": "item_329", "name": "Акустическая система для аудитории", "invNumber": "1101340094", "date": "30.03.2018", "category": "Аудиооборудование", "writeOff": false},
-{"id": "item_330", "name": "Принтер групповой, монохромный, Epson WorkForce Pro WF-M5190DW", "invNumber": "1101340078", "date": "22.03.2018", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_331", "name": "Уничтожитель бумаг Rexet v60/65", "invNumber": "1101340051", "date": "02.07.2017", "category": "Уничтожители документов", "writeOff": false},
-{"id": "item_332", "name": "Уничтожитель бумаг Rexet v60/65", "invNumber": "1101340052", "date": "02.07.2017", "category": "Уничтожители документов", "writeOff": false},
-{"id": "item_333", "name": "Стационарное АРМ (Tiger T-310)", "invNumber": "1101340059", "date": "29.12.2017", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_334", "name": "Накладка на сиденье на трехсверный прожектор", "invNumber": "-", "date": "01.07.2011", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_335", "name": "МФУ", "invNumber": "-", "date": "25.11.2011", "category": "Принтеры и МФУ", "writeOff": false},
-{"id": "item_336", "name": "Кронштейн для телевизор", "invNumber": "-", "date": "07.06.2011", "category": "Телевизоры", "writeOff": false},
-{"id": "item_337", "name": "Ап-т телеф. \"Panasonic\"", "invNumber": "-", "date": "01.10.2002", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_338", "name": "Ап-т телеф. \"Panasonic\"", "invNumber": "-", "date": "01.10.2002", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_339", "name": "Ламинатор пакетный", "invNumber": "-", "date": "30.03.2018", "category": "Ламинаторы", "writeOff": false},
-{"id": "item_340", "name": "Ламинатор пакетный", "invNumber": "-", "date": "30.03.2018", "category": "Ламинаторы", "writeOff": false},
-{"id": "item_341", "name": "Графический планшет Bamboo Pen Bamboo Scribe,ArtRage2", "invNumber": "4101340203", "date": "28.11.2012", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_342", "name": "Графический планшет Bamboo Pen Bamboo Scribe,ArtRage2", "invNumber": "4101340205", "date": "28.11.2012", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_343", "name": "Графический планшет Bamboo Pen Bamboo Scribe,ArtRage2", "invNumber": "4101360064", "date": "28.11.2012", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_344", "name": "Графический планшет Bamboo Pen Bamboo Scribe,ArtRage2", "invNumber": "4101340053", "date": "28.11.2012", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_345", "name": "Тамбурин", "invNumber": "-", "date": "30.07.2018", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_346", "name": "Монитор видеодомофона CTV-M1701 S, цвет белый", "invNumber": "-", "date": "19.05.2022", "category": "Мониторы и экраны", "writeOff": false},
-{"id": "item_347", "name": "Микрофон проводной ТИП 1 PROAUDIO RM-02", "invNumber": "-", "date": "13.05.2021", "category": "Аудиооборудование", "writeOff": false},
-{"id": "item_348", "name": "Тестер кабельный многофункционаьный Noyafa NF-8506, 200*50*33 мм", "invNumber": "-", "date": "05.11.2024", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_349", "name": "Коммутатор TP-LINK TL-SF1008D", "invNumber": "-", "date": "18.06.2024", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_350", "name": "Микрофон петличный беспроводной с шумоподавлением для iphone, Android - Type-C", "invNumber": "-", "date": "30.10.2023", "category": "Аудиооборудование", "writeOff": false},
-{"id": "item_351", "name": "Компьютерная гарнитура Acer Nitro Headset", "invNumber": "-", "date": "24.11.2023", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_352", "name": "Телефонный аппарат", "invNumber": "-", "date": "16.07.2018", "category": "Телефония", "writeOff": false},
-{"id": "item_353", "name": "Система аудиозаписи", "invNumber": "-", "date": "16.07.2018", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_354", "name": "Телефон Понасоник КХ-Т2350", "invNumber": "-", "date": "14.03.2008", "category": "Телефония", "writeOff": false},
-{"id": "item_355", "name": "Телефон Понасоник КХ-Т2350", "invNumber": "-", "date": "14.03.2008", "category": "Телефония", "writeOff": false},
-{"id": "item_356", "name": "Телефон Понасоник КХ-Т2350", "invNumber": "-", "date": "14.03.2008", "category": "Телефония", "writeOff": false},
-{"id": "item_357", "name": "Ап-т телеф. \"Siemens\"", "invNumber": "-", "date": "01.04.2011", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_358", "name": "Малый гонг (ударный инструмент)", "invNumber": "-", "date": "31.05.2011", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_359", "name": "Графический планшет Bamboo Pen Bamboo Scribe,ArtRage2", "invNumber": "4101340204", "date": "28.11.2012", "category": "Прочее оборудование", "writeOff": false},
-{"id": "item_360", "name": "Кронштейн для телевизора", "invNumber": "-", "date": "28.12.2009", "category": "Телевизоры", "writeOff": false},
-{"id": "item_361", "name": "Телефон беспроводной с базой Yealink W73P", "invNumber": "-", "date": "27.01.2025", "category": "Телефония", "writeOff": false},
-{"id": "item_362", "name": "Стабилизатор напряжения Ресанта АСН-5000/1-Ц 5000Вт", "invNumber": "-", "date": "27.01.2025", "category": "Электропитание", "writeOff": false},
-{"id": "item_363", "name": "Ламинатор Office Kit L3350 формат А3", "invNumber": "-", "date": "13.02.2025", "category": "Ламинаторы", "writeOff": false},
-{"id": "item_364", "name": "Телефон Yealink SIP-T31P", "invNumber": "-", "date": "27.01.2025", "category": "Телефония", "writeOff": false},
-{"id": "item_365", "name": "Ламинатор пакетный", "invNumber": "10400116", "date": "25.04.2014", "category": "Ламинаторы", "writeOff": false},
-{"id": "item_366", "name": "Источник бесперебойного питания однофазный двойного преобразования с АКБ 4 шт.", "invNumber": "БД-01", "date": "01.07.2022", "category": "Электропитание", "writeOff": false},
-{"id": "item_367", "name": "Источник бесперебойного питания однофазный двойного преобразования с АКБ 4 шт.", "invNumber": "БД-02", "date": "01.07.2022", "category": "Электропитание", "writeOff": false},
-{"id": "item_368", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-03", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_369", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-04", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_370", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-05", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_371", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-06", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_372", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-07", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_373", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-08", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_374", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-09", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_375", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-10", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_376", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-11", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_377", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-12", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_378", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-13", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_379", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-14", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_380", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-15", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_381", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-16", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_382", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-17", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_383", "name": "Моноблок ICL SafeRAY Sil05.Mi", "invNumber": "БД-18", "date": "01.07.2022", "category": "Компьютеры и моноблоки", "writeOff": false},
-{"id": "item_384", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-19", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_385", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-20", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_386", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-21", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_387", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-22", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_388", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-23", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_389", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-24", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_390", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-25", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_391", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-26", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_392", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-27", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_393", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-28", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_394", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-29", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_395", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-30", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_396", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-31", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_397", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-32", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_398", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-33", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_399", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-34", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_400", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-35", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_401", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-36", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_402", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-37", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_403", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-38", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_404", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-39", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_405", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-40", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_406", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-41", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_407", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-42", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_408", "name": "Ноутбук Clevo NL41MU2", "invNumber": "БД-43", "date": "01.07.2022", "category": "Ноутбуки", "writeOff": false},
-{"id": "item_409", "name": "Точка доступа Huawei Xingfu Kele [WP4094]", "invNumber": "БД-44", "date": "01.07.2022", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_410", "name": "Точка доступа Huawei Xingfu Kele [WP4094]", "invNumber": "БД-45", "date": "01.07.2022", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_411", "name": "Точка доступа Huawei Xingfu Kele [WP4094]", "invNumber": "БД-46", "date": "01.07.2022", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_412", "name": "Точка доступа Huawei Xingfu Kele [WP4094]", "invNumber": "БД-47", "date": "01.07.2022", "category": "Сетевое оборудование", "writeOff": false},
-{"id": "item_413", "name": "Интерактивная панель (моноблок) со встроенным компьютером OPS, диагональ 86 дюймов, модель AIO86A9G (i7-1280P / 16Gb / 256 SSD)", "invNumber": "БД-48", "date": "03.10.2022", "category": "Интерактивное оборудование", "writeOff": false},
-{"id": "item_414", "name": "Интерактивная панель (моноблок) со встроенным компьютером OPS, диагональ 86 дюймов, модель AIO86A9G (i7-1280P / 16Gb / 256 SSD)", "invNumber": "БД-49", "date": "03.10.2022", "category": "Интерактивное оборудование", "writeOff": false},
             {id:"item_415",name:"Интерактивная панель 86 дюймов",invNumber:"БД-50",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_416",name:"Интерактивная панель 86 дюймов",invNumber:"БД-51",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
             {id:"item_417",name:"Интерактивная панель 86 дюймов",invNumber:"БД-52",date:"03.10.2022",note:"",category:"Интерактивное оборудование",building:"",floor:"",checked:false,writeOff:false,hasLabel:null,serialNumber:"",location:"",responsible:"",inventoryNote:"",isUserAdded:false},
@@ -832,38 +532,75 @@
             );
         };
 
-        const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenNotes }) => (
+        const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenStats, onOpenExport, onOpenSettings, onOpenHistory, problemCount }) => (
             <div className="nav-rail w-16 bg-gray-900 flex flex-col items-center py-4 flex-shrink-0">
                 <button onClick={onShowInfo} className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mb-6" title="О программе">
                     <span className="text-white font-bold text-sm">102</span>
                 </button>
                 <div className="flex-1 flex flex-col items-center gap-2">
-                    <button onClick={onGoHome} className="touch-btn w-10 h-10 rounded-lg bg-gray-800 text-white" title="Главная">
-                        <Icons.Home />
+                    <button onClick={onGoHome} className="nav-btn bg-gray-800 text-white" title="Главная">
+                        🏠
                     </button>
-                    <button onClick={onOpenRooms} className="touch-btn w-10 h-10 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white" title="Кабинеты">
-                        <Icons.Building />
+                    <button onClick={onOpenStats} className="nav-btn text-gray-400 hover:text-white" title="Статистика">
+                        📊
                     </button>
-                    <button onClick={onOpenPeople} className="touch-btn w-10 h-10 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white" title="Сотрудники">
-                        <Icons.Users />
+                    <button onClick={onOpenHistory} className="nav-btn text-gray-400 hover:text-white" title="История">
+                        📜
                     </button>
-                    <button onClick={onOpenNotes} className="touch-btn w-10 h-10 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white" title="Все заметки">
-                        <span className="text-lg">📝</span>
+                    
+                    <div className="w-8 h-px bg-gray-700 my-2"></div>
+                    
+                    <button onClick={onOpenRooms} className="nav-btn text-gray-400 hover:text-white" title="Кабинеты">
+                        🚪
+                    </button>
+                    <button onClick={onOpenPeople} className="nav-btn text-gray-400 hover:text-white" title="Сотрудники">
+                        👥
+                    </button>
+                    
+                    <div className="w-8 h-px bg-gray-700 my-2"></div>
+                    
+                    <button onClick={onOpenExport} className="nav-btn text-gray-400 hover:text-white" title="Экспорт/Импорт">
+                        📤
+                    </button>
+                    <button onClick={onOpenSettings} className="nav-btn text-gray-400 hover:text-white relative" title="Настройки">
+                        ⚙️
+                        {problemCount > 0 && <span className="nav-btn-badge">{problemCount}</span>}
                     </button>
                 </div>
-                <button onClick={onAddEquipment} className="touch-btn w-10 h-10 rounded-lg bg-green-600 text-white" title="Добавить">
-                    <Icons.Plus />
+                <button onClick={onAddEquipment} className="nav-btn bg-green-600 text-white" title="Добавить">
+                    ➕
                 </button>
             </div>
         );
 
-        const FilterPanel = ({ isOpen, onClose, stats, categories, activeCategory, setActiveCategory, activeFilter, setActiveFilter, activeBuilding, setActiveBuilding }) => {
+        const FilterPanel = ({ isOpen, onClose, stats, activeFilter, setActiveFilter, activeBuilding, setActiveBuilding, equipment, onViewItem, recentItems, problemItems }) => {
             const percent = stats.total > 0 ? Math.round((stats.checked / stats.total) * 100) : 0;
+            const [expandedFloors, setExpandedFloors] = useState({});
+
+            const locationsByFloor = useMemo(() => {
+                const result = { 'Нансена': {}, 'Ботаничка': {} };
+                equipment.forEach(item => {
+                    if (item.building && item.floor && item.location) {
+                        if (!result[item.building][item.floor]) {
+                            result[item.building][item.floor] = new Set();
+                        }
+                        result[item.building][item.floor].add(item.location);
+                    }
+                });
+                return result;
+            }, [equipment]);
+
+            const toggleFloor = (building, floor) => {
+                setExpandedFloors(prev => ({
+                    ...prev,
+                    [`${building}-${floor}`]: !prev[`${building}-${floor}`]
+                }));
+            };
 
             return (
                 <>
                     <div className={`mobile-overlay fixed inset-0 bg-black/40 z-400 ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} />
-                    <div className={`filter-panel w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 ${isOpen ? 'open' : ''}`}>
+                    <div className={`filter-panel w-72 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 ${isOpen ? 'open' : ''}`}>
                         <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center lg:hidden">
                             <Icons.X />
                         </button>
@@ -873,8 +610,8 @@
                             <p className="text-xs text-gray-500">ГКОУ СКОШИ №102</p>
                         </div>
 
-                        <div className="p-3 border-b border-gray-100">
-                            <div className="text-xs font-semibold text-gray-400 uppercase mb-2">Здание</div>
+                        <div className="sidebar-section">
+                            <div className="sidebar-section-title">Здание</div>
                             <div className="building-selector">
                                 <button onClick={() => { setActiveBuilding('Все здания'); onClose(); }}
                                     className={`building-selector-btn ${activeBuilding === 'Все здания' ? 'active' : ''}`}>
@@ -895,7 +632,7 @@
                             </button>
                         </div>
 
-                        <div className="p-4 border-b border-gray-100">
+                        <div className="sidebar-section">
                             <div className="flex items-center gap-4">
                                 <ProgressRing percent={percent} size={56} />
                                 <div className="flex-1">
@@ -923,54 +660,108 @@
                                 <div className="quick-stat-value text-amber-600">{stats.noLabel}</div>
                                 <div className="quick-stat-label">Без бирки</div>
                             </div>
-                            <div onClick={() => setActiveFilter(activeFilter === 'serial' ? 'all' : 'serial')}
-                                className={`quick-stat-card bg-green-50 ${activeFilter === 'serial' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-green-600">{stats.withSerial}</div>
-                                <div className="quick-stat-label">С серийником</div>
-                            </div>
-                            <div onClick={() => setActiveFilter(activeFilter === 'new' ? 'all' : 'new')}
-                                className={`quick-stat-card bg-blue-50 ${activeFilter === 'new' ? 'active' : ''}`}>
-                                <div className="quick-stat-value text-blue-600">{stats.new}</div>
-                                <div className="quick-stat-label">Новые</div>
-                            </div>
                         </div>
 
-                        <div className="p-3 border-b border-gray-100">
-                            <div className="text-xs font-semibold text-gray-400 uppercase mb-2">Статус</div>
-                            <div className="space-y-1">
-                                {[
-                                    { id: 'all', label: 'Все', count: stats.total },
-                                    { id: 'unchecked', label: 'Ожидают', count: stats.pending },
-                                    { id: 'checked', label: 'Проверено', count: stats.checked },
-                                    { id: 'notes', label: 'С заметками', count: stats.withNotes },
-                                ].map(f => (
-                                    <button key={f.id} onClick={() => { setActiveFilter(f.id); onClose(); }}
-                                        className={`touch-btn w-full flex items-center gap-2 px-3 rounded-lg text-sm
-                                            ${activeFilter === f.id ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
-                                        <span className="flex-1 text-left">{f.label}</span>
-                                        <span className={`text-xs font-medium px-2 py-0.5 rounded ${activeFilter === f.id ? 'bg-white/20' : 'bg-gray-100'}`}>{f.count}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                        <div className="flex-1 overflow-y-auto custom-scroll">
+                            {/* Проблемные позиции */}
+                            {problemItems.length > 0 && (
+                                <div className="sidebar-section">
+                                    <div className="sidebar-section-title">⚠️ Требуют внимания</div>
+                                    <div className="space-y-1">
+                                        {problemItems.slice(0, 5).map(item => (
+                                            <div key={item.id} onClick={() => { onViewItem(item); onClose(); }}
+                                                className={`problem-item ${item.hasLabel === false ? 'critical' : ''}`}>
+                                                <span className="text-sm">{item.hasLabel === false ? '🏷️' : '📦'}</span>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-mono text-xs font-bold text-gray-700">{item.invNumber}</div>
+                                                    <div className="text-xs text-gray-500 truncate">{item.name}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {problemItems.length > 5 && (
+                                            <div className="text-xs text-center text-gray-400 py-1">
+                                                и ещё {problemItems.length - 5}...
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
 
-                        <div className="flex-1 overflow-y-auto p-3 custom-scroll">
-                            <div className="text-xs font-semibold text-gray-400 uppercase mb-2">Категории</div>
-                            <div className="space-y-1">
-                                {categories.map(cat => {
-                                    const config = categoryConfig[cat] || defaultCatConfig;
+                            {/* Локации по этажам */}
+                            <div className="sidebar-section">
+                                <div className="sidebar-section-title">📍 Локации по этажам</div>
+                                {['Нансена', 'Ботаничка'].map(building => {
+                                    const floors = buildingsConfig[building]?.floors || [];
+                                    const hasLocations = floors.some(f => locationsByFloor[building][f]?.size > 0);
+                                    if (!hasLocations) return null;
+                                    
                                     return (
-                                        <button key={cat} onClick={() => { setActiveCategory(cat); onClose(); }}
-                                            className={`touch-btn w-full flex items-center gap-2 px-3 rounded-lg text-sm
-                                                ${activeCategory === cat ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
-                                            <span>{cat === 'Все оборудование' ? '📋' : config.icon}</span>
-                                            <span className="flex-1 text-left truncate">{cat}</span>
-                                            <span className={`text-xs font-medium px-2 py-0.5 rounded ${activeCategory === cat ? 'bg-white/20' : 'bg-gray-100'}`}>
-                                                {cat === 'Все оборудование' ? stats.total : stats.byCategory[cat] || 0}
-                                            </span>
-                                        </button>
+                                        <div key={building} className="mb-3">
+                                            <div className={`text-xs font-bold mb-1 ${building === 'Нансена' ? 'text-blue-600' : 'text-green-600'}`}>
+                                                {building === 'Нансена' ? '🏫' : '🏢'} {building}
+                                            </div>
+                                            {floors.map(floor => {
+                                                const rooms = locationsByFloor[building][floor];
+                                                if (!rooms || rooms.size === 0) return null;
+                                                const isExpanded = expandedFloors[`${building}-${floor}`];
+                                                
+                                                return (
+                                                    <div key={floor} className="floor-section">
+                                                        <div className="floor-header" onClick={() => toggleFloor(building, floor)}>
+                                                            <span className="text-sm">🔢</span>
+                                                            <span className="text-sm font-semibold">{floor} этаж</span>
+                                                            <span className="text-xs text-gray-400 ml-auto">{rooms.size} каб.</span>
+                                                            <span className={`text-xs transition-transform ${isExpanded ? 'rotate-180' : ''}`}>▼</span>
+                                                        </div>
+                                                        {isExpanded && (
+                                                            <div className="floor-rooms">
+                                                                {[...rooms].sort().map(room => (
+                                                                    <span key={room} className="room-chip">{room}</span>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
                                     );
                                 })}
+                                {!['Нансена', 'Ботаничка'].some(b => 
+                                    (buildingsConfig[b]?.floors || []).some(f => locationsByFloor[b][f]?.size > 0)
+                                ) && (
+                                    <div className="text-xs text-gray-400 text-center py-4">
+                                        Локации появятся после проверки оборудования
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Недавние проверки */}
+                            <div className="sidebar-section">
+                                <div className="sidebar-section-title">🕐 Недавние проверки</div>
+                                {recentItems.length === 0 ? (
+                                    <div className="text-xs text-gray-400 text-center py-4">
+                                        Пока нет проверенных позиций
+                                    </div>
+                                ) : (
+                                    <div className="space-y-1">
+                                        {recentItems.map(item => (
+                                            <div key={item.id} onClick={() => { onViewItem(item); onClose(); }} className="recent-item">
+                                                <div className={`w-6 h-6 rounded flex items-center justify-center text-xs ${item.writeOff ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                                                    {item.writeOff ? '📝' : '✓'}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-mono text-xs font-bold text-gray-700">{item.invNumber}</div>
+                                                    <div className="text-xs text-gray-400 truncate">{item.location || 'Без локации'}</div>
+                                                </div>
+                                                {item.building && (
+                                                    <span className={`text-xs ${item.building === 'Нансена' ? 'text-blue-500' : 'text-green-500'}`}>
+                                                        {item.building === 'Нансена' ? '🏫' : '🏢'}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -1067,7 +858,6 @@
             }, [isOpen]);
             
             const currentOption = options.find(o => o.value === value) || options[0];
-            // Don't show count on button for "All" options
             const isAllOption = value === 'Все здания' || value === 'Все оборудование';
             
             return (
@@ -1097,7 +887,7 @@
 
         const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
             if (!isOpen) return null;
-            const sizeClass = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg' }[size];
+            const sizeClass = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-xl' }[size];
             
             return (
                 <div className="modal-base modal-z-600" onClick={onClose}>
@@ -1169,22 +959,13 @@
             );
         };
 
-        // Check Wizard Modal - Multi-step check process
         const CheckWizardModal = ({ isOpen, onClose, item, onComplete, directories }) => {
             const [step, setStep] = useState(1);
             const [formData, setFormData] = useState({
-                building: '',
-                floor: '',
-                location: '',
-                responsible: '',
-                hasLabel: null,
-                serialNumber: '',
-                inventoryNote: ''
+                building: '', floor: '', location: '', responsible: '', hasLabel: null, serialNumber: '', inventoryNote: ''
             });
 
             const totalSteps = 7;
-            
-            // All hooks must be called before any conditional returns
             const safeDirectories = directories || { rooms: [], people: [], roomsWithBuilding: [] };
             const safeItem = item || {};
             
@@ -1192,9 +973,7 @@
                 const rooms = safeDirectories.rooms || [];
                 const roomsWithBuilding = safeDirectories.roomsWithBuilding || [];
                 if (!formData.building) return rooms;
-                const roomsForBuilding = roomsWithBuilding
-                    .filter(r => r && r.building === formData.building)
-                    .map(r => r.name);
+                const roomsForBuilding = roomsWithBuilding.filter(r => r && r.building === formData.building).map(r => r.name);
                 return roomsForBuilding.length > 0 ? roomsForBuilding : rooms;
             }, [safeDirectories.rooms, safeDirectories.roomsWithBuilding, formData.building]);
             
@@ -1204,18 +983,12 @@
                 if (isOpen && item) {
                     setStep(1);
                     setFormData({
-                        building: item.building || '',
-                        floor: item.floor || '',
-                        location: item.location || '',
-                        responsible: item.responsible || '',
-                        hasLabel: item.hasLabel,
-                        serialNumber: item.serialNumber || '',
-                        inventoryNote: item.inventoryNote || ''
+                        building: item.building || '', floor: item.floor || '', location: item.location || '',
+                        responsible: item.responsible || '', hasLabel: item.hasLabel, serialNumber: item.serialNumber || '', inventoryNote: item.inventoryNote || ''
                     });
                 }
             }, [isOpen, item]);
 
-            // Now we can safely return null after all hooks
             if (!isOpen || !item) return null;
 
             const floors = formData.building ? (buildingsConfig[formData.building]?.floors || []) : [];
@@ -1224,26 +997,13 @@
                 switch (step) {
                     case 1: return !!formData.building;
                     case 2: return !!formData.floor;
-                    case 3: return true; // location optional
-                    case 4: return true; // responsible optional
                     case 5: return formData.hasLabel !== null;
-                    case 6: return true; // serial optional
-                    case 7: return true; // note optional
                     default: return true;
                 }
             };
 
-            const nextStep = () => {
-                if (step < totalSteps) {
-                    setStep(step + 1);
-                } else {
-                    onComplete(formData);
-                }
-            };
-
-            const prevStep = () => {
-                if (step > 1) setStep(step - 1);
-            };
+            const nextStep = () => { if (step < totalSteps) setStep(step + 1); else onComplete(formData); };
+            const prevStep = () => { if (step > 1) setStep(step - 1); };
 
             const renderStepContent = () => {
                 switch (step) {
@@ -1279,26 +1039,16 @@
                         return (
                             <div className="space-y-3">
                                 <p className="text-center text-gray-600 text-sm mb-4">Номер кабинета</p>
-                                <AutocompleteInput 
-                                    value={formData.location} 
-                                    onChange={v => setFormData(prev => ({ ...prev, location: v }))} 
-                                    suggestions={filteredRooms} 
-                                    placeholder="Введите номер кабинета..."
-                                    autoFocus
-                                />
+                                <AutocompleteInput value={formData.location} onChange={v => setFormData(prev => ({ ...prev, location: v }))} 
+                                    suggestions={filteredRooms} placeholder="Введите номер кабинета..." autoFocus />
                             </div>
                         );
                     case 4:
                         return (
                             <div className="space-y-3">
                                 <p className="text-center text-gray-600 text-sm mb-4">Ответственный</p>
-                                <AutocompleteInput 
-                                    value={formData.responsible} 
-                                    onChange={v => setFormData(prev => ({ ...prev, responsible: v }))} 
-                                    suggestions={directories?.people || []} 
-                                    placeholder="ФИО ответственного..."
-                                    autoFocus
-                                />
+                                <AutocompleteInput value={formData.responsible} onChange={v => setFormData(prev => ({ ...prev, responsible: v }))} 
+                                    suggestions={safePeople} placeholder="ФИО ответственного..." autoFocus />
                             </div>
                         );
                     case 5:
@@ -1319,26 +1069,20 @@
                         return (
                             <div className="space-y-3">
                                 <p className="text-center text-gray-600 text-sm mb-4">Серийный номер (если есть)</p>
-                                <input type="text" value={formData.serialNumber} 
-                                    onChange={e => setFormData(prev => ({ ...prev, serialNumber: e.target.value }))}
-                                    placeholder="S/N" 
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-center font-mono text-lg"
-                                    autoFocus />
+                                <input type="text" value={formData.serialNumber} onChange={e => setFormData(prev => ({ ...prev, serialNumber: e.target.value }))}
+                                    placeholder="S/N" className="w-full px-4 py-3 border border-gray-200 rounded-xl text-center font-mono text-lg" autoFocus />
                             </div>
                         );
                     case 7:
                         return (
                             <div className="space-y-3">
                                 <p className="text-center text-gray-600 text-sm mb-4">Заметка (необязательно)</p>
-                                <textarea value={formData.inventoryNote} 
-                                    onChange={e => setFormData(prev => ({ ...prev, inventoryNote: e.target.value }))}
+                                <textarea value={formData.inventoryNote} onChange={e => setFormData(prev => ({ ...prev, inventoryNote: e.target.value }))}
                                     placeholder="Примечания, комментарии..." rows={3}
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none"
-                                    autoFocus />
+                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none" autoFocus />
                             </div>
                         );
-                    default:
-                        return null;
+                    default: return null;
                 }
             };
 
@@ -1350,9 +1094,7 @@
                         <div className="px-4 py-3 border-b border-gray-100">
                             <div className="flex items-center justify-between mb-2">
                                 <h2 className="text-base font-bold text-gray-800">Проверка: {stepTitles[step-1]}</h2>
-                                <button onClick={onClose} className="touch-btn w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-400">
-                                    <Icons.X />
-                                </button>
+                                <button onClick={onClose} className="touch-btn w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-400"><Icons.X /></button>
                             </div>
                             <div className="step-indicator">
                                 {Array.from({ length: totalSteps }, (_, i) => (
@@ -1364,17 +1106,9 @@
                                 <p className="text-xs text-gray-600 truncate">{item.name}</p>
                             </div>
                         </div>
-                        
-                        <div className="p-4">
-                            {renderStepContent()}
-                        </div>
-
+                        <div className="p-4">{renderStepContent()}</div>
                         <div className="px-4 pb-4 flex gap-2">
-                            {step > 1 && (
-                                <button onClick={prevStep} className="touch-btn flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold">
-                                    ← Назад
-                                </button>
-                            )}
+                            {step > 1 && <button onClick={prevStep} className="touch-btn flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold">← Назад</button>}
                             <button onClick={nextStep} disabled={!canProceed()}
                                 className={`touch-btn flex-1 py-3 rounded-xl font-semibold ${canProceed() ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>
                                 {step === totalSteps ? '✓ Завершить' : 'Далее →'}
@@ -1382,6 +1116,201 @@
                         </div>
                     </div>
                 </div>
+            );
+        };
+
+        const StatsModal = ({ isOpen, onClose, stats, equipment }) => {
+            const byCategory = useMemo(() => {
+                const result = {};
+                equipment.forEach(item => {
+                    if (!result[item.category]) result[item.category] = { total: 0, checked: 0 };
+                    result[item.category].total++;
+                    if (item.checked || item.writeOff) result[item.category].checked++;
+                });
+                return Object.entries(result).sort((a, b) => b[1].total - a[1].total);
+            }, [equipment]);
+
+            const byBuilding = useMemo(() => {
+                const result = { 'Нансена': { total: 0, checked: 0 }, 'Ботаничка': { total: 0, checked: 0 }, 'Не указано': { total: 0, checked: 0 } };
+                equipment.forEach(item => {
+                    const b = item.building || 'Не указано';
+                    if (!result[b]) result[b] = { total: 0, checked: 0 };
+                    result[b].total++;
+                    if (item.checked || item.writeOff) result[b].checked++;
+                });
+                return result;
+            }, [equipment]);
+
+            if (!isOpen) return null;
+
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title="📊 Статистика" size="lg">
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="stat-card text-center">
+                                <div className="text-3xl font-bold text-blue-600">{stats.total}</div>
+                                <div className="text-xs text-gray-500 font-semibold">Всего</div>
+                            </div>
+                            <div className="stat-card text-center">
+                                <div className="text-3xl font-bold text-green-600">{stats.checked}</div>
+                                <div className="text-xs text-gray-500 font-semibold">Проверено</div>
+                            </div>
+                            <div className="stat-card text-center">
+                                <div className="text-3xl font-bold text-amber-600">{stats.pending}</div>
+                                <div className="text-xs text-gray-500 font-semibold">Ожидает</div>
+                            </div>
+                            <div className="stat-card text-center">
+                                <div className="text-3xl font-bold text-red-600">{stats.writeOff}</div>
+                                <div className="text-xs text-gray-500 font-semibold">Списание</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 className="font-bold text-gray-700 mb-3">По зданиям</h3>
+                            {Object.entries(byBuilding).map(([building, data]) => (
+                                <div key={building} className="flex items-center gap-3 mb-2">
+                                    <span className="text-lg">{building === 'Нансена' ? '🏫' : building === 'Ботаничка' ? '🏢' : '❓'}</span>
+                                    <span className="flex-1 text-sm font-medium">{building}</span>
+                                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div className="h-full bg-green-500 rounded-full" style={{ width: `${data.total > 0 ? (data.checked / data.total) * 100 : 0}%` }} />
+                                    </div>
+                                    <span className="text-xs text-gray-500 w-16 text-right">{data.checked}/{data.total}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div>
+                            <h3 className="font-bold text-gray-700 mb-3">По категориям</h3>
+                            {byCategory.map(([category, data]) => {
+                                const config = categoryConfig[category] || defaultCatConfig;
+                                return (
+                                    <div key={category} className="flex items-center gap-3 mb-2">
+                                        <span className="text-lg">{config.icon}</span>
+                                        <span className="flex-1 text-sm font-medium truncate">{category}</span>
+                                        <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                            <div className="h-full rounded-full" style={{ width: `${data.total > 0 ? (data.checked / data.total) * 100 : 0}%`, background: config.color }} />
+                                        </div>
+                                        <span className="text-xs text-gray-500 w-16 text-right">{data.checked}/{data.total}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </Modal>
+            );
+        };
+
+        const HistoryModal = ({ isOpen, onClose, history, onViewItem }) => {
+            if (!isOpen) return null;
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title="📜 История действий" size="md">
+                    {history.length === 0 ? (
+                        <div className="text-center py-8 text-gray-400">
+                            <div className="text-4xl mb-2">📜</div>
+                            <p className="text-sm">История пуста</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-2 max-h-96 overflow-y-auto">
+                            {history.map((entry, idx) => (
+                                <div key={idx} onClick={() => entry.item && onViewItem(entry.item)} 
+                                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${
+                                        entry.action === 'check' ? 'bg-green-100 text-green-600' :
+                                        entry.action === 'writeoff' ? 'bg-red-100 text-red-600' :
+                                        entry.action === 'undo' ? 'bg-gray-200 text-gray-600' : 'bg-blue-100 text-blue-600'
+                                    }`}>
+                                        {entry.action === 'check' ? '✓' : entry.action === 'writeoff' ? '📝' : entry.action === 'undo' ? '↩' : '➕'}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-mono text-xs font-bold text-gray-700">{entry.invNumber}</div>
+                                        <div className="text-xs text-gray-400">{entry.time}</div>
+                                    </div>
+                                    <span className="text-xs text-gray-500">{entry.actionText}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </Modal>
+            );
+        };
+
+        const ExportModal = ({ isOpen, onClose, onExportExcel, onExportJSON, onImport, onClearAll }) => {
+            if (!isOpen) return null;
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title="📤 Экспорт и импорт" size="sm">
+                    <div className="space-y-3">
+                        <button onClick={onExportExcel} className="touch-btn w-full py-4 bg-green-100 hover:bg-green-200 text-green-700 rounded-xl font-semibold flex items-center justify-center gap-3">
+                            <span className="text-2xl">📊</span>
+                            <div className="text-left">
+                                <div>Экспорт в Excel</div>
+                                <div className="text-xs opacity-75">CSV файл для таблиц</div>
+                            </div>
+                        </button>
+                        <button onClick={onExportJSON} className="touch-btn w-full py-4 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-xl font-semibold flex items-center justify-center gap-3">
+                            <span className="text-2xl">💾</span>
+                            <div className="text-left">
+                                <div>Резервная копия</div>
+                                <div className="text-xs opacity-75">JSON со всеми данными</div>
+                            </div>
+                        </button>
+                        <button onClick={onImport} className="touch-btn w-full py-4 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl font-semibold flex items-center justify-center gap-3">
+                            <span className="text-2xl">📥</span>
+                            <div className="text-left">
+                                <div>Импорт данных</div>
+                                <div className="text-xs opacity-75">Загрузить JSON файл</div>
+                            </div>
+                        </button>
+                        <hr className="my-4" />
+                        <button onClick={onClearAll} className="touch-btn w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-semibold text-sm">
+                            🗑️ Сбросить все данные
+                        </button>
+                    </div>
+                </Modal>
+            );
+        };
+
+        const SettingsModal = ({ isOpen, onClose, stats }) => {
+            if (!isOpen) return null;
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title="⚙️ Настройки" size="sm">
+                    <div className="space-y-4">
+                        <div className="p-4 bg-amber-50 rounded-xl">
+                            <h3 className="font-bold text-amber-800 mb-2">⚠️ Требуют внимания</h3>
+                            <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                    <span>Без здания:</span>
+                                    <span className="font-bold text-amber-600">{stats.noBuilding}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>Без бирки:</span>
+                                    <span className="font-bold text-red-600">{stats.noLabel}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>Ожидают проверки:</span>
+                                    <span className="font-bold text-amber-600">{stats.pending}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="p-4 bg-gray-50 rounded-xl">
+                            <h3 className="font-bold text-gray-700 mb-2">ℹ️ Информация</h3>
+                            <div className="space-y-1 text-sm text-gray-600">
+                                <div className="flex justify-between">
+                                    <span>Версия:</span>
+                                    <span>7.0</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>Всего записей:</span>
+                                    <span>{stats.total}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>С серийными №:</span>
+                                    <span>{stats.withSerial}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
             );
         };
 
@@ -1407,14 +1336,17 @@
                     const saved = localStorage.getItem('inv_102_dirs_v12');
                     if (saved) {
                         const parsed = JSON.parse(saved);
-                        return {
-                            rooms: parsed.rooms || [],
-                            people: parsed.people || [],
-                            roomsWithBuilding: parsed.roomsWithBuilding || []
-                        };
+                        return { rooms: parsed.rooms || [], people: parsed.people || [], roomsWithBuilding: parsed.roomsWithBuilding || [] };
                     }
                 } catch (e) { console.error(e); }
                 return { rooms: [], people: [], roomsWithBuilding: [] };
+            });
+
+            const [history, setHistory] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('inv_102_history');
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) { return []; }
             });
 
             const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -1430,13 +1362,25 @@
             const [roomsModal, setRoomsModal] = useState({ open: false, newRoom: '', newRoomBuilding: 'Нансена' });
             const [peopleModal, setPeopleModal] = useState({ open: false, newPerson: '' });
             const [infoModal, setInfoModal] = useState({ open: false });
-            const [notesModal, setNotesModal] = useState({ open: false });
+            const [statsModal, setStatsModal] = useState({ open: false });
+            const [historyModal, setHistoryModal] = useState({ open: false });
+            const [exportModal, setExportModal] = useState({ open: false });
+            const [settingsModal, setSettingsModal] = useState({ open: false });
 
             const [detailsForm, setDetailsForm] = useState({ serialNumber: '', location: '', responsible: '', inventoryNote: '', hasLabel: null, building: '', floor: '' });
             const [editForm, setEditForm] = useState({ name: '', invNumber: '', date: '', category: '', newCategory: '', note: '', building: '', floor: '' });
 
             useEffect(() => { localStorage.setItem('inv_102_data_v12', JSON.stringify(equipment)); }, [equipment]);
             useEffect(() => { localStorage.setItem('inv_102_dirs_v12', JSON.stringify(directories)); }, [directories]);
+            useEffect(() => { localStorage.setItem('inv_102_history', JSON.stringify(history.slice(0, 50))); }, [history]);
+
+            const addToHistory = useCallback((action, item, actionText) => {
+                setHistory(prev => [{
+                    action, invNumber: item.invNumber, actionText,
+                    time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+                    item
+                }, ...prev].slice(0, 50));
+            }, []);
 
             const stats = useMemo(() => ({
                 total: equipment.length,
@@ -1449,12 +1393,16 @@
                 new: equipment.filter(i => i.isUserAdded).length,
                 noBuilding: equipment.filter(i => !i.building).length,
                 byCategory: equipment.reduce((acc, i) => { acc[i.category] = (acc[i.category] || 0) + 1; return acc; }, {}),
-                byBuilding: equipment.reduce((acc, i) => { 
-                    const b = i.building || 'Не указано';
-                    acc[b] = (acc[b] || 0) + 1; 
-                    return acc; 
-                }, {}),
+                byBuilding: equipment.reduce((acc, i) => { const b = i.building || 'Не указано'; acc[b] = (acc[b] || 0) + 1; return acc; }, {}),
             }), [equipment]);
+
+            const recentItems = useMemo(() => 
+                equipment.filter(i => i.checkedAt).sort((a, b) => new Date(b.checkedAt) - new Date(a.checkedAt)).slice(0, 5),
+            [equipment]);
+
+            const problemItems = useMemo(() => 
+                equipment.filter(i => i.hasLabel === false || (i.checked && !i.building)),
+            [equipment]);
 
             const categories = useMemo(() => {
                 const others = [...new Set(equipment.map(i => i.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
@@ -1465,9 +1413,7 @@
                 const rooms = directories.rooms || [];
                 const roomsWithBuilding = directories.roomsWithBuilding || [];
                 if (!detailsForm.building) return rooms;
-                const roomsForBuilding = roomsWithBuilding
-                    .filter(r => r && r.building === detailsForm.building)
-                    .map(r => r.name);
+                const roomsForBuilding = roomsWithBuilding.filter(r => r && r.building === detailsForm.building).map(r => r.name);
                 return roomsForBuilding.length > 0 ? roomsForBuilding : rooms;
             }, [directories.rooms, directories.roomsWithBuilding, detailsForm.building]);
 
@@ -1485,7 +1431,6 @@
                     case 'notes': if (!item.inventoryNote?.trim()) return false; break;
                     case 'new': if (!item.isUserAdded) return false; break;
                 }
-                
                 return true;
             }), [equipment, activeCategory, activeFilter, activeBuilding]);
 
@@ -1506,10 +1451,7 @@
             const categoryOptions = useMemo(() => [
                 { value: 'Все оборудование', label: 'Все оборудование', icon: '📋', count: stats.total },
                 ...categories.filter(c => c !== 'Все оборудование').map(cat => ({
-                    value: cat,
-                    label: cat,
-                    icon: categoryConfig[cat]?.icon || '📦',
-                    count: stats.byCategory[cat] || 0
+                    value: cat, label: cat, icon: categoryConfig[cat]?.icon || '📦', count: stats.byCategory[cat] || 0
                 }))
             ], [categories, stats]);
 
@@ -1526,17 +1468,8 @@
 
             const handleCheckComplete = useCallback((formData) => {
                 const item = checkWizardModal.item;
+                setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, ...formData, checked: true, writeOff: false, checkedAt: new Date().toISOString() } : i));
                 
-                // Update equipment
-                setEquipment(prev => prev.map(i => i.id === item.id ? { 
-                    ...i, 
-                    ...formData,
-                    checked: true, 
-                    writeOff: false, 
-                    checkedAt: new Date().toISOString() 
-                } : i));
-                
-                // Add room to directory if new
                 if (formData.location && formData.building) {
                     const roomsWithBuilding = directories.roomsWithBuilding || [];
                     const exists = roomsWithBuilding.find(r => r && r.name === formData.location && r.building === formData.building);
@@ -1549,7 +1482,6 @@
                     }
                 }
                 
-                // Add person to directory if new
                 if (formData.responsible) {
                     const people = directories.people || [];
                     if (!people.includes(formData.responsible)) {
@@ -1557,40 +1489,38 @@
                     }
                 }
                 
+                addToHistory('check', item, 'Проверено');
                 setCheckWizardModal({ open: false, item: null });
                 showToast('✓ Проверено');
-            }, [checkWizardModal.item, directories, showToast]);
+            }, [checkWizardModal.item, directories, showToast, addToHistory]);
 
             const handleCheck = useCallback((item, undo = false) => {
                 if (undo) {
                     showConfirm('Отменить?', 'Снять отметку проверки?', () => {
                         setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, checked: false, writeOff: false, checkedAt: null } : i));
+                        addToHistory('undo', item, 'Отменено');
                         setConfirmModal(prev => ({ ...prev, open: false }));
                         showToast('↩ Отменено');
                     });
                 } else {
                     setCheckWizardModal({ open: true, item });
                 }
-            }, [showConfirm, showToast]);
+            }, [showConfirm, showToast, addToHistory]);
 
             const handleWriteOff = useCallback((item) => {
                 showConfirm('Списать?', item.name, () => {
                     setEquipment(prev => prev.map(i => i.id === item.id ? { ...i, writeOff: true, checked: false, checkedAt: new Date().toISOString(), hasLabel: i.hasLabel === null ? true : i.hasLabel } : i));
+                    addToHistory('writeoff', item, 'Списано');
                     setConfirmModal(prev => ({ ...prev, open: false }));
                     setDetailsModal({ open: false, item: null });
                     showToast('📝 Списано');
                 });
-            }, [showConfirm, showToast]);
+            }, [showConfirm, showToast, addToHistory]);
 
             const openDetails = useCallback((item) => {
                 setDetailsForm({
-                    serialNumber: item.serialNumber || '',
-                    location: item.location || '',
-                    responsible: item.responsible || '',
-                    inventoryNote: item.inventoryNote || '',
-                    hasLabel: item.hasLabel,
-                    building: item.building || '',
-                    floor: item.floor || ''
+                    serialNumber: item.serialNumber || '', location: item.location || '', responsible: item.responsible || '',
+                    inventoryNote: item.inventoryNote || '', hasLabel: item.hasLabel, building: item.building || '', floor: item.floor || ''
                 });
                 setDetailsModal({ open: true, item });
             }, []);
@@ -1650,13 +1580,14 @@
                         building: building, floor: floor, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', isUserAdded: true
                     };
                     setEquipment(prev => [...prev, newItem]);
+                    addToHistory('add', newItem, 'Добавлено');
                     showToast('Добавлено');
                 } else {
                     setEquipment(prev => prev.map(i => i.id === editModal.item.id ? { ...i, name: name.trim(), invNumber: invNumber.trim(), date: date.trim(), category: finalCategory, note: note.trim(), building, floor } : i));
                     showToast('Сохранено');
                 }
                 setEditModal({ open: false, item: null, isNew: false });
-            }, [editForm, editModal, equipment, showToast]);
+            }, [editForm, editModal, equipment, showToast, addToHistory]);
 
             const addToDirectory = useCallback((type, value, building = null) => {
                 if (!value.trim()) return;
@@ -1696,8 +1627,7 @@
                 showConfirm('Удалить?', item, () => {
                     if (type === 'rooms') {
                         setDirectories(prev => ({
-                            ...prev,
-                            rooms: (prev.rooms || []).filter((_, i) => i !== idx),
+                            ...prev, rooms: (prev.rooms || []).filter((_, i) => i !== idx),
                             roomsWithBuilding: (prev.roomsWithBuilding || []).filter(r => r && r.name !== item)
                         }));
                     } else {
@@ -1714,7 +1644,7 @@
                 showToast('💾 Сохранено');
             });
 
-            const handleExportExcel = () => showConfirm('Excel?', 'Скачать CSV?', () => {
+            const handleExportExcel = () => {
                 const BOM = '\uFEFF';
                 const headers = ['Инв.№', 'S/N', 'Название', 'Категория', 'Здание', 'Этаж', 'Кабинет', 'Ответственный', 'Статус', 'Бирка', 'Заметка'];
                 let csv = BOM + headers.join(';') + '\n';
@@ -1730,25 +1660,25 @@
                 link.href = URL.createObjectURL(blob);
                 link.download = `inventory_${new Date().toISOString().slice(0, 10)}.csv`;
                 link.click();
-                setConfirmModal(prev => ({ ...prev, open: false }));
+                setExportModal({ open: false });
                 showToast('📊 Скачано');
-            });
+            };
 
-            const handleExportJSON = () => showConfirm('Экспорт?', 'Скачать резервную копию?', () => {
-                const data = JSON.stringify({ equipment, directories }, null, 2);
+            const handleExportJSON = () => {
+                const data = JSON.stringify({ equipment, directories, history }, null, 2);
                 const blob = new Blob([data], { type: 'application/json' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
                 link.download = `backup_${new Date().toISOString().slice(0, 10)}.json`;
                 link.click();
-                setConfirmModal(prev => ({ ...prev, open: false }));
+                setExportModal({ open: false });
                 showToast('📤 Экспортировано');
-            });
+            };
 
-            const handleImportClick = () => showConfirm('Импорт?', 'Загрузить JSON?', () => {
-                setConfirmModal(prev => ({ ...prev, open: false }));
+            const handleImportClick = () => {
+                setExportModal({ open: false });
                 document.getElementById('fileInput').click();
-            });
+            };
 
             const handleImportJSON = (e) => {
                 const file = e.target.files[0];
@@ -1788,7 +1718,9 @@
 
             const handleClearAll = () => showConfirm('Сбросить?', 'Удалить все данные?', () => {
                 setEquipment(prev => prev.map(i => ({ ...i, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', building: '', floor: '', checkedAt: null })));
+                setHistory([]);
                 setConfirmModal(prev => ({ ...prev, open: false }));
+                setExportModal({ open: false });
                 showToast('🗑️ Сброшено');
             });
 
@@ -1816,24 +1748,28 @@
                         onAddEquipment={() => openEditModal()}
                         onShowInfo={() => setInfoModal({ open: true })}
                         onGoHome={goHome}
-                        onOpenNotes={() => setNotesModal({ open: true })}
+                        onOpenStats={() => setStatsModal({ open: true })}
+                        onOpenExport={() => setExportModal({ open: true })}
+                        onOpenSettings={() => setSettingsModal({ open: true })}
+                        onOpenHistory={() => setHistoryModal({ open: true })}
+                        problemCount={problemItems.length}
                     />
 
                     <FilterPanel
                         isOpen={sidebarOpen}
                         onClose={() => setSidebarOpen(false)}
                         stats={stats}
-                        categories={categories}
-                        activeCategory={activeCategory}
-                        setActiveCategory={setActiveCategory}
                         activeFilter={activeFilter}
                         setActiveFilter={setActiveFilter}
                         activeBuilding={activeBuilding}
                         setActiveBuilding={setActiveBuilding}
+                        equipment={equipment}
+                        onViewItem={openDetails}
+                        recentItems={recentItems}
+                        problemItems={problemItems}
                     />
 
                     <main className="main-area flex-1 flex flex-col min-w-0 overflow-hidden">
-                        {/* Mobile header - no search */}
                         <header className="mobile-header bg-white border-b border-gray-200 px-3 py-2.5 flex-col gap-2 flex-shrink-0">
                             <div className="flex items-center gap-2">
                                 <button onClick={() => setSidebarOpen(true)} className="touch-btn w-10 h-10 rounded-lg bg-gray-100 flex-shrink-0">
@@ -1847,7 +1783,6 @@
                             </div>
                         </header>
 
-                        {/* Desktop header - no search */}
                         <header className="desktop-header bg-white border-b border-gray-200 px-5 py-3 flex-shrink-0">
                             <div className="flex items-center gap-3">
                                 <Dropdown value={activeBuilding} options={buildingOptions} onChange={setActiveBuilding} />
@@ -1856,10 +1791,6 @@
                                     <button onClick={handleSave} className="touch-btn px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5">
                                         <Icons.Save /> <span className="hidden sm:inline">Сохранить</span>
                                     </button>
-                                    <button onClick={handleExportExcel} className="touch-btn p-2 bg-green-600 text-white rounded-lg" title="Excel">📊</button>
-                                    <button onClick={handleExportJSON} className="touch-btn p-2 bg-gray-100 text-gray-600 rounded-lg" title="Экспорт"><Icons.Download /></button>
-                                    <button onClick={handleImportClick} className="touch-btn p-2 bg-gray-100 text-gray-600 rounded-lg" title="Импорт"><Icons.Upload /></button>
-                                    <button onClick={handleClearAll} className="touch-btn p-2 bg-gray-100 text-red-600 rounded-lg" title="Сброс"><Icons.Trash /></button>
                                 </div>
                             </div>
                         </header>
@@ -1912,17 +1843,15 @@
                                 <span>🏫 Нансена (3 эт.)</span>
                                 <span>🏢 Ботаничка (2 эт.)</span>
                             </div>
-                            <p className="text-xs text-gray-400">Версия 6.0</p>
+                            <p className="text-xs text-gray-400">Версия 7.0</p>
                         </div>
                     </Modal>
 
-                    <CheckWizardModal 
-                        isOpen={checkWizardModal.open} 
-                        onClose={() => setCheckWizardModal({ open: false, item: null })}
-                        item={checkWizardModal.item}
-                        onComplete={handleCheckComplete}
-                        directories={directories}
-                    />
+                    <StatsModal isOpen={statsModal.open} onClose={() => setStatsModal({ open: false })} stats={stats} equipment={equipment} />
+                    <HistoryModal isOpen={historyModal.open} onClose={() => setHistoryModal({ open: false })} history={history} onViewItem={(item) => { setHistoryModal({ open: false }); openDetails(item); }} />
+                    <ExportModal isOpen={exportModal.open} onClose={() => setExportModal({ open: false })} onExportExcel={handleExportExcel} onExportJSON={handleExportJSON} onImport={handleImportClick} onClearAll={handleClearAll} />
+                    <SettingsModal isOpen={settingsModal.open} onClose={() => setSettingsModal({ open: false })} stats={stats} />
+                    <CheckWizardModal isOpen={checkWizardModal.open} onClose={() => setCheckWizardModal({ open: false, item: null })} item={checkWizardModal.item} onComplete={handleCheckComplete} directories={directories} />
 
                     <Modal isOpen={detailsModal.open} onClose={() => setDetailsModal({ open: false, item: null })} title="Карточка оборудования" size="lg">
                         {detailsModal.item && (
@@ -2100,7 +2029,7 @@
                         </div>
                     </Modal>
 
-                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '', newRoomBuilding: 'Нансена' })} title="Кабинеты" size="md">
+                    <Modal isOpen={roomsModal.open} onClose={() => setRoomsModal({ open: false, newRoom: '', newRoomBuilding: 'Нансена' })} title="🚪 Кабинеты" size="md">
                         <div className="space-y-3 mb-4">
                             <div className="grid grid-cols-2 gap-2">
                                 <button type="button" onClick={() => setRoomsModal(prev => ({ ...prev, newRoomBuilding: 'Нансена' }))}
@@ -2142,7 +2071,7 @@
                         </div>
                     </Modal>
 
-                    <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="Сотрудники" size="sm">
+                    <Modal isOpen={peopleModal.open} onClose={() => setPeopleModal({ open: false, newPerson: '' })} title="👥 Сотрудники" size="sm">
                         <div className="flex gap-2 mb-4">
                             <input type="text" value={peopleModal.newPerson} onChange={e => setPeopleModal(prev => ({ ...prev, newPerson: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && addToDirectory('people', peopleModal.newPerson)}
@@ -2159,39 +2088,6 @@
                                         <button onClick={() => removeFromDirectory('people', idx)} className="touch-btn p-2 bg-red-100 text-red-600 rounded-lg text-xs">🗑️</button>
                                     </div>
                                 ))
-                            )}
-                        </div>
-                    </Modal>
-
-                    <Modal isOpen={notesModal.open} onClose={() => setNotesModal({ open: false })} title="📝 Все заметки" size="lg">
-                        <div className="max-h-96 overflow-y-auto">
-                            {equipment.filter(i => i.inventoryNote?.trim()).length === 0 ? (
-                                <div className="p-8 text-center text-gray-400">
-                                    <div className="text-3xl mb-2">📝</div>
-                                    <p className="text-sm">Заметок пока нет</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-3">
-                                    {equipment.filter(i => i.inventoryNote?.trim()).map(item => (
-                                        <button key={item.id} onClick={() => { setNotesModal({ open: false }); openDetails(item); }}
-                                            className="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                                            <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                                <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs font-mono">{item.invNumber}</span>
-                                                {item.building && (
-                                                    <span className={`text-xs px-1.5 py-0.5 rounded ${item.building === 'Нансена' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
-                                                        {item.building === 'Нансена' ? '🏫' : '🏢'} {item.building}
-                                                    </span>
-                                                )}
-                                                <span className={`px-2 py-0.5 rounded text-xs font-semibold ${item.writeOff ? 'bg-red-100 text-red-600' : item.checked ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>
-                                                    {item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает'}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm font-semibold text-gray-800 mb-1 line-clamp-1">{item.name}</p>
-                                            <p className="text-xs text-gray-600 bg-white p-2 rounded border border-gray-200">{item.inventoryNote}</p>
-                                            {item.location && <p className="text-xs text-gray-400 mt-1">📍 {item.location}</p>}
-                                        </button>
-                                    ))}
-                                </div>
                             )}
                         </div>
                     </Modal>
