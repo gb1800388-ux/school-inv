@@ -717,7 +717,7 @@ return (
 {isExpanded && (
 <div className="floor-rooms">
 {[...rooms].sort().map(room => (
-                                                                    <span key={room} className="room-chip">{room}</span>
+                                                        
                                                                     <span key={room} className="room-chip" onClick={() => onRoomClick && onRoomClick(building, floor, room)}>{room}</span>
 ))}
 </div>
