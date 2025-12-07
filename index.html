@@ -457,6 +457,18 @@
             padding: 16px;
             border: 1px solid #e2e8f0;
         }
+
+        .device-item {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-bottom: 8px;
+        }
+        .device-item:hover { border-color: #3182ce; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .device-item.checked { background: #f0fff4; border-color: #9ae6b4; }
+        .device-item.writeoff { background: #fff5f5; border-color: #feb2b2; }
     </style>
 </head>
 <body>
@@ -573,7 +585,8 @@
             </div>
         );
 
-        const FilterPanel = ({ isOpen, onClose, stats, activeFilter, setActiveFilter, activeBuilding, setActiveBuilding, equipment, onViewItem, recentItems, problemItems }) => {
+        // ИЗМЕНЕНО: добавлен параметр onRoomClick
+        const FilterPanel = ({ isOpen, onClose, stats, activeFilter, setActiveFilter, activeBuilding, setActiveBuilding, equipment, onViewItem, recentItems, problemItems, onRoomClick }) => {
             const percent = stats.total > 0 ? Math.round((stats.checked / stats.total) * 100) : 0;
             const [expandedFloors, setExpandedFloors] = useState({});
 
@@ -716,7 +729,20 @@
                                                         {isExpanded && (
                                                             <div className="floor-rooms">
                                                                 {[...rooms].sort().map(room => (
-                                                                    <span key={room} className="room-chip">{room}</span>
+                                                                    // ИЗМЕНЕНО: добавлен onClick для открытия модального окна
+                                                                    <span 
+                                                                        key={room} 
+                                                                        className="room-chip"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            if (onRoomClick) {
+                                                                                onRoomClick(building, floor, room);
+                                                                                onClose();
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        {room}
+                                                                    </span>
                                                                 ))}
                                                             </div>
                                                         )}
@@ -1119,6 +1145,86 @@
             );
         };
 
+        // НОВЫЙ КОМПОНЕНТ: Модальное окно устройств кабинета
+        const RoomDevicesModal = ({ isOpen, onClose, building, floor, room, equipment, onViewItem }) => {
+            if (!isOpen) return null;
+
+            const devices = equipment.filter(item => 
+                item.building === building && item.location === room
+            );
+            const checkedCount = devices.filter(d => d.checked || d.writeOff).length;
+
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title={`📍 Кабинет ${room}`} size="lg">
+                    <div>
+                        {/* Заголовок с информацией */}
+                        <div className="flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+                            <span className={`text-lg ${building === 'Нансена' ? 'text-blue-500' : 'text-green-500'}`}>
+                                {building === 'Нансена' ? '🏫' : '🏢'}
+                            </span>
+                            <div className="flex-1">
+                                <div className="font-semibold text-gray-800">{building}</div>
+                                <div className="text-xs text-gray-500">{floor} этаж</div>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-sm font-bold text-gray-700">{devices.length} устр.</div>
+                                <div className="text-xs text-green-600">{checkedCount} проверено</div>
+                            </div>
+                        </div>
+
+                        {/* Список устройств */}
+                        {devices.length === 0 ? (
+                            <div className="text-center py-8 text-gray-400">
+                                <div className="text-4xl mb-2">📦</div>
+                                <div>Устройства не найдены</div>
+                            </div>
+                        ) : (
+                            <div className="space-y-2 max-h-96 overflow-y-auto custom-scroll">
+                                {devices.map(device => {
+                                    const config = categoryConfig[device.category] || defaultCatConfig;
+                                    return (
+                                        <div 
+                                            key={device.id}
+                                            onClick={() => { onClose(); onViewItem(device); }}
+                                            className={`device-item ${device.writeOff ? 'writeoff' : device.checked ? 'checked' : ''}`}
+                                        >
+                                            <div className="flex items-start gap-3">
+                                                <div className={`w-8 h-8 rounded flex items-center justify-center text-sm flex-shrink-0 ${
+                                                    device.writeOff ? 'bg-red-100 text-red-600' :
+                                                    device.checked ? 'bg-green-100 text-green-600' :
+                                                    'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                    {device.writeOff ? '📝' : device.checked ? '✓' : config.icon}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-mono font-bold">
+                                                            {device.invNumber}
+                                                        </span>
+                                                        <span className={`text-xs font-semibold ${
+                                                            device.writeOff ? 'text-red-600' :
+                                                            device.checked ? 'text-green-600' :
+                                                            'text-amber-600'
+                                                        }`}>
+                                                            {device.writeOff ? 'Списание' : device.checked ? 'Проверено' : 'Ожидает'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-sm text-gray-800 line-clamp-2">{device.name}</div>
+                                                    {device.responsible && (
+                                                        <div className="text-xs text-gray-500 mt-1">👤 {device.responsible}</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                </Modal>
+            );
+        };
+
         const StatsModal = ({ isOpen, onClose, stats, equipment }) => {
             const byCategory = useMemo(() => {
                 const result = {};
@@ -1297,7 +1403,7 @@
                             <div className="space-y-1 text-sm text-gray-600">
                                 <div className="flex justify-between">
                                     <span>Версия:</span>
-                                    <span>7.0</span>
+                                    <span>7.1</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span>Всего записей:</span>
@@ -1366,6 +1472,8 @@
             const [historyModal, setHistoryModal] = useState({ open: false });
             const [exportModal, setExportModal] = useState({ open: false });
             const [settingsModal, setSettingsModal] = useState({ open: false });
+            // НОВОЕ: состояние для модального окна устройств кабинета
+            const [roomDevicesModal, setRoomDevicesModal] = useState({ open: false, building: '', floor: '', room: '' });
 
             const [detailsForm, setDetailsForm] = useState({ serialNumber: '', location: '', responsible: '', inventoryNote: '', hasLabel: null, building: '', floor: '' });
             const [editForm, setEditForm] = useState({ name: '', invNumber: '', date: '', category: '', newCategory: '', note: '', building: '', floor: '' });
@@ -1724,6 +1832,11 @@
                 showToast('🗑️ Сброшено');
             });
 
+            // НОВОЕ: обработчик клика по кабинету
+            const handleRoomClick = useCallback((building, floor, room) => {
+                setRoomDevicesModal({ open: true, building, floor, room });
+            }, []);
+
             const quickSearchResults = useMemo(() => {
                 if (!quickSearchModal.query) return [];
                 const q = quickSearchModal.query.toLowerCase();
@@ -1755,6 +1868,7 @@
                         problemCount={problemItems.length}
                     />
 
+                    {/* ИЗМЕНЕНО: добавлен onRoomClick */}
                     <FilterPanel
                         isOpen={sidebarOpen}
                         onClose={() => setSidebarOpen(false)}
@@ -1767,6 +1881,7 @@
                         onViewItem={openDetails}
                         recentItems={recentItems}
                         problemItems={problemItems}
+                        onRoomClick={handleRoomClick}
                     />
 
                     <main className="main-area flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -1843,7 +1958,7 @@
                                 <span>🏫 Нансена (3 эт.)</span>
                                 <span>🏢 Ботаничка (2 эт.)</span>
                             </div>
-                            <p className="text-xs text-gray-400">Версия 7.0</p>
+                            <p className="text-xs text-gray-400">Версия 7.1</p>
                         </div>
                     </Modal>
 
@@ -1852,6 +1967,17 @@
                     <ExportModal isOpen={exportModal.open} onClose={() => setExportModal({ open: false })} onExportExcel={handleExportExcel} onExportJSON={handleExportJSON} onImport={handleImportClick} onClearAll={handleClearAll} />
                     <SettingsModal isOpen={settingsModal.open} onClose={() => setSettingsModal({ open: false })} stats={stats} />
                     <CheckWizardModal isOpen={checkWizardModal.open} onClose={() => setCheckWizardModal({ open: false, item: null })} item={checkWizardModal.item} onComplete={handleCheckComplete} directories={directories} />
+                    
+                    {/* НОВОЕ: модальное окно устройств кабинета */}
+                    <RoomDevicesModal 
+                        isOpen={roomDevicesModal.open}
+                        onClose={() => setRoomDevicesModal({ open: false, building: '', floor: '', room: '' })}
+                        building={roomDevicesModal.building}
+                        floor={roomDevicesModal.floor}
+                        room={roomDevicesModal.room}
+                        equipment={equipment}
+                        onViewItem={openDetails}
+                    />
 
                     <Modal isOpen={detailsModal.open} onClose={() => setDetailsModal({ open: false, item: null })} title="Карточка оборудования" size="lg">
                         {detailsModal.item && (
