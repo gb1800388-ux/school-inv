@@ -2260,6 +2260,15 @@
                 e.target.value = '';
             };
 
+            // Слушаем событие fileSelected для импорта
+            useEffect(() => {
+                const handleFileSelected = (e) => {
+                    handleImportJSON(e.detail);
+                };
+                document.addEventListener('fileSelected', handleFileSelected);
+                return () => document.removeEventListener('fileSelected', handleFileSelected);
+            }, []);
+
             const handleClearAll = () => showConfirm('Сбросить?', 'Удалить все данные?', () => {
                 setEquipment(prev => prev.map(i => ({ ...i, checked: false, writeOff: false, hasLabel: null, serialNumber: '', location: '', responsible: '', inventoryNote: '', building: '', floor: '', checkedAt: null })));
                 setHistory([]);
