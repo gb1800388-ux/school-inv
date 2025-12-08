@@ -303,6 +303,7 @@
         
         .building-selector {
             display: flex;
+            align-items: stretch;
             gap: 4px;
             padding: 2px;
             background: #edf2f7;
@@ -310,6 +311,9 @@
         }
         .building-selector-btn {
             flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 8px 4px;
             border-radius: 6px;
             font-size: 0.75rem;
@@ -320,6 +324,7 @@
             border: none;
             background: transparent;
             color: #718096;
+            line-height: 1.2;
         }
         .building-selector-btn:hover { color: #4a5568; }
         .building-selector-btn.active { background: white; color: #2d3748; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -2206,17 +2211,33 @@
                         const json = JSON.parse(event.target.result);
                         const imp = json.equipment || (Array.isArray(json) ? json : null);
                         if (!imp) throw new Error('Неверный формат');
-                        let count = 0;
-                        imp.forEach(impItem => {
-                            const existing = equipment.find(e => e.id === impItem.id);
-                            if (existing) {
-                                setEquipment(prev => prev.map(i => i.id === impItem.id ? { ...i, ...impItem } : i));
-                                count++;
-                            } else if (impItem.isUserAdded) {
-                                setEquipment(prev => [...prev, impItem]);
-                                count++;
-                            }
+
+                        // Собираем все изменения и применяем одной операцией
+                        setEquipment(prev => {
+                            const existingIds = new Set(prev.map(item => item.id));
+                            const updatesMap = new Map();
+                            const newItems = [];
+
+                            imp.forEach(impItem => {
+                                if (existingIds.has(impItem.id)) {
+                                    // Обновляем существующий элемент
+                                    updatesMap.set(impItem.id, impItem);
+                                } else if (impItem.isUserAdded) {
+                                    // Добавляем новый пользовательский элемент
+                                    newItems.push(impItem);
+                                }
+                            });
+
+                            const updated = prev.map(item =>
+                                updatesMap.has(item.id) ? { ...item, ...updatesMap.get(item.id) } : item
+                            );
+
+                            const count = updatesMap.size + newItems.length;
+                            setTimeout(() => showToast(`📥 Импортировано: ${count}`), 0);
+
+                            return [...updated, ...newItems];
                         });
+
                         if (json.directories) {
                             setDirectories(prev => ({
                                 rooms: [...new Set([...(prev.rooms || []), ...(json.directories.rooms || [])])].sort((a, b) => a.localeCompare(b, 'ru')),
@@ -2224,9 +2245,8 @@
                                 roomsWithBuilding: [...(prev.roomsWithBuilding || []), ...(json.directories.roomsWithBuilding || [])]
                             }));
                         }
-                        showToast(`📥 Импортировано: ${count}`);
                     } catch (err) {
-                        showToast('❌ Ошибка');
+                        showToast('❌ Ошибка импорта');
                     }
                 };
                 reader.readAsText(file);
