@@ -10,8 +10,6 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -2215,106 +2213,63 @@
             };
 
             const handleExportCheckedReport = () => {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF('p', 'mm', 'a4');
-
                 const checkedItems = equipment.filter(item => item.checked || item.writeOff);
                 const date = new Date().toLocaleDateString('ru-RU');
-                const percent = Math.round((checkedItems.length / equipment.length) * 100);
+                const percent = equipment.length > 0 ? Math.round((checkedItems.length / equipment.length) * 100) : 0;
 
-                // Группируем по зданиям
+                // Группируем по зданиям и этажам
                 const byBuilding = {};
                 checkedItems.forEach(item => {
                     const building = item.building || 'Не указано';
-                    if (!byBuilding[building]) byBuilding[building] = [];
-                    byBuilding[building].push(item);
+                    const floor = item.floor || '-';
+                    if (!byBuilding[building]) byBuilding[building] = {};
+                    if (!byBuilding[building][floor]) byBuilding[building][floor] = [];
+                    byBuilding[building][floor].push(item);
                 });
 
-                let yPos = 15;
+                // Генерируем HTML для секций
+                let sectionsHtml = '';
+                Object.entries(byBuilding).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([building, floors]) => {
+                    const buildingClass = building === 'Нансена' ? 'nansen' : building === 'Ботаничка' ? 'botanica' : 'unknown';
+                    const buildingIcon = building === 'Нансена' ? '🏫' : building === 'Ботаничка' ? '🏢' : '📍';
+                    const totalInBuilding = Object.values(floors).flat().length;
 
-                // Заголовок
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.text('INVENTORY REPORT / OTCHET PO INVENTARIZACII', 105, yPos, { align: 'center' });
+                    sectionsHtml += '<div class="building-section">';
+                    sectionsHtml += '<div class="building-header ' + buildingClass + '">' + buildingIcon + ' ' + building + ' (' + totalInBuilding + ' шт.)</div>';
 
-                yPos += 8;
-                doc.setFontSize(12);
-                doc.setFont('helvetica', 'normal');
-                doc.text('GKOU SKOSHI No.102', 105, yPos, { align: 'center' });
+                    Object.entries(floors).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([floor, items]) => {
+                        sectionsHtml += '<div class="floor-section">';
+                        sectionsHtml += '<div class="floor-header">Этаж ' + floor + '</div>';
+                        sectionsHtml += '<table><thead><tr><th style="width:12%">Инв. №</th><th style="width:38%">Название</th><th style="width:15%">Кабинет</th><th style="width:20%">Ответственный</th><th style="width:8%">Статус</th><th style="width:7%">Бирка</th></tr></thead><tbody>';
 
-                yPos += 10;
-                doc.setFontSize(10);
-                doc.text(`Date / Data: ${date}`, 20, yPos);
-                doc.text(`Checked / Provereno: ${checkedItems.length} / ${equipment.length} (${percent}%)`, 120, yPos);
+                        items.sort((a, b) => (a.location || '').localeCompare(b.location || '', 'ru')).forEach(item => {
+                            const statusClass = item.writeOff ? 'status-writeoff' : 'status-ok';
+                            const statusText = item.writeOff ? 'Списание' : 'ОК';
+                            const labelText = item.hasLabel === true ? '✓' : item.hasLabel === false ? '✗' : '-';
+                            sectionsHtml += '<tr><td class="inv-number">' + (item.invNumber || '-') + '</td><td>' + (item.name || '-') + '</td><td>' + (item.location || '-') + '</td><td>' + (item.responsible || '-') + '</td><td class="' + statusClass + '">' + statusText + '</td><td>' + labelText + '</td></tr>';
+                        });
 
-                yPos += 8;
-
-                // Таблица по зданиям
-                Object.entries(byBuilding).sort((a, b) => a[0].localeCompare(b[0])).forEach(([building, items]) => {
-                    // Заголовок здания
-                    doc.setFillColor(66, 139, 202);
-                    doc.rect(15, yPos - 4, 180, 7, 'F');
-                    doc.setTextColor(255, 255, 255);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(10);
-                    doc.text(`${building} (${items.length})`, 20, yPos);
-                    doc.setTextColor(0, 0, 0);
-
-                    yPos += 5;
-
-                    // Данные для таблицы
-                    const tableData = items
-                        .sort((a, b) => (a.location || '').localeCompare(b.location || ''))
-                        .map(item => [
-                            item.invNumber || '-',
-                            (item.name || '').substring(0, 35) + ((item.name || '').length > 35 ? '...' : ''),
-                            item.location || '-',
-                            item.writeOff ? 'WRITE-OFF' : 'OK'
-                        ]);
-
-                    doc.autoTable({
-                        startY: yPos,
-                        head: [['Inv.No', 'Name / Nazvanie', 'Room / Kabinet', 'Status']],
-                        body: tableData,
-                        theme: 'striped',
-                        headStyles: { fillColor: [100, 100, 100], fontSize: 8 },
-                        bodyStyles: { fontSize: 8 },
-                        columnStyles: {
-                            0: { cellWidth: 25 },
-                            1: { cellWidth: 90 },
-                            2: { cellWidth: 35 },
-                            3: { cellWidth: 25 }
-                        },
-                        margin: { left: 15, right: 15 },
-                        didDrawPage: (data) => {
-                            // Footer on each page
-                            doc.setFontSize(8);
-                            doc.setTextColor(128, 128, 128);
-                            doc.text(`Page ${doc.internal.getNumberOfPages()}`, 105, 290, { align: 'center' });
-                            doc.setTextColor(0, 0, 0);
-                        }
+                        sectionsHtml += '</tbody></table></div>';
                     });
 
-                    yPos = doc.lastAutoTable.finalY + 10;
-
-                    // Новая страница если мало места
-                    if (yPos > 250) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
+                    sectionsHtml += '</div>';
                 });
 
-                // Подпись внизу последней страницы
-                const pageHeight = doc.internal.pageSize.height;
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'normal');
-                doc.text('Signature / Podpis: _______________________', 20, pageHeight - 30);
-                doc.text('Date / Data: _______________________', 120, pageHeight - 30);
+                // Создаём HTML для печати
+                const printWindow = window.open('', '_blank');
+                const percentColor = percent >= 80 ? '#38a169' : percent >= 50 ? '#d69e2e' : '#e53e3e';
 
-                // Сохранение
-                doc.save(`inventory_report_${new Date().toISOString().slice(0, 10)}.pdf`);
+                printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>Отчёт по инвентаризации</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:"Segoe UI",Tahoma,sans-serif;padding:20px;color:#333}.header{text-align:center;margin-bottom:30px;border-bottom:3px solid #3182ce;padding-bottom:20px}.header h1{font-size:24px;color:#2d3748;margin-bottom:5px}.header h2{font-size:16px;color:#718096;font-weight:normal}.stats{display:flex;justify-content:space-between;margin-bottom:25px;padding:15px;background:#f7fafc;border-radius:8px}.stat-item{text-align:center}.stat-value{font-size:28px;font-weight:bold;color:#3182ce}.stat-label{font-size:12px;color:#718096}.building-section{margin-bottom:25px;break-inside:avoid}.building-header{background:linear-gradient(135deg,#3182ce,#2c5282);color:#fff;padding:10px 15px;border-radius:6px 6px 0 0;font-weight:bold;font-size:14px}.building-header.nansen{background:linear-gradient(135deg,#3182ce,#2c5282)}.building-header.botanica{background:linear-gradient(135deg,#38a169,#276749)}.building-header.unknown{background:linear-gradient(135deg,#718096,#4a5568)}.floor-section{border:1px solid #e2e8f0;border-top:none}.floor-header{background:#edf2f7;padding:8px 15px;font-weight:600;font-size:12px;color:#4a5568;border-bottom:1px solid #e2e8f0}table{width:100%;border-collapse:collapse;font-size:11px}th{background:#f7fafc;padding:8px 10px;text-align:left;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0}td{padding:8px 10px;border-bottom:1px solid #e2e8f0}tr:nth-child(even){background:#f7fafc}.inv-number{font-family:monospace;font-weight:bold;color:#2d3748}.status-ok{color:#38a169;font-weight:bold}.status-writeoff{color:#e53e3e;font-weight:bold}.signature-section{margin-top:50px;display:flex;justify-content:space-between;padding-top:30px;border-top:1px solid #e2e8f0}.signature-line{width:45%}.signature-line p{border-bottom:1px solid #333;padding-bottom:5px;margin-bottom:5px}.signature-line span{font-size:11px;color:#718096}.footer{margin-top:30px;text-align:center;font-size:10px;color:#a0aec0}@media print{body{padding:10px}.building-section{break-inside:avoid}@page{margin:15mm}}</style></head><body>');
+                printWindow.document.write('<div class="header"><h1>📋 ОТЧЁТ ПО ИНВЕНТАРИЗАЦИИ</h1><h2>ГКОУ СКОШИ №102</h2></div>');
+                printWindow.document.write('<div class="stats"><div class="stat-item"><div class="stat-value">' + date + '</div><div class="stat-label">Дата проверки</div></div><div class="stat-item"><div class="stat-value">' + checkedItems.length + '</div><div class="stat-label">Проверено</div></div><div class="stat-item"><div class="stat-value">' + equipment.length + '</div><div class="stat-label">Всего</div></div><div class="stat-item"><div class="stat-value" style="color:' + percentColor + '">' + percent + '%</div><div class="stat-label">Выполнено</div></div></div>');
+                printWindow.document.write(sectionsHtml);
+                printWindow.document.write('<div class="signature-section"><div class="signature-line"><p>&nbsp;</p><span>Подпись ответственного</span></div><div class="signature-line"><p>&nbsp;</p><span>Дата</span></div></div>');
+                printWindow.document.write('<div class="footer">Сформировано: ' + new Date().toLocaleString('ru-RU') + '</div>');
+                printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
+                printWindow.document.close();
+
                 setExportModal({ open: false });
-                showToast('📄 PDF отчёт сформирован');
+                showToast('📄 Отчёт открыт для печати');
             };
 
             const handleExportJSON = () => {
