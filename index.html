@@ -1009,6 +1009,7 @@
         const FilterPanel = ({ isOpen, onClose, stats, activeFilter, setActiveFilter, activeBuilding, setActiveBuilding, equipment, onViewItem, recentItems, problemItems, onRoomClick }) => {
             const percent = stats.total > 0 ? Math.round((stats.checked / stats.total) * 100) : 0;
             const [expandedFloors, setExpandedFloors] = useState({});
+            const [showAllProblems, setShowAllProblems] = useState(false);
 
             const locationsByFloor = useMemo(() => {
                 const result = { 'Нансена': {}, 'Ботаничка': {} };
@@ -1101,7 +1102,7 @@
                                 <div className="sidebar-section">
                                     <div className="sidebar-section-title">⚠️ Требуют внимания</div>
                                     <div className="space-y-1">
-                                        {problemItems.slice(0, 5).map(item => (
+                                        {(showAllProblems ? problemItems : problemItems.slice(0, 5)).map(item => (
                                             <div key={item.id} onClick={() => { onViewItem(item); onClose(); }}
                                                 className={`problem-item ${item.hasLabel === false ? 'critical' : ''}`}>
                                                 <span className="text-sm">{item.hasLabel === false ? '🏷️' : '📦'}</span>
@@ -1112,9 +1113,11 @@
                                             </div>
                                         ))}
                                         {problemItems.length > 5 && (
-                                            <div className="text-xs text-center text-gray-400 py-1">
-                                                и ещё {problemItems.length - 5}...
-                                            </div>
+                                            <button
+                                                onClick={() => setShowAllProblems(!showAllProblems)}
+                                                className="w-full text-xs text-center text-blue-500 hover:text-blue-700 py-1 cursor-pointer hover:bg-blue-50 rounded transition-colors">
+                                                {showAllProblems ? '▲ Свернуть' : `▼ Показать ещё ${problemItems.length - 5}...`}
+                                            </button>
                                         )}
                                     </div>
                                 </div>
@@ -1760,7 +1763,7 @@
             );
         };
 
-        const ExportModal = ({ isOpen, onClose, onExportExcel, onExportJSON, onImport, onClearAll }) => {
+        const ExportModal = ({ isOpen, onClose, onExportExcel, onExportCheckedReport, onExportJSON, onImport, onClearAll }) => {
             if (!isOpen) return null;
             return (
                 <Modal isOpen={isOpen} onClose={onClose} title="📤 Экспорт и импорт" size="sm">
@@ -1770,6 +1773,13 @@
                             <div className="text-left">
                                 <div>Экспорт в Excel</div>
                                 <div className="text-xs opacity-75">CSV файл для таблиц</div>
+                            </div>
+                        </button>
+                        <button onClick={onExportCheckedReport} className="touch-btn w-full py-4 bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl font-semibold flex items-center justify-center gap-3">
+                            <span className="text-2xl">📋</span>
+                            <div className="text-left">
+                                <div>Отчёт по проверенным</div>
+                                <div className="text-xs opacity-75">Форматированный отчёт</div>
                             </div>
                         </button>
                         <button onClick={onExportJSON} className="touch-btn w-full py-4 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-xl font-semibold flex items-center justify-center gap-3">
@@ -1879,6 +1889,7 @@
             const [activeCategory, setActiveCategory] = useState('Все оборудование');
             const [activeFilter, setActiveFilter] = useState('all');
             const [activeBuilding, setActiveBuilding] = useState('Все здания');
+            const [searchQuery, setSearchQuery] = useState('');
             const [toast, setToast] = useState({ visible: false, message: '' });
             const [confirmModal, setConfirmModal] = useState({ open: false, title: '', message: '', onConfirm: null });
             const [detailsModal, setDetailsModal] = useState({ open: false, item: null });
@@ -1946,10 +1957,19 @@
             }, [directories.rooms, directories.roomsWithBuilding, detailsForm.building]);
 
             const filteredEquipment = useMemo(() => equipment.filter(item => {
+                // Поиск по названию, инв.номеру, серийному номеру
+                if (searchQuery.trim()) {
+                    const q = searchQuery.toLowerCase().trim();
+                    const matchName = item.name?.toLowerCase().includes(q);
+                    const matchInv = item.invNumber?.toLowerCase().includes(q);
+                    const matchSerial = item.serialNumber?.toLowerCase().includes(q);
+                    if (!matchName && !matchInv && !matchSerial) return false;
+                }
+
                 if (activeBuilding === 'Не указано' && item.building) return false;
                 if (activeBuilding !== 'Все здания' && activeBuilding !== 'Не указано' && item.building !== activeBuilding) return false;
                 if (activeCategory !== 'Все оборудование' && item.category !== activeCategory) return false;
-                
+
                 switch (activeFilter) {
                     case 'checked': if (!item.checked && !item.writeOff) return false; break;
                     case 'unchecked': if (item.checked || item.writeOff) return false; break;
@@ -1960,7 +1980,7 @@
                     case 'new': if (!item.isUserAdded) return false; break;
                 }
                 return true;
-            }), [equipment, activeCategory, activeFilter, activeBuilding]);
+            }), [equipment, activeCategory, activeFilter, activeBuilding, searchQuery]);
 
             const groupedEquipment = useMemo(() => filteredEquipment.reduce((acc, item) => {
                 const cat = item.category || 'Прочее';
@@ -2192,6 +2212,66 @@
                 showToast('📊 Скачано');
             };
 
+            const handleExportCheckedReport = () => {
+                const BOM = '\uFEFF';
+                const checkedItems = equipment.filter(item => item.checked || item.writeOff);
+                const date = new Date().toLocaleDateString('ru-RU');
+
+                // Группируем по зданиям и этажам
+                const byBuilding = {};
+                checkedItems.forEach(item => {
+                    const building = item.building || 'Не указано';
+                    const floor = item.floor || '-';
+                    if (!byBuilding[building]) byBuilding[building] = {};
+                    if (!byBuilding[building][floor]) byBuilding[building][floor] = [];
+                    byBuilding[building][floor].push(item);
+                });
+
+                let csv = BOM;
+                csv += `ОТЧЁТ ПО ИНВЕНТАРИЗАЦИИ;;;;;;\n`;
+                csv += `ГКОУ СКОШИ №102;;;;;;\n`;
+                csv += `Дата: ${date};;;;;;\n`;
+                csv += `Всего проверено: ${checkedItems.length} из ${equipment.length};;;;;;\n`;
+                csv += `;;;;;;\n`;
+
+                // Заголовки
+                csv += 'Инв.№;Название;S/N;Кабинет;Ответственный;Статус;Заметка\n';
+
+                Object.entries(byBuilding).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([building, floors]) => {
+                    csv += `;;;;;;\n`;
+                    csv += `"=== ${building} ===";;;;;;\n`;
+
+                    Object.entries(floors).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([floor, items]) => {
+                        csv += `"--- Этаж ${floor} ---";;;;;;\n`;
+                        items.sort((a, b) => (a.location || '').localeCompare(b.location || '', 'ru')).forEach(item => {
+                            const status = item.writeOff ? 'СПИСАНИЕ' : 'ОК';
+                            const row = [
+                                item.invNumber,
+                                item.name,
+                                item.serialNumber || '-',
+                                item.location || '-',
+                                item.responsible || '-',
+                                status,
+                                item.inventoryNote || ''
+                            ].map(f => `"${String(f).replace(/"/g, '""')}"`).join(';');
+                            csv += row + '\n';
+                        });
+                    });
+                });
+
+                csv += `;;;;;;\n`;
+                csv += `;;;;;;\n`;
+                csv += `Подпись ответственного: __________________;;;;;;\n`;
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `report_checked_${new Date().toISOString().slice(0, 10)}.csv`;
+                link.click();
+                setExportModal({ open: false });
+                showToast('📋 Отчёт сформирован');
+            };
+
             const handleExportJSON = () => {
                 const data = JSON.stringify({ equipment, directories, history }, null, 2);
                 const blob = new Blob([data], { type: 'application/json' });
@@ -2348,6 +2428,19 @@
                                 <Dropdown value={activeBuilding} options={buildingOptions} onChange={setActiveBuilding} />
                                 <Dropdown value={activeCategory} options={categoryOptions} onChange={setActiveCategory} />
                                 <div className="flex items-center gap-2 ml-auto">
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder="Поиск..."
+                                            className="w-48 px-3 py-2 pl-8 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                        />
+                                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                                        {searchQuery && (
+                                            <button onClick={() => setSearchQuery('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">✕</button>
+                                        )}
+                                    </div>
                                     <button onClick={handleSave} className="touch-btn px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5">
                                         <Icons.Save /> <span className="hidden sm:inline">Сохранить</span>
                                     </button>
@@ -2409,7 +2502,7 @@
 
                     <StatsModal isOpen={statsModal.open} onClose={() => setStatsModal({ open: false })} stats={stats} equipment={equipment} />
                     <HistoryModal isOpen={historyModal.open} onClose={() => setHistoryModal({ open: false })} history={history} onViewItem={(item) => { setHistoryModal({ open: false }); openDetails(item); }} />
-                    <ExportModal isOpen={exportModal.open} onClose={() => setExportModal({ open: false })} onExportExcel={handleExportExcel} onExportJSON={handleExportJSON} onImport={handleImportClick} onClearAll={handleClearAll} />
+                    <ExportModal isOpen={exportModal.open} onClose={() => setExportModal({ open: false })} onExportExcel={handleExportExcel} onExportCheckedReport={handleExportCheckedReport} onExportJSON={handleExportJSON} onImport={handleImportClick} onClearAll={handleClearAll} />
                     <SettingsModal isOpen={settingsModal.open} onClose={() => setSettingsModal({ open: false })} stats={stats} />
                     <CheckWizardModal isOpen={checkWizardModal.open} onClose={() => setCheckWizardModal({ open: false, item: null })} item={checkWizardModal.item} onComplete={handleCheckComplete} directories={directories} />
                     
