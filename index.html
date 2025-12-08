@@ -330,6 +330,12 @@
         .building-selector-btn.active { background: white; color: #2d3748; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .building-selector-btn.nansen.active { background: #3182ce; color: white; }
         .building-selector-btn.botanica.active { background: #38a169; color: white; }
+        .building-icon {
+            font-size: 0.85rem;
+            line-height: 1;
+            margin-right: 2px;
+            vertical-align: middle;
+        }
         
         @media (max-width: 768px) {
             .dropdown-btn { min-width: unset; padding: 8px 10px; }
@@ -1042,15 +1048,15 @@
                             <div className="building-selector">
                                 <button onClick={() => { setActiveBuilding('Все здания'); onClose(); }}
                                     className={`building-selector-btn ${activeBuilding === 'Все здания' ? 'active' : ''}`}>
-                                    Все
+                                    <span>Все</span>
                                 </button>
                                 <button onClick={() => { setActiveBuilding('Нансена'); onClose(); }}
                                     className={`building-selector-btn nansen ${activeBuilding === 'Нансена' ? 'active' : ''}`}>
-                                    🏫 Нансена
+                                    <span className="building-icon">🏫</span><span>Нансена</span>
                                 </button>
                                 <button onClick={() => { setActiveBuilding('Ботаничка'); onClose(); }}
                                     className={`building-selector-btn botanica ${activeBuilding === 'Ботаничка' ? 'active' : ''}`}>
-                                    🏢 Ботаничка
+                                    <span className="building-icon">🏢</span><span>Ботаничка</span>
                                 </button>
                             </div>
                             <button onClick={() => { setActiveBuilding('Не указано'); onClose(); }}
