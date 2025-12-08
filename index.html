@@ -2218,40 +2218,41 @@
                         const imp = json.equipment || (Array.isArray(json) ? json : null);
                         if (!imp) throw new Error('Неверный формат');
 
-                        // Собираем все изменения и применяем одной операцией
+                        // Полное восстановление из резервной копии
                         setEquipment(prev => {
-                            const existingIds = new Set(prev.map(item => item.id));
-                            const updatesMap = new Map();
-                            const newItems = [];
+                            // Создаём карту импортируемых данных по ID
+                            const importMap = new Map(imp.map(item => [item.id, item]));
 
-                            imp.forEach(impItem => {
-                                if (existingIds.has(impItem.id)) {
-                                    // Обновляем существующий элемент
-                                    updatesMap.set(impItem.id, impItem);
-                                } else if (impItem.isUserAdded) {
-                                    // Добавляем новый пользовательский элемент
-                                    newItems.push(impItem);
+                            // Обновляем существующие элементы данными из импорта
+                            const updated = prev.map(item => {
+                                if (importMap.has(item.id)) {
+                                    const importedItem = importMap.get(item.id);
+                                    importMap.delete(item.id); // Убираем из карты - уже обработан
+                                    return { ...item, ...importedItem };
                                 }
+                                return item;
                             });
 
-                            const updated = prev.map(item =>
-                                updatesMap.has(item.id) ? { ...item, ...updatesMap.get(item.id) } : item
-                            );
+                            // Добавляем новые элементы (которых не было в prev)
+                            const newItems = Array.from(importMap.values()).filter(item => item.isUserAdded);
 
-                            const count = updatesMap.size + newItems.length;
-                            setTimeout(() => showToast(`📥 Импортировано: ${count}`), 0);
+                            const count = imp.filter(i => prev.some(p => p.id === i.id)).length + newItems.length;
+                            setTimeout(() => showToast(`📥 Восстановлено: ${count} элементов`), 0);
 
                             return [...updated, ...newItems];
                         });
 
+                        // Восстанавливаем справочники
                         if (json.directories) {
-                            setDirectories(prev => ({
-                                rooms: [...new Set([...(prev.rooms || []), ...(json.directories.rooms || [])])].sort((a, b) => a.localeCompare(b, 'ru')),
-                                people: [...new Set([...(prev.people || []), ...(json.directories.people || [])])].sort((a, b) => a.localeCompare(b, 'ru')),
-                                roomsWithBuilding: [...(prev.roomsWithBuilding || []), ...(json.directories.roomsWithBuilding || [])]
-                            }));
+                            setDirectories(json.directories);
+                        }
+
+                        // Восстанавливаем историю
+                        if (json.history) {
+                            setHistory(json.history);
                         }
                     } catch (err) {
+                        console.error('Import error:', err);
                         showToast('❌ Ошибка импорта');
                     }
                 };
