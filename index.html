@@ -10,6 +10,8 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -1775,11 +1777,11 @@
                                 <div className="text-xs opacity-75">CSV файл для таблиц</div>
                             </div>
                         </button>
-                        <button onClick={onExportCheckedReport} className="touch-btn w-full py-4 bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-xl font-semibold flex items-center justify-center gap-3">
-                            <span className="text-2xl">📋</span>
+                        <button onClick={onExportCheckedReport} className="touch-btn w-full py-4 bg-red-100 hover:bg-red-200 text-red-700 rounded-xl font-semibold flex items-center justify-center gap-3">
+                            <span className="text-2xl">📄</span>
                             <div className="text-left">
-                                <div>Отчёт по проверенным</div>
-                                <div className="text-xs opacity-75">Форматированный отчёт</div>
+                                <div>Отчёт PDF</div>
+                                <div className="text-xs opacity-75">Красивый отчёт для печати</div>
                             </div>
                         </button>
                         <button onClick={onExportJSON} className="touch-btn w-full py-4 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-xl font-semibold flex items-center justify-center gap-3">
@@ -2213,63 +2215,106 @@
             };
 
             const handleExportCheckedReport = () => {
-                const BOM = '\uFEFF';
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+
                 const checkedItems = equipment.filter(item => item.checked || item.writeOff);
                 const date = new Date().toLocaleDateString('ru-RU');
+                const percent = Math.round((checkedItems.length / equipment.length) * 100);
 
-                // Группируем по зданиям и этажам
+                // Группируем по зданиям
                 const byBuilding = {};
                 checkedItems.forEach(item => {
                     const building = item.building || 'Не указано';
-                    const floor = item.floor || '-';
-                    if (!byBuilding[building]) byBuilding[building] = {};
-                    if (!byBuilding[building][floor]) byBuilding[building][floor] = [];
-                    byBuilding[building][floor].push(item);
+                    if (!byBuilding[building]) byBuilding[building] = [];
+                    byBuilding[building].push(item);
                 });
 
-                let csv = BOM;
-                csv += `ОТЧЁТ ПО ИНВЕНТАРИЗАЦИИ;;;;;;\n`;
-                csv += `ГКОУ СКОШИ №102;;;;;;\n`;
-                csv += `Дата: ${date};;;;;;\n`;
-                csv += `Всего проверено: ${checkedItems.length} из ${equipment.length};;;;;;\n`;
-                csv += `;;;;;;\n`;
+                let yPos = 15;
 
-                // Заголовки
-                csv += 'Инв.№;Название;S/N;Кабинет;Ответственный;Статус;Заметка\n';
+                // Заголовок
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.text('INVENTORY REPORT / OTCHET PO INVENTARIZACII', 105, yPos, { align: 'center' });
 
-                Object.entries(byBuilding).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([building, floors]) => {
-                    csv += `;;;;;;\n`;
-                    csv += `"=== ${building} ===";;;;;;\n`;
+                yPos += 8;
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'normal');
+                doc.text('GKOU SKOSHI No.102', 105, yPos, { align: 'center' });
 
-                    Object.entries(floors).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([floor, items]) => {
-                        csv += `"--- Этаж ${floor} ---";;;;;;\n`;
-                        items.sort((a, b) => (a.location || '').localeCompare(b.location || '', 'ru')).forEach(item => {
-                            const status = item.writeOff ? 'СПИСАНИЕ' : 'ОК';
-                            const row = [
-                                item.invNumber,
-                                item.name,
-                                item.serialNumber || '-',
-                                item.location || '-',
-                                item.responsible || '-',
-                                status,
-                                item.inventoryNote || ''
-                            ].map(f => `"${String(f).replace(/"/g, '""')}"`).join(';');
-                            csv += row + '\n';
-                        });
+                yPos += 10;
+                doc.setFontSize(10);
+                doc.text(`Date / Data: ${date}`, 20, yPos);
+                doc.text(`Checked / Provereno: ${checkedItems.length} / ${equipment.length} (${percent}%)`, 120, yPos);
+
+                yPos += 8;
+
+                // Таблица по зданиям
+                Object.entries(byBuilding).sort((a, b) => a[0].localeCompare(b[0])).forEach(([building, items]) => {
+                    // Заголовок здания
+                    doc.setFillColor(66, 139, 202);
+                    doc.rect(15, yPos - 4, 180, 7, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(10);
+                    doc.text(`${building} (${items.length})`, 20, yPos);
+                    doc.setTextColor(0, 0, 0);
+
+                    yPos += 5;
+
+                    // Данные для таблицы
+                    const tableData = items
+                        .sort((a, b) => (a.location || '').localeCompare(b.location || ''))
+                        .map(item => [
+                            item.invNumber || '-',
+                            (item.name || '').substring(0, 35) + ((item.name || '').length > 35 ? '...' : ''),
+                            item.location || '-',
+                            item.writeOff ? 'WRITE-OFF' : 'OK'
+                        ]);
+
+                    doc.autoTable({
+                        startY: yPos,
+                        head: [['Inv.No', 'Name / Nazvanie', 'Room / Kabinet', 'Status']],
+                        body: tableData,
+                        theme: 'striped',
+                        headStyles: { fillColor: [100, 100, 100], fontSize: 8 },
+                        bodyStyles: { fontSize: 8 },
+                        columnStyles: {
+                            0: { cellWidth: 25 },
+                            1: { cellWidth: 90 },
+                            2: { cellWidth: 35 },
+                            3: { cellWidth: 25 }
+                        },
+                        margin: { left: 15, right: 15 },
+                        didDrawPage: (data) => {
+                            // Footer on each page
+                            doc.setFontSize(8);
+                            doc.setTextColor(128, 128, 128);
+                            doc.text(`Page ${doc.internal.getNumberOfPages()}`, 105, 290, { align: 'center' });
+                            doc.setTextColor(0, 0, 0);
+                        }
                     });
+
+                    yPos = doc.lastAutoTable.finalY + 10;
+
+                    // Новая страница если мало места
+                    if (yPos > 250) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
                 });
 
-                csv += `;;;;;;\n`;
-                csv += `;;;;;;\n`;
-                csv += `Подпись ответственного: __________________;;;;;;\n`;
+                // Подпись внизу последней страницы
+                const pageHeight = doc.internal.pageSize.height;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Signature / Podpis: _______________________', 20, pageHeight - 30);
+                doc.text('Date / Data: _______________________', 120, pageHeight - 30);
 
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `report_checked_${new Date().toISOString().slice(0, 10)}.csv`;
-                link.click();
+                // Сохранение
+                doc.save(`inventory_report_${new Date().toISOString().slice(0, 10)}.pdf`);
                 setExportModal({ open: false });
-                showToast('📋 Отчёт сформирован');
+                showToast('📄 PDF отчёт сформирован');
             };
 
             const handleExportJSON = () => {
