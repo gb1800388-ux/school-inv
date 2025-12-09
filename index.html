@@ -223,6 +223,8 @@
         .bulk-action-bar .btn-check:hover { background: #2f855a; }
         .bulk-action-bar .btn-writeoff { background: #e53e3e; color: white; }
         .bulk-action-bar .btn-writeoff:hover { background: #c53030; }
+        .bulk-action-bar .btn-print { background: #3182ce; color: white; }
+        .bulk-action-bar .btn-print:hover { background: #2c5282; }
         .bulk-action-bar .btn-cancel { background: #4a5568; color: white; }
         .bulk-action-bar .btn-cancel:hover { background: #2d3748; }
 
@@ -1906,7 +1908,7 @@
             );
         };
 
-        const ExportModal = ({ isOpen, onClose, onExportExcel, onExportCheckedReport, onPrintNotFound, onExportJSON, onImport, onClearAll }) => {
+        const ExportModal = ({ isOpen, onClose, onExportExcel, onExportCheckedReport, onPrintNotFound, onOpenFilterReport, onExportJSON, onImport, onClearAll }) => {
             if (!isOpen) return null;
             return (
                 <Modal isOpen={isOpen} onClose={onClose} title="📤 Экспорт и импорт" size="sm">
@@ -1932,6 +1934,14 @@
                                 <div className="text-xs opacity-75">Печать списка НЕ найденных</div>
                             </div>
                         </button>
+                        <button onClick={onOpenFilterReport} className="touch-btn w-full py-4 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl font-semibold flex items-center justify-center gap-3">
+                            <span className="text-2xl">📋</span>
+                            <div className="text-left">
+                                <div>Отчёт по фильтру</div>
+                                <div className="text-xs opacity-75">По ФИО, кабинету или этажу</div>
+                            </div>
+                        </button>
+                        <hr className="my-2" />
                         <button onClick={onExportJSON} className="touch-btn w-full py-4 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-xl font-semibold flex items-center justify-center gap-3">
                             <span className="text-2xl">💾</span>
                             <div className="text-left">
@@ -1939,16 +1949,94 @@
                                 <div className="text-xs opacity-75">JSON со всеми данными</div>
                             </div>
                         </button>
-                        <button onClick={onImport} className="touch-btn w-full py-4 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl font-semibold flex items-center justify-center gap-3">
+                        <button onClick={onImport} className="touch-btn w-full py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold flex items-center justify-center gap-3">
                             <span className="text-2xl">📥</span>
                             <div className="text-left">
                                 <div>Импорт данных</div>
                                 <div className="text-xs opacity-75">Загрузить JSON файл</div>
                             </div>
                         </button>
-                        <hr className="my-4" />
+                        <hr className="my-2" />
                         <button onClick={onClearAll} className="touch-btn w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-semibold text-sm">
                             🗑️ Сбросить все данные
+                        </button>
+                    </div>
+                </Modal>
+            );
+        };
+
+        // Модальное окно для отчёта по фильтру
+        const ReportFilterModal = ({ isOpen, onClose, filterType, filterValue, onFilterTypeChange, onFilterValueChange, onPrint, uniqueResponsibles, uniqueLocations, uniqueFloors }) => {
+            if (!isOpen) return null;
+
+            const getOptions = () => {
+                switch (filterType) {
+                    case 'responsible': return uniqueResponsibles;
+                    case 'location': return uniqueLocations;
+                    case 'floor': return uniqueFloors;
+                    default: return [];
+                }
+            };
+
+            const getPlaceholder = () => {
+                switch (filterType) {
+                    case 'responsible': return 'Выберите ответственного';
+                    case 'location': return 'Выберите кабинет';
+                    case 'floor': return 'Выберите этаж';
+                    default: return 'Выберите значение';
+                }
+            };
+
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title="📋 Отчёт по фильтру" size="sm">
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Тип фильтра</label>
+                            <div className="grid grid-cols-3 gap-2">
+                                <button
+                                    onClick={() => { onFilterTypeChange('responsible'); onFilterValueChange(''); }}
+                                    className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${filterType === 'responsible' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                >
+                                    👤 ФИО
+                                </button>
+                                <button
+                                    onClick={() => { onFilterTypeChange('location'); onFilterValueChange(''); }}
+                                    className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${filterType === 'location' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                >
+                                    🚪 Кабинет
+                                </button>
+                                <button
+                                    onClick={() => { onFilterTypeChange('floor'); onFilterValueChange(''); }}
+                                    className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${filterType === 'floor' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                >
+                                    🏢 Этаж
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Значение</label>
+                            <select
+                                value={filterValue}
+                                onChange={(e) => onFilterValueChange(e.target.value)}
+                                className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-base"
+                            >
+                                <option value="">{getPlaceholder()}</option>
+                                {getOptions().map(opt => (
+                                    <option key={opt} value={opt}>{opt}</option>
+                                ))}
+                            </select>
+                            {getOptions().length === 0 && (
+                                <p className="mt-2 text-sm text-amber-600">⚠️ Нет данных для выбранного типа фильтра</p>
+                            )}
+                        </div>
+
+                        <button
+                            onClick={() => onPrint(filterType, filterValue)}
+                            disabled={!filterValue}
+                            className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${filterValue ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                        >
+                            🖨️ Сформировать и напечатать
                         </button>
                     </div>
                 </Modal>
@@ -2058,6 +2146,8 @@
             const [settingsModal, setSettingsModal] = useState({ open: false });
             // НОВОЕ: состояние для модального окна устройств кабинета
             const [roomDevicesModal, setRoomDevicesModal] = useState({ open: false, building: '', floor: '', room: '' });
+            // Модальное окно для отчёта по фильтру (ФИО/кабинет/этаж)
+            const [reportFilterModal, setReportFilterModal] = useState({ open: false, filterType: 'responsible', filterValue: '' });
 
             const [detailsForm, setDetailsForm] = useState({ serialNumber: '', location: '', responsible: '', inventoryNote: '', hasLabel: null, building: '', floor: '' });
             const [editForm, setEditForm] = useState({ name: '', invNumber: '', date: '', category: '', newCategory: '', note: '', building: '', floor: '' });
@@ -2108,6 +2198,19 @@
                 const roomsForBuilding = roomsWithBuilding.filter(r => r && r.building === detailsForm.building).map(r => r.name);
                 return roomsForBuilding.length > 0 ? roomsForBuilding : rooms;
             }, [directories.rooms, directories.roomsWithBuilding, detailsForm.building]);
+
+            // Уникальные значения для отчётов
+            const uniqueResponsibles = useMemo(() =>
+                [...new Set(equipment.map(i => i.responsible).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru')),
+            [equipment]);
+
+            const uniqueLocations = useMemo(() =>
+                [...new Set(equipment.map(i => i.location).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru')),
+            [equipment]);
+
+            const uniqueFloors = useMemo(() =>
+                [...new Set(equipment.map(i => i.floor).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b))),
+            [equipment]);
 
             const filteredEquipment = useMemo(() => equipment.filter(item => {
                 // Поиск по названию, инв.номеру, серийному номеру
@@ -2309,6 +2412,213 @@
                     }
                 );
             }, [selectedItems, showConfirm, clearSelection, showToast]);
+
+            // Печать выбранных позиций
+            const bulkPrint = useCallback(() => {
+                if (selectedItems.size === 0) return;
+
+                const items = equipment.filter(item => selectedItems.has(item.id));
+                const date = new Date().toLocaleDateString('ru-RU');
+
+                // Группируем по категориям
+                const byCategory = {};
+                items.forEach(item => {
+                    const category = item.category || 'Без категории';
+                    if (!byCategory[category]) byCategory[category] = [];
+                    byCategory[category].push(item);
+                });
+
+                let sectionsHtml = '';
+                Object.entries(byCategory).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([category, catItems]) => {
+                    sectionsHtml += '<div class="category-section">';
+                    sectionsHtml += '<div class="category-header">' + category + ' (' + catItems.length + ' шт.)</div>';
+                    sectionsHtml += '<table><thead><tr><th style="width:3%">№</th><th style="width:12%">Инв. №</th><th style="width:35%">Название</th><th style="width:20%">Местоположение</th><th style="width:15%">Ответственный</th><th style="width:15%">Статус</th></tr></thead><tbody>';
+
+                    catItems.sort((a, b) => (a.invNumber || '').localeCompare(b.invNumber || '')).forEach((item, idx) => {
+                        const location = [item.building, item.floor ? 'эт.' + item.floor : '', item.location].filter(Boolean).join(', ') || '-';
+                        const status = item.writeOff ? '📝 Списано' : item.checked ? '✓ Проверено' : '⏳ Ожидает';
+                        const statusClass = item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending';
+                        sectionsHtml += '<tr><td>' + (idx + 1) + '</td><td class="inv-number">' + (item.invNumber || '-') + '</td><td>' + (item.name || '-') + '</td><td class="location">' + location + '</td><td>' + (item.responsible || '-') + '</td><td class="' + statusClass + '">' + status + '</td></tr>';
+                    });
+
+                    sectionsHtml += '</tbody></table></div>';
+                });
+
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>Выбранное оборудование</title><style>');
+                printWindow.document.write('*{margin:0;padding:0;box-sizing:border-box}');
+                printWindow.document.write('body{font-family:"Segoe UI",Tahoma,sans-serif;padding:15px;color:#333;font-size:11px}');
+                printWindow.document.write('.header{text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid #3182ce}');
+                printWindow.document.write('.header h1{font-size:20px;color:#2c5282;margin-bottom:5px}');
+                printWindow.document.write('.header h2{font-size:14px;color:#718096;font-weight:normal}');
+                printWindow.document.write('.stats{display:flex;justify-content:center;gap:30px;margin-bottom:15px;padding:10px;background:#ebf8ff;border-radius:6px;border:1px solid #90cdf4}');
+                printWindow.document.write('.stat-item{text-align:center}.stat-value{font-size:18px;font-weight:bold;color:#2c5282}.stat-label{font-size:10px;color:#718096}');
+                printWindow.document.write('.category-section{margin-bottom:15px;break-inside:avoid}');
+                printWindow.document.write('.category-header{background:#2c5282;color:white;padding:8px 12px;font-weight:bold;font-size:12px;border-radius:4px 4px 0 0}');
+                printWindow.document.write('table{width:100%;border-collapse:collapse;font-size:10px}');
+                printWindow.document.write('th{background:#edf2f7;padding:6px 8px;text-align:left;font-weight:600;color:#4a5568;border:1px solid #e2e8f0}');
+                printWindow.document.write('td{padding:6px 8px;border:1px solid #e2e8f0;vertical-align:top}');
+                printWindow.document.write('tr:nth-child(even){background:#f7fafc}');
+                printWindow.document.write('.inv-number{font-family:monospace;font-weight:bold;color:#2d3748;white-space:nowrap}');
+                printWindow.document.write('.location{color:#718096;font-size:9px}');
+                printWindow.document.write('.status-checked{color:#38a169;font-weight:bold}');
+                printWindow.document.write('.status-writeoff{color:#e53e3e;font-weight:bold}');
+                printWindow.document.write('.status-pending{color:#d69e2e}');
+                printWindow.document.write('.footer{margin-top:20px;text-align:center;font-size:10px;color:#718096}');
+                printWindow.document.write('@media print{body{padding:10px}@page{margin:10mm;size:A4}}');
+                printWindow.document.write('</style></head><body>');
+
+                printWindow.document.write('<div class="header"><h1>📋 ВЫБРАННОЕ ОБОРУДОВАНИЕ</h1><h2>ГКОУ СКОШИ №102</h2></div>');
+
+                const checked = items.filter(i => i.checked && !i.writeOff).length;
+                const writeOff = items.filter(i => i.writeOff).length;
+                const pending = items.filter(i => !i.checked && !i.writeOff).length;
+
+                printWindow.document.write('<div class="stats">');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value">' + date + '</div><div class="stat-label">Дата</div></div>');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value">' + items.length + '</div><div class="stat-label">Всего</div></div>');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value" style="color:#38a169">' + checked + '</div><div class="stat-label">Проверено</div></div>');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value" style="color:#d69e2e">' + pending + '</div><div class="stat-label">Ожидает</div></div>');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value" style="color:#e53e3e">' + writeOff + '</div><div class="stat-label">Списано</div></div>');
+                printWindow.document.write('</div>');
+
+                printWindow.document.write(sectionsHtml);
+
+                printWindow.document.write('<div class="footer">Сформировано: ' + new Date().toLocaleString('ru-RU') + '</div>');
+                printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
+                printWindow.document.close();
+
+                showToast('🖨️ Печать выбранных позиций');
+            }, [selectedItems, equipment, showToast]);
+
+            // Печать отчёта по фильтру (ФИО/кабинет/этаж)
+            const handlePrintFilteredReport = useCallback((filterType, filterValue) => {
+                if (!filterValue) {
+                    showToast('⚠️ Выберите значение фильтра');
+                    return;
+                }
+
+                let items = [];
+                let title = '';
+                let subtitle = '';
+
+                switch (filterType) {
+                    case 'responsible':
+                        items = equipment.filter(i => i.responsible === filterValue);
+                        title = '👤 ОБОРУДОВАНИЕ ПО ОТВЕТСТВЕННОМУ';
+                        subtitle = filterValue;
+                        break;
+                    case 'location':
+                        items = equipment.filter(i => i.location === filterValue);
+                        title = '🚪 ОБОРУДОВАНИЕ ПО КАБИНЕТУ';
+                        subtitle = filterValue;
+                        break;
+                    case 'floor':
+                        items = equipment.filter(i => String(i.floor) === String(filterValue));
+                        title = '🏢 ОБОРУДОВАНИЕ ПО ЭТАЖУ';
+                        subtitle = filterValue + ' этаж';
+                        break;
+                }
+
+                if (items.length === 0) {
+                    showToast('📭 Нет оборудования по данному фильтру');
+                    return;
+                }
+
+                const date = new Date().toLocaleDateString('ru-RU');
+
+                // Группируем по категориям
+                const byCategory = {};
+                items.forEach(item => {
+                    const category = item.category || 'Без категории';
+                    if (!byCategory[category]) byCategory[category] = [];
+                    byCategory[category].push(item);
+                });
+
+                let sectionsHtml = '';
+                Object.entries(byCategory).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([category, catItems]) => {
+                    sectionsHtml += '<div class="category-section">';
+                    sectionsHtml += '<div class="category-header">' + category + ' (' + catItems.length + ' шт.)</div>';
+                    sectionsHtml += '<table><thead><tr><th style="width:3%">№</th><th style="width:12%">Инв. №</th><th style="width:30%">Название</th>';
+                    if (filterType !== 'location') sectionsHtml += '<th style="width:18%">Местоположение</th>';
+                    if (filterType !== 'responsible') sectionsHtml += '<th style="width:15%">Ответственный</th>';
+                    sectionsHtml += '<th style="width:12%">Статус</th><th style="width:10%">Бирка</th></tr></thead><tbody>';
+
+                    catItems.sort((a, b) => (a.invNumber || '').localeCompare(b.invNumber || '')).forEach((item, idx) => {
+                        const location = [item.building, item.floor ? 'эт.' + item.floor : '', item.location].filter(Boolean).join(', ') || '-';
+                        const status = item.writeOff ? '📝 Списано' : item.checked ? '✓ OK' : '⏳';
+                        const statusClass = item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending';
+                        const labelStatus = item.hasLabel === true ? '✓' : item.hasLabel === false ? '✗' : '?';
+                        const labelClass = item.hasLabel === true ? 'label-yes' : item.hasLabel === false ? 'label-no' : 'label-unknown';
+
+                        sectionsHtml += '<tr><td>' + (idx + 1) + '</td><td class="inv-number">' + (item.invNumber || '-') + '</td><td>' + (item.name || '-') + '</td>';
+                        if (filterType !== 'location') sectionsHtml += '<td class="location">' + location + '</td>';
+                        if (filterType !== 'responsible') sectionsHtml += '<td>' + (item.responsible || '-') + '</td>';
+                        sectionsHtml += '<td class="' + statusClass + '">' + status + '</td>';
+                        sectionsHtml += '<td class="' + labelClass + '">' + labelStatus + '</td></tr>';
+                    });
+
+                    sectionsHtml += '</tbody></table></div>';
+                });
+
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>' + title + '</title><style>');
+                printWindow.document.write('*{margin:0;padding:0;box-sizing:border-box}');
+                printWindow.document.write('body{font-family:"Segoe UI",Tahoma,sans-serif;padding:15px;color:#333;font-size:11px}');
+                printWindow.document.write('.header{text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid #805ad5}');
+                printWindow.document.write('.header h1{font-size:18px;color:#553c9a;margin-bottom:5px}');
+                printWindow.document.write('.header h2{font-size:16px;color:#6b46c1;font-weight:bold;margin-bottom:5px}');
+                printWindow.document.write('.header h3{font-size:12px;color:#718096;font-weight:normal}');
+                printWindow.document.write('.stats{display:flex;justify-content:center;gap:25px;margin-bottom:15px;padding:10px;background:#faf5ff;border-radius:6px;border:1px solid #d6bcfa}');
+                printWindow.document.write('.stat-item{text-align:center}.stat-value{font-size:18px;font-weight:bold;color:#553c9a}.stat-label{font-size:10px;color:#718096}');
+                printWindow.document.write('.category-section{margin-bottom:15px;break-inside:avoid}');
+                printWindow.document.write('.category-header{background:#553c9a;color:white;padding:8px 12px;font-weight:bold;font-size:12px;border-radius:4px 4px 0 0}');
+                printWindow.document.write('table{width:100%;border-collapse:collapse;font-size:10px}');
+                printWindow.document.write('th{background:#edf2f7;padding:6px 8px;text-align:left;font-weight:600;color:#4a5568;border:1px solid #e2e8f0}');
+                printWindow.document.write('td{padding:6px 8px;border:1px solid #e2e8f0;vertical-align:top}');
+                printWindow.document.write('tr:nth-child(even){background:#f7fafc}');
+                printWindow.document.write('.inv-number{font-family:monospace;font-weight:bold;color:#2d3748;white-space:nowrap}');
+                printWindow.document.write('.location{color:#718096;font-size:9px}');
+                printWindow.document.write('.status-checked{color:#38a169;font-weight:bold}');
+                printWindow.document.write('.status-writeoff{color:#e53e3e;font-weight:bold}');
+                printWindow.document.write('.status-pending{color:#d69e2e}');
+                printWindow.document.write('.label-yes{color:#38a169;font-weight:bold;text-align:center}');
+                printWindow.document.write('.label-no{color:#e53e3e;font-weight:bold;text-align:center}');
+                printWindow.document.write('.label-unknown{color:#a0aec0;text-align:center}');
+                printWindow.document.write('.footer{margin-top:20px;padding-top:15px;border-top:1px solid #e2e8f0}');
+                printWindow.document.write('.signature-row{display:flex;justify-content:space-between;margin-top:20px}');
+                printWindow.document.write('.signature-line{width:45%}.signature-line p{border-bottom:1px solid #333;height:25px}.signature-line span{font-size:9px;color:#718096}');
+                printWindow.document.write('@media print{body{padding:10px}@page{margin:10mm;size:A4}}');
+                printWindow.document.write('</style></head><body>');
+
+                printWindow.document.write('<div class="header"><h1>' + title + '</h1><h2>' + subtitle + '</h2><h3>ГКОУ СКОШИ №102</h3></div>');
+
+                const checked = items.filter(i => i.checked && !i.writeOff).length;
+                const writeOff = items.filter(i => i.writeOff).length;
+                const pending = items.filter(i => !i.checked && !i.writeOff).length;
+                const noLabel = items.filter(i => i.hasLabel === false).length;
+
+                printWindow.document.write('<div class="stats">');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value">' + date + '</div><div class="stat-label">Дата</div></div>');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value">' + items.length + '</div><div class="stat-label">Всего</div></div>');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value" style="color:#38a169">' + checked + '</div><div class="stat-label">Проверено</div></div>');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value" style="color:#d69e2e">' + pending + '</div><div class="stat-label">Ожидает</div></div>');
+                printWindow.document.write('<div class="stat-item"><div class="stat-value" style="color:#e53e3e">' + writeOff + '</div><div class="stat-label">Списано</div></div>');
+                if (noLabel > 0) printWindow.document.write('<div class="stat-item"><div class="stat-value" style="color:#e53e3e">' + noLabel + '</div><div class="stat-label">Без бирки</div></div>');
+                printWindow.document.write('</div>');
+
+                printWindow.document.write(sectionsHtml);
+
+                printWindow.document.write('<div class="footer">');
+                printWindow.document.write('<div class="signature-row"><div class="signature-line"><p></p><span>Подпись ответственного</span></div><div class="signature-line"><p></p><span>Дата</span></div></div>');
+                printWindow.document.write('</div>');
+
+                printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
+                printWindow.document.close();
+
+                setReportFilterModal({ open: false, filterType: 'responsible', filterValue: '' });
+                showToast('📋 Отчёт сформирован');
+            }, [equipment, showToast]);
 
             // Быстрая проверка без мастера
             const quickCheck = useCallback((item) => {
@@ -2883,7 +3193,19 @@
 
                     <StatsModal isOpen={statsModal.open} onClose={() => setStatsModal({ open: false })} stats={stats} equipment={equipment} />
                     <HistoryModal isOpen={historyModal.open} onClose={() => setHistoryModal({ open: false })} history={history} onViewItem={(item) => { setHistoryModal({ open: false }); openDetails(item); }} />
-                    <ExportModal isOpen={exportModal.open} onClose={() => setExportModal({ open: false })} onExportExcel={handleExportExcel} onExportCheckedReport={handleExportCheckedReport} onPrintNotFound={handlePrintNotFound} onExportJSON={handleExportJSON} onImport={handleImportClick} onClearAll={handleClearAll} />
+                    <ExportModal isOpen={exportModal.open} onClose={() => setExportModal({ open: false })} onExportExcel={handleExportExcel} onExportCheckedReport={handleExportCheckedReport} onPrintNotFound={handlePrintNotFound} onOpenFilterReport={() => { setExportModal({ open: false }); setReportFilterModal({ open: true, filterType: 'responsible', filterValue: '' }); }} onExportJSON={handleExportJSON} onImport={handleImportClick} onClearAll={handleClearAll} />
+                    <ReportFilterModal
+                        isOpen={reportFilterModal.open}
+                        onClose={() => setReportFilterModal({ open: false, filterType: 'responsible', filterValue: '' })}
+                        filterType={reportFilterModal.filterType}
+                        filterValue={reportFilterModal.filterValue}
+                        onFilterTypeChange={(type) => setReportFilterModal(prev => ({ ...prev, filterType: type }))}
+                        onFilterValueChange={(val) => setReportFilterModal(prev => ({ ...prev, filterValue: val }))}
+                        onPrint={handlePrintFilteredReport}
+                        uniqueResponsibles={uniqueResponsibles}
+                        uniqueLocations={uniqueLocations}
+                        uniqueFloors={uniqueFloors}
+                    />
                     <SettingsModal isOpen={settingsModal.open} onClose={() => setSettingsModal({ open: false })} stats={stats} />
                     <CheckWizardModal isOpen={checkWizardModal.open} onClose={() => setCheckWizardModal({ open: false, item: null })} item={checkWizardModal.item} onComplete={handleCheckComplete} directories={directories} />
                     
@@ -3196,6 +3518,7 @@
                                 <button onClick={bulkCheck} className="btn-check">✓ Проверить</button>
                                 <button onClick={bulkUncheck} className="btn-cancel">↩ Снять отметку</button>
                                 <button onClick={bulkWriteOff} className="btn-writeoff">📝 Списать</button>
+                                <button onClick={bulkPrint} className="btn-print">🖨️ Печать</button>
                                 <button onClick={clearSelection} className="btn-cancel">✕ Отмена</button>
                             </div>
                         </div>
