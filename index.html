@@ -1966,14 +1966,14 @@
         };
 
         // Модальное окно для отчёта по фильтру
-        const ReportFilterModal = ({ isOpen, onClose, filterType, filterValue, onFilterTypeChange, onFilterValueChange, onPrint, uniqueResponsibles, uniqueLocations, uniqueFloors }) => {
+        const ReportFilterModal = ({ isOpen, onClose, filterType, filterValue, filterBuilding, onFilterTypeChange, onFilterValueChange, onBuildingChange, onPrint, uniqueResponsibles, uniqueLocations, uniqueBuildings, getFloorsByBuilding }) => {
             if (!isOpen) return null;
 
             const getOptions = () => {
                 switch (filterType) {
                     case 'responsible': return uniqueResponsibles;
                     case 'location': return uniqueLocations;
-                    case 'floor': return uniqueFloors;
+                    case 'floor': return filterBuilding ? getFloorsByBuilding(filterBuilding) : [];
                     default: return [];
                 }
             };
@@ -1982,10 +1982,12 @@
                 switch (filterType) {
                     case 'responsible': return 'Выберите ответственного';
                     case 'location': return 'Выберите кабинет';
-                    case 'floor': return 'Выберите этаж';
+                    case 'floor': return filterBuilding ? 'Выберите этаж' : 'Сначала выберите здание';
                     default: return 'Выберите значение';
                 }
             };
+
+            const canPrint = filterType === 'floor' ? (filterBuilding && filterValue) : filterValue;
 
             return (
                 <Modal isOpen={isOpen} onClose={onClose} title="📋 Отчёт по фильтру" size="sm">
@@ -1994,19 +1996,19 @@
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Тип фильтра</label>
                             <div className="grid grid-cols-3 gap-2">
                                 <button
-                                    onClick={() => { onFilterTypeChange('responsible'); onFilterValueChange(''); }}
+                                    onClick={() => { onFilterTypeChange('responsible'); onFilterValueChange(''); onBuildingChange(''); }}
                                     className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${filterType === 'responsible' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                 >
                                     👤 ФИО
                                 </button>
                                 <button
-                                    onClick={() => { onFilterTypeChange('location'); onFilterValueChange(''); }}
+                                    onClick={() => { onFilterTypeChange('location'); onFilterValueChange(''); onBuildingChange(''); }}
                                     className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${filterType === 'location' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                 >
                                     🚪 Кабинет
                                 </button>
                                 <button
-                                    onClick={() => { onFilterTypeChange('floor'); onFilterValueChange(''); }}
+                                    onClick={() => { onFilterTypeChange('floor'); onFilterValueChange(''); onBuildingChange(''); }}
                                     className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${filterType === 'floor' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                 >
                                     🏢 Этаж
@@ -2014,27 +2016,49 @@
                             </div>
                         </div>
 
+                        {filterType === 'floor' && (
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">🏫 Здание</label>
+                                <select
+                                    value={filterBuilding}
+                                    onChange={(e) => { onBuildingChange(e.target.value); onFilterValueChange(''); }}
+                                    className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-base"
+                                >
+                                    <option value="">Выберите здание</option>
+                                    {uniqueBuildings.map(b => (
+                                        <option key={b} value={b}>{b}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Значение</label>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                {filterType === 'responsible' ? '👤 Ответственный' : filterType === 'location' ? '🚪 Кабинет' : '📍 Этаж'}
+                            </label>
                             <select
                                 value={filterValue}
                                 onChange={(e) => onFilterValueChange(e.target.value)}
-                                className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-base"
+                                disabled={filterType === 'floor' && !filterBuilding}
+                                className={`w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-base ${filterType === 'floor' && !filterBuilding ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                             >
                                 <option value="">{getPlaceholder()}</option>
                                 {getOptions().map(opt => (
                                     <option key={opt} value={opt}>{opt}</option>
                                 ))}
                             </select>
-                            {getOptions().length === 0 && (
+                            {getOptions().length === 0 && filterType !== 'floor' && (
                                 <p className="mt-2 text-sm text-amber-600">⚠️ Нет данных для выбранного типа фильтра</p>
+                            )}
+                            {filterType === 'floor' && filterBuilding && getOptions().length === 0 && (
+                                <p className="mt-2 text-sm text-amber-600">⚠️ В этом здании нет этажей с оборудованием</p>
                             )}
                         </div>
 
                         <button
-                            onClick={() => onPrint(filterType, filterValue)}
-                            disabled={!filterValue}
-                            className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${filterValue ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                            onClick={() => onPrint(filterType, filterValue, filterBuilding)}
+                            disabled={!canPrint}
+                            className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${canPrint ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
                         >
                             🖨️ Сформировать и напечатать
                         </button>
@@ -2147,7 +2171,7 @@
             // НОВОЕ: состояние для модального окна устройств кабинета
             const [roomDevicesModal, setRoomDevicesModal] = useState({ open: false, building: '', floor: '', room: '' });
             // Модальное окно для отчёта по фильтру (ФИО/кабинет/этаж)
-            const [reportFilterModal, setReportFilterModal] = useState({ open: false, filterType: 'responsible', filterValue: '' });
+            const [reportFilterModal, setReportFilterModal] = useState({ open: false, filterType: 'responsible', filterValue: '', filterBuilding: '' });
 
             const [detailsForm, setDetailsForm] = useState({ serialNumber: '', location: '', responsible: '', inventoryNote: '', hasLabel: null, building: '', floor: '' });
             const [editForm, setEditForm] = useState({ name: '', invNumber: '', date: '', category: '', newCategory: '', note: '', building: '', floor: '' });
@@ -2211,6 +2235,16 @@
             const uniqueFloors = useMemo(() =>
                 [...new Set(equipment.map(i => i.floor).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b))),
             [equipment]);
+
+            const uniqueBuildings = useMemo(() =>
+                [...new Set(equipment.map(i => i.building).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru')),
+            [equipment]);
+
+            // Этажи конкретного здания
+            const getFloorsByBuilding = useCallback((building) => {
+                if (!building) return [];
+                return [...new Set(equipment.filter(i => i.building === building).map(i => i.floor).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b)));
+            }, [equipment]);
 
             const filteredEquipment = useMemo(() => equipment.filter(item => {
                 // Поиск по названию, инв.номеру, серийному номеру
@@ -2492,7 +2526,7 @@
             }, [selectedItems, equipment, showToast]);
 
             // Печать отчёта по фильтру (ФИО/кабинет/этаж)
-            const handlePrintFilteredReport = useCallback((filterType, filterValue) => {
+            const handlePrintFilteredReport = useCallback((filterType, filterValue, filterBuilding) => {
                 if (!filterValue) {
                     showToast('⚠️ Выберите значение фильтра');
                     return;
@@ -2514,9 +2548,9 @@
                         subtitle = filterValue;
                         break;
                     case 'floor':
-                        items = equipment.filter(i => String(i.floor) === String(filterValue));
+                        items = equipment.filter(i => i.building === filterBuilding && String(i.floor) === String(filterValue));
                         title = '🏢 ОБОРУДОВАНИЕ ПО ЭТАЖУ';
-                        subtitle = filterValue + ' этаж';
+                        subtitle = filterBuilding + ', ' + filterValue + ' этаж';
                         break;
                 }
 
@@ -2616,7 +2650,7 @@
                 printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
                 printWindow.document.close();
 
-                setReportFilterModal({ open: false, filterType: 'responsible', filterValue: '' });
+                setReportFilterModal({ open: false, filterType: 'responsible', filterValue: '', filterBuilding: '' });
                 showToast('📋 Отчёт сформирован');
             }, [equipment, showToast]);
 
@@ -3193,18 +3227,21 @@
 
                     <StatsModal isOpen={statsModal.open} onClose={() => setStatsModal({ open: false })} stats={stats} equipment={equipment} />
                     <HistoryModal isOpen={historyModal.open} onClose={() => setHistoryModal({ open: false })} history={history} onViewItem={(item) => { setHistoryModal({ open: false }); openDetails(item); }} />
-                    <ExportModal isOpen={exportModal.open} onClose={() => setExportModal({ open: false })} onExportExcel={handleExportExcel} onExportCheckedReport={handleExportCheckedReport} onPrintNotFound={handlePrintNotFound} onOpenFilterReport={() => { setExportModal({ open: false }); setReportFilterModal({ open: true, filterType: 'responsible', filterValue: '' }); }} onExportJSON={handleExportJSON} onImport={handleImportClick} onClearAll={handleClearAll} />
+                    <ExportModal isOpen={exportModal.open} onClose={() => setExportModal({ open: false })} onExportExcel={handleExportExcel} onExportCheckedReport={handleExportCheckedReport} onPrintNotFound={handlePrintNotFound} onOpenFilterReport={() => { setExportModal({ open: false }); setReportFilterModal({ open: true, filterType: 'responsible', filterValue: '', filterBuilding: '' }); }} onExportJSON={handleExportJSON} onImport={handleImportClick} onClearAll={handleClearAll} />
                     <ReportFilterModal
                         isOpen={reportFilterModal.open}
-                        onClose={() => setReportFilterModal({ open: false, filterType: 'responsible', filterValue: '' })}
+                        onClose={() => setReportFilterModal({ open: false, filterType: 'responsible', filterValue: '', filterBuilding: '' })}
                         filterType={reportFilterModal.filterType}
                         filterValue={reportFilterModal.filterValue}
+                        filterBuilding={reportFilterModal.filterBuilding}
                         onFilterTypeChange={(type) => setReportFilterModal(prev => ({ ...prev, filterType: type }))}
                         onFilterValueChange={(val) => setReportFilterModal(prev => ({ ...prev, filterValue: val }))}
+                        onBuildingChange={(building) => setReportFilterModal(prev => ({ ...prev, filterBuilding: building }))}
                         onPrint={handlePrintFilteredReport}
                         uniqueResponsibles={uniqueResponsibles}
                         uniqueLocations={uniqueLocations}
-                        uniqueFloors={uniqueFloors}
+                        uniqueBuildings={uniqueBuildings}
+                        getFloorsByBuilding={getFloorsByBuilding}
                     />
                     <SettingsModal isOpen={settingsModal.open} onClose={() => setSettingsModal({ open: false })} stats={stats} />
                     <CheckWizardModal isOpen={checkWizardModal.open} onClose={() => setCheckWizardModal({ open: false, item: null })} item={checkWizardModal.item} onComplete={handleCheckComplete} directories={directories} />
