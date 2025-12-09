@@ -1404,6 +1404,12 @@
                         <span className={`status-badge ${item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending'}`}>
                             {item.writeOff ? 'Списание' : item.checked ? 'Проверено' : 'Ожидает'}
                         </span>
+                        {item.date && (
+                            <>
+                                <span className="text-gray-400">•</span>
+                                <span>📅 {item.date}</span>
+                            </>
+                        )}
                         {(item.floor || item.location) && (
                             <>
                                 <span className="text-gray-400">•</span>
@@ -3263,6 +3269,7 @@
                                 <div className="p-3 bg-blue-50 rounded-lg">
                                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                                         <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs font-mono">{detailsModal.item.invNumber}</span>
+                                        {detailsModal.item.date && <span className="text-xs text-gray-500">📅 {detailsModal.item.date}</span>}
                                         {detailsModal.item.isUserAdded && <span className="text-xs text-blue-600 font-semibold">Новое</span>}
                                     </div>
                                     <h3 className="font-semibold text-gray-800 text-sm">{detailsModal.item.name}</h3>
