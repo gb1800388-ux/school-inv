@@ -1972,7 +1972,7 @@
         };
 
         // Модальное окно для отчёта по фильтру
-        const ReportFilterModal = ({ isOpen, onClose, filterType, filterValue, filterBuilding, onFilterTypeChange, onFilterValueChange, onBuildingChange, onPrint, uniqueResponsibles, uniqueLocations, uniqueBuildings, getFloorsByBuilding }) => {
+        const ReportFilterModal = ({ isOpen, onClose, filterType, filterValue, filterBuilding, onFilterTypeChange, onFilterValueChange, onBuildingChange, onPrint, uniqueResponsibles, uniqueLocations, uniqueBuildings, uniqueYears, getFloorsByBuilding }) => {
             if (!isOpen) return null;
 
             const getOptions = () => {
@@ -1980,6 +1980,7 @@
                     case 'responsible': return uniqueResponsibles;
                     case 'location': return uniqueLocations;
                     case 'floor': return filterBuilding ? getFloorsByBuilding(filterBuilding) : [];
+                    case 'year': return uniqueYears;
                     default: return [];
                 }
             };
@@ -1989,6 +1990,7 @@
                     case 'responsible': return 'Выберите ответственного';
                     case 'location': return 'Выберите кабинет';
                     case 'floor': return filterBuilding ? 'Выберите этаж' : 'Сначала выберите здание';
+                    case 'year': return 'Выберите год';
                     default: return 'Выберите значение';
                 }
             };
@@ -2000,24 +2002,30 @@
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Тип фильтра</label>
-                            <div className="grid grid-cols-3 gap-2">
+                            <div className="grid grid-cols-4 gap-2">
                                 <button
                                     onClick={() => { onFilterTypeChange('responsible'); onFilterValueChange(''); onBuildingChange(''); }}
-                                    className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${filterType === 'responsible' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                    className={`py-3 px-1 rounded-lg text-xs font-medium transition-all ${filterType === 'responsible' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                 >
                                     👤 ФИО
                                 </button>
                                 <button
                                     onClick={() => { onFilterTypeChange('location'); onFilterValueChange(''); onBuildingChange(''); }}
-                                    className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${filterType === 'location' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                    className={`py-3 px-1 rounded-lg text-xs font-medium transition-all ${filterType === 'location' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                 >
                                     🚪 Кабинет
                                 </button>
                                 <button
                                     onClick={() => { onFilterTypeChange('floor'); onFilterValueChange(''); onBuildingChange(''); }}
-                                    className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${filterType === 'floor' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                    className={`py-3 px-1 rounded-lg text-xs font-medium transition-all ${filterType === 'floor' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                 >
                                     🏢 Этаж
+                                </button>
+                                <button
+                                    onClick={() => { onFilterTypeChange('year'); onFilterValueChange(''); onBuildingChange(''); }}
+                                    className={`py-3 px-1 rounded-lg text-xs font-medium transition-all ${filterType === 'year' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                >
+                                    📅 Год
                                 </button>
                             </div>
                         </div>
@@ -2040,7 +2048,7 @@
 
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                {filterType === 'responsible' ? '👤 Ответственный' : filterType === 'location' ? '🚪 Кабинет' : '📍 Этаж'}
+                                {filterType === 'responsible' ? '👤 Ответственный' : filterType === 'location' ? '🚪 Кабинет' : filterType === 'year' ? '📅 Год ввода' : '📍 Этаж'}
                             </label>
                             <select
                                 value={filterValue}
@@ -2245,6 +2253,16 @@
             const uniqueBuildings = useMemo(() =>
                 [...new Set(equipment.map(i => i.building).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru')),
             [equipment]);
+
+            // Уникальные года ввода в эксплуатацию
+            const uniqueYears = useMemo(() => {
+                const years = equipment.map(i => {
+                    if (!i.date) return null;
+                    const parts = i.date.split('.');
+                    return parts.length === 3 ? parts[2] : null;
+                }).filter(Boolean);
+                return [...new Set(years)].sort((a, b) => b.localeCompare(a)); // Сортировка по убыванию (новые первые)
+            }, [equipment]);
 
             // Этажи конкретного здания
             const getFloorsByBuilding = useCallback((building) => {
@@ -2557,6 +2575,15 @@
                         items = equipment.filter(i => i.building === filterBuilding && String(i.floor) === String(filterValue));
                         title = '🏢 ОБОРУДОВАНИЕ ПО ЭТАЖУ';
                         subtitle = filterBuilding + ', ' + filterValue + ' этаж';
+                        break;
+                    case 'year':
+                        items = equipment.filter(i => {
+                            if (!i.date) return false;
+                            const parts = i.date.split('.');
+                            return parts.length === 3 && parts[2] === filterValue;
+                        });
+                        title = '📅 ОБОРУДОВАНИЕ ПО ГОДУ ВВОДА';
+                        subtitle = filterValue + ' год';
                         break;
                 }
 
@@ -3256,6 +3283,7 @@
                         uniqueResponsibles={uniqueResponsibles}
                         uniqueLocations={uniqueLocations}
                         uniqueBuildings={uniqueBuildings}
+                        uniqueYears={uniqueYears}
                         getFloorsByBuilding={getFloorsByBuilding}
                     />
                     <SettingsModal isOpen={settingsModal.open} onClose={() => setSettingsModal({ open: false })} stats={stats} />
