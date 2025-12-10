@@ -2252,10 +2252,10 @@
             const [showAddModel, setShowAddModel] = useState(false);
             const [newModelForm, setNewModelForm] = useState({ name: '', type: 'black', pageYield: '', avgPrice: '', compatiblePrinters: '' });
 
-            if (!isOpen) return null;
-
             // Получаем принтеры из оборудования
-            const printers = equipment.filter(item => item.category === 'Принтеры и МФУ' && !item.writeOff);
+            const printers = useMemo(() =>
+                equipment.filter(item => item.category === 'Принтеры и МФУ' && !item.writeOff),
+            [equipment]);
 
             // Подсчёт остатков на складе по моделям
             const stockByModel = useMemo(() => {
@@ -2307,6 +2307,9 @@
                 });
                 return Object.entries(stats).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 12);
             }, [cartridgeHistory]);
+
+            // Ранний выход если модальное окно закрыто (после всех хуков!)
+            if (!isOpen) return null;
 
             // Добавление на склад
             const handleAddStock = () => {
