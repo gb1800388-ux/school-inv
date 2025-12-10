@@ -1914,6 +1914,235 @@
             );
         };
 
+        // Модальное окно аналитики
+        const AnalyticsModal = ({ isOpen, onClose, equipment, onPrintReconciliation }) => {
+            const currentYear = new Date().getFullYear();
+
+            // Анализ по возрасту
+            const ageAnalysis = useMemo(() => {
+                const ranges = { 'До 3 лет': 0, '3-5 лет': 0, '5-10 лет': 0, 'Старше 10 лет': 0, 'Без даты': 0 };
+                equipment.forEach(item => {
+                    if (!item.date) { ranges['Без даты']++; return; }
+                    const parts = item.date.split('.');
+                    if (parts.length !== 3) { ranges['Без даты']++; return; }
+                    const year = parseInt(parts[2]);
+                    const age = currentYear - year;
+                    if (age < 3) ranges['До 3 лет']++;
+                    else if (age < 5) ranges['3-5 лет']++;
+                    else if (age < 10) ranges['5-10 лет']++;
+                    else ranges['Старше 10 лет']++;
+                });
+                return ranges;
+            }, [equipment, currentYear]);
+
+            // Прогноз списания (износ 100% или срок вышел)
+            const writeOffForecast = useMemo(() => {
+                return equipment.filter(item => {
+                    if (item.writeOff) return false; // Уже списано
+                    // Износ 100%
+                    if (item.wear === '100,00' || item.wear === '100.00' || item.wear === '100') return true;
+                    // Проверяем срок службы
+                    if (item.date && item.term) {
+                        const parts = item.date.split('.');
+                        if (parts.length === 3) {
+                            const startYear = parseInt(parts[2]);
+                            const termMonths = parseInt(item.term) || 0;
+                            const endYear = startYear + Math.floor(termMonths / 12);
+                            if (currentYear >= endYear) return true;
+                        }
+                    }
+                    return false;
+                }).sort((a, b) => (a.category || '').localeCompare(b.category || '', 'ru'));
+            }, [equipment, currentYear]);
+
+            // Статистика по зданиям
+            const buildingStats = useMemo(() => {
+                const stats = {};
+                equipment.forEach(item => {
+                    const b = item.building || 'Не указано';
+                    if (!stats[b]) stats[b] = { total: 0, checked: 0, writeOff: 0 };
+                    stats[b].total++;
+                    if (item.checked) stats[b].checked++;
+                    if (item.writeOff) stats[b].writeOff++;
+                });
+                return stats;
+            }, [equipment]);
+
+            // Статистика по годам поступления
+            const yearStats = useMemo(() => {
+                const stats = {};
+                equipment.forEach(item => {
+                    if (!item.date) return;
+                    const parts = item.date.split('.');
+                    if (parts.length === 3) {
+                        const year = parts[2];
+                        if (!stats[year]) stats[year] = 0;
+                        stats[year]++;
+                    }
+                });
+                return Object.entries(stats).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 10);
+            }, [equipment]);
+
+            const maxYearCount = Math.max(...yearStats.map(([, count]) => count), 1);
+
+            if (!isOpen) return null;
+
+            const total = equipment.length;
+            const checked = equipment.filter(i => i.checked && !i.writeOff).length;
+            const writeOff = equipment.filter(i => i.writeOff).length;
+            const pending = equipment.filter(i => !i.checked && !i.writeOff).length;
+            const noLabel = equipment.filter(i => i.hasLabel === false).length;
+            const progress = total > 0 ? Math.round((checked + writeOff) / total * 100) : 0;
+
+            const ageColors = { 'До 3 лет': '#38a169', '3-5 лет': '#3182ce', '5-10 лет': '#d69e2e', 'Старше 10 лет': '#e53e3e', 'Без даты': '#a0aec0' };
+            const totalWithDate = Object.entries(ageAnalysis).filter(([k]) => k !== 'Без даты').reduce((sum, [, v]) => sum + v, 0);
+
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title="📈 Аналитика" size="lg">
+                    <div className="space-y-6 max-h-[70vh] overflow-y-auto">
+
+                        {/* Дашборд */}
+                        <div>
+                            <h3 className="font-bold text-gray-700 mb-3 flex items-center gap-2">📊 Дашборд</h3>
+
+                            {/* Прогресс-бар */}
+                            <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="font-semibold text-gray-700">Прогресс инвентаризации</span>
+                                    <span className="text-2xl font-bold text-green-600">{progress}%</span>
+                                </div>
+                                <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+                                    <div className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+                                </div>
+                                <div className="flex justify-between mt-2 text-xs text-gray-500">
+                                    <span>Обработано: {checked + writeOff} из {total}</span>
+                                    <span>Осталось: {pending}</span>
+                                </div>
+                            </div>
+
+                            {/* Ключевые показатели */}
+                            <div className="grid grid-cols-4 gap-2">
+                                <div className="text-center p-3 bg-blue-50 rounded-lg">
+                                    <div className="text-2xl font-bold text-blue-600">{total}</div>
+                                    <div className="text-xs text-gray-500">Всего</div>
+                                </div>
+                                <div className="text-center p-3 bg-green-50 rounded-lg">
+                                    <div className="text-2xl font-bold text-green-600">{checked}</div>
+                                    <div className="text-xs text-gray-500">Проверено</div>
+                                </div>
+                                <div className="text-center p-3 bg-amber-50 rounded-lg">
+                                    <div className="text-2xl font-bold text-amber-600">{pending}</div>
+                                    <div className="text-xs text-gray-500">Ожидает</div>
+                                </div>
+                                <div className="text-center p-3 bg-red-50 rounded-lg">
+                                    <div className="text-2xl font-bold text-red-600">{writeOff}</div>
+                                    <div className="text-xs text-gray-500">Списано</div>
+                                </div>
+                            </div>
+
+                            {/* По зданиям - мини график */}
+                            <div className="mt-4 grid grid-cols-2 gap-3">
+                                {Object.entries(buildingStats).filter(([b]) => b !== 'Не указано').map(([building, data]) => (
+                                    <div key={building} className="p-3 bg-gray-50 rounded-lg">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span>{building === 'Нансена' ? '🏫' : '🏢'}</span>
+                                            <span className="font-semibold text-sm">{building}</span>
+                                        </div>
+                                        <div className="text-lg font-bold text-gray-700">{data.total} ед.</div>
+                                        <div className="h-1.5 bg-gray-200 rounded-full mt-1">
+                                            <div className="h-full bg-green-500 rounded-full" style={{ width: `${data.total > 0 ? (data.checked / data.total) * 100 : 0}%` }} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Анализ по возрасту */}
+                        <div>
+                            <h3 className="font-bold text-gray-700 mb-3 flex items-center gap-2">📅 Анализ по возрасту</h3>
+                            <div className="space-y-2">
+                                {Object.entries(ageAnalysis).filter(([k]) => k !== 'Без даты').map(([range, count]) => (
+                                    <div key={range} className="flex items-center gap-3">
+                                        <span className="w-28 text-sm font-medium text-gray-600">{range}</span>
+                                        <div className="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+                                            <div className="h-full rounded-full flex items-center justify-end pr-2 text-xs text-white font-bold"
+                                                style={{ width: `${totalWithDate > 0 ? (count / totalWithDate) * 100 : 0}%`, background: ageColors[range], minWidth: count > 0 ? '40px' : '0' }}>
+                                                {count > 0 && count}
+                                            </div>
+                                        </div>
+                                        <span className="w-12 text-right text-xs text-gray-500">{totalWithDate > 0 ? Math.round((count / totalWithDate) * 100) : 0}%</span>
+                                    </div>
+                                ))}
+                            </div>
+                            {ageAnalysis['Без даты'] > 0 && (
+                                <div className="mt-2 text-xs text-gray-400">* Без указания даты: {ageAnalysis['Без даты']} ед.</div>
+                            )}
+                        </div>
+
+                        {/* График поступлений по годам */}
+                        <div>
+                            <h3 className="font-bold text-gray-700 mb-3 flex items-center gap-2">📈 Поступления по годам</h3>
+                            <div className="flex items-end gap-1 h-32 p-3 bg-gray-50 rounded-lg">
+                                {yearStats.map(([year, count]) => (
+                                    <div key={year} className="flex-1 flex flex-col items-center">
+                                        <div className="w-full bg-blue-500 rounded-t transition-all hover:bg-blue-600"
+                                            style={{ height: `${(count / maxYearCount) * 100}%`, minHeight: '4px' }}
+                                            title={`${year}: ${count} ед.`} />
+                                        <span className="text-xs text-gray-500 mt-1 transform -rotate-45 origin-top-left">{year.slice(2)}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Прогноз списания */}
+                        <div>
+                            <h3 className="font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                ⚠️ Прогноз списания
+                                <span className="px-2 py-0.5 bg-red-100 text-red-600 rounded-full text-xs font-bold">{writeOffForecast.length}</span>
+                            </h3>
+                            {writeOffForecast.length === 0 ? (
+                                <div className="text-center py-4 text-gray-400 text-sm">Нет оборудования для списания</div>
+                            ) : (
+                                <div className="space-y-2 max-h-48 overflow-y-auto">
+                                    {writeOffForecast.slice(0, 20).map(item => (
+                                        <div key={item.id} className="flex items-center gap-3 p-2 bg-red-50 rounded-lg text-sm">
+                                            <span className="font-mono text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">{item.invNumber}</span>
+                                            <span className="flex-1 truncate text-gray-700">{item.name}</span>
+                                            <span className="text-xs text-red-500 whitespace-nowrap">
+                                                {item.wear === '100,00' || item.wear === '100.00' ? 'Износ 100%' : 'Срок вышел'}
+                                            </span>
+                                        </div>
+                                    ))}
+                                    {writeOffForecast.length > 20 && (
+                                        <div className="text-center text-xs text-gray-400">...и ещё {writeOffForecast.length - 20}</div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Проблемы */}
+                        {noLabel > 0 && (
+                            <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
+                                <div className="flex items-center gap-2 text-amber-700">
+                                    <span>⚠️</span>
+                                    <span className="font-semibold">Требуют внимания:</span>
+                                    <span className="font-bold">{noLabel} ед. без бирки</span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Кнопка акта сверки */}
+                        <button
+                            onClick={onPrintReconciliation}
+                            className="w-full py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
+                        >
+                            📋 Сформировать акт сверки
+                        </button>
+                    </div>
+                </Modal>
+            );
+        };
+
         const ExportModal = ({ isOpen, onClose, onExportExcel, onExportCheckedReport, onPrintNotFound, onOpenFilterReport, onExportJSON, onImport, onClearAll }) => {
             if (!isOpen) return null;
             return (
@@ -2182,6 +2411,7 @@
             const [historyModal, setHistoryModal] = useState({ open: false });
             const [exportModal, setExportModal] = useState({ open: false });
             const [settingsModal, setSettingsModal] = useState({ open: false });
+            const [analyticsModal, setAnalyticsModal] = useState({ open: false });
             // НОВОЕ: состояние для модального окна устройств кабинета
             const [roomDevicesModal, setRoomDevicesModal] = useState({ open: false, building: '', floor: '', room: '' });
             // Модальное окно для отчёта по фильтру (ФИО/кабинет/этаж)
@@ -3002,6 +3232,147 @@
 
                 setExportModal({ open: false });
                 showToast('🔍 Список для поиска открыт');
+            };
+
+            // Акт сверки для комиссии
+            const handlePrintReconciliation = () => {
+                const date = new Date().toLocaleDateString('ru-RU');
+                const currentYear = new Date().getFullYear();
+
+                const total = equipment.length;
+                const checked = equipment.filter(i => i.checked && !i.writeOff).length;
+                const writeOff = equipment.filter(i => i.writeOff).length;
+                const pending = equipment.filter(i => !i.checked && !i.writeOff).length;
+                const noLabel = equipment.filter(i => i.hasLabel === false).length;
+
+                // Группировка по зданиям и категориям
+                const byBuilding = {};
+                equipment.forEach(item => {
+                    const building = item.building || 'Не указано';
+                    if (!byBuilding[building]) byBuilding[building] = { total: 0, checked: 0, writeOff: 0, items: [] };
+                    byBuilding[building].total++;
+                    if (item.checked && !item.writeOff) byBuilding[building].checked++;
+                    if (item.writeOff) byBuilding[building].writeOff++;
+                    byBuilding[building].items.push(item);
+                });
+
+                const byCategory = {};
+                equipment.forEach(item => {
+                    const cat = item.category || 'Без категории';
+                    if (!byCategory[cat]) byCategory[cat] = { total: 0, checked: 0, writeOff: 0 };
+                    byCategory[cat].total++;
+                    if (item.checked && !item.writeOff) byCategory[cat].checked++;
+                    if (item.writeOff) byCategory[cat].writeOff++;
+                });
+
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>Акт сверки</title><style>');
+                printWindow.document.write('*{margin:0;padding:0;box-sizing:border-box}');
+                printWindow.document.write('body{font-family:"Times New Roman",serif;padding:20mm;color:#000;font-size:12pt;line-height:1.5}');
+                printWindow.document.write('.header{text-align:center;margin-bottom:20px}');
+                printWindow.document.write('.header h1{font-size:14pt;font-weight:bold;margin-bottom:10px}');
+                printWindow.document.write('.header h2{font-size:12pt;font-weight:normal;margin-bottom:5px}');
+                printWindow.document.write('.org-info{text-align:right;font-size:10pt;margin-bottom:15px}');
+                printWindow.document.write('.section{margin-bottom:15px}');
+                printWindow.document.write('.section-title{font-weight:bold;margin-bottom:8px;border-bottom:1px solid #000;padding-bottom:3px}');
+                printWindow.document.write('table{width:100%;border-collapse:collapse;margin-bottom:15px;font-size:10pt}');
+                printWindow.document.write('th,td{border:1px solid #000;padding:5px 8px;text-align:left}');
+                printWindow.document.write('th{background:#f0f0f0;font-weight:bold}');
+                printWindow.document.write('.num{text-align:center;width:30px}');
+                printWindow.document.write('.count{text-align:center;width:60px}');
+                printWindow.document.write('.summary-box{border:2px solid #000;padding:15px;margin:20px 0}');
+                printWindow.document.write('.summary-row{display:flex;justify-content:space-between;margin-bottom:5px}');
+                printWindow.document.write('.signatures{margin-top:30px;page-break-inside:avoid}');
+                printWindow.document.write('.sig-row{display:flex;justify-content:space-between;margin-bottom:25px}');
+                printWindow.document.write('.sig-item{width:45%}');
+                printWindow.document.write('.sig-line{border-bottom:1px solid #000;height:20px;margin-bottom:3px}');
+                printWindow.document.write('.sig-label{font-size:9pt;text-align:center}');
+                printWindow.document.write('.stamp-place{width:120px;height:120px;border:1px dashed #999;display:flex;align-items:center;justify-content:center;font-size:9pt;color:#999;margin:0 auto}');
+                printWindow.document.write('@media print{body{padding:15mm}@page{margin:15mm;size:A4}}');
+                printWindow.document.write('</style></head><body>');
+
+                // Шапка
+                printWindow.document.write('<div class="org-info">ГКОУ СКОШИ №102<br>г. Москва</div>');
+                printWindow.document.write('<div class="header">');
+                printWindow.document.write('<h1>АКТ СВЕРКИ</h1>');
+                printWindow.document.write('<h2>материально-технических ценностей</h2>');
+                printWindow.document.write('<p>от «' + new Date().getDate() + '» ' + new Date().toLocaleString('ru-RU', { month: 'long' }) + ' ' + currentYear + ' г.</p>');
+                printWindow.document.write('</div>');
+
+                // Основание
+                printWindow.document.write('<div class="section">');
+                printWindow.document.write('<p>На основании приказа директора ГКОУ СКОШИ №102 комиссией в составе:</p>');
+                printWindow.document.write('<p>Председатель комиссии: ___________________________________ / _______________</p>');
+                printWindow.document.write('<p>Члены комиссии: ___________________________________ / _______________</p>');
+                printWindow.document.write('<p style="margin-left:100px">___________________________________ / _______________</p>');
+                printWindow.document.write('<p style="margin-left:100px">___________________________________ / _______________</p>');
+                printWindow.document.write('<p style="margin-top:10px">произведена сверка фактического наличия материально-технических ценностей.</p>');
+                printWindow.document.write('</div>');
+
+                // Итоговая таблица
+                printWindow.document.write('<div class="summary-box">');
+                printWindow.document.write('<div class="section-title">ИТОГИ СВЕРКИ</div>');
+                printWindow.document.write('<div class="summary-row"><span>Всего единиц по учёту:</span><strong>' + total + '</strong></div>');
+                printWindow.document.write('<div class="summary-row"><span>Проверено и подтверждено наличие:</span><strong style="color:green">' + checked + '</strong></div>');
+                printWindow.document.write('<div class="summary-row"><span>Подлежит списанию:</span><strong style="color:red">' + writeOff + '</strong></div>');
+                printWindow.document.write('<div class="summary-row"><span>Не проверено (требует дополнительной проверки):</span><strong style="color:orange">' + pending + '</strong></div>');
+                if (noLabel > 0) printWindow.document.write('<div class="summary-row"><span>Без инвентарной бирки:</span><strong style="color:red">' + noLabel + '</strong></div>');
+                printWindow.document.write('</div>');
+
+                // По зданиям
+                printWindow.document.write('<div class="section">');
+                printWindow.document.write('<div class="section-title">РАСПРЕДЕЛЕНИЕ ПО ЗДАНИЯМ</div>');
+                printWindow.document.write('<table><thead><tr><th class="num">№</th><th>Здание</th><th class="count">Всего</th><th class="count">Проверено</th><th class="count">Списано</th><th class="count">Ожидает</th></tr></thead><tbody>');
+                Object.entries(byBuilding).forEach(([building, data], idx) => {
+                    const pend = data.total - data.checked - data.writeOff;
+                    printWindow.document.write('<tr><td class="num">' + (idx + 1) + '</td><td>' + building + '</td><td class="count">' + data.total + '</td><td class="count">' + data.checked + '</td><td class="count">' + data.writeOff + '</td><td class="count">' + pend + '</td></tr>');
+                });
+                printWindow.document.write('</tbody></table></div>');
+
+                // По категориям
+                printWindow.document.write('<div class="section">');
+                printWindow.document.write('<div class="section-title">РАСПРЕДЕЛЕНИЕ ПО КАТЕГОРИЯМ</div>');
+                printWindow.document.write('<table><thead><tr><th class="num">№</th><th>Категория</th><th class="count">Всего</th><th class="count">Проверено</th><th class="count">Списано</th></tr></thead><tbody>');
+                Object.entries(byCategory).sort((a, b) => b[1].total - a[1].total).forEach(([cat, data], idx) => {
+                    printWindow.document.write('<tr><td class="num">' + (idx + 1) + '</td><td>' + cat + '</td><td class="count">' + data.total + '</td><td class="count">' + data.checked + '</td><td class="count">' + data.writeOff + '</td></tr>');
+                });
+                printWindow.document.write('</tbody></table></div>');
+
+                // Заключение
+                printWindow.document.write('<div class="section">');
+                printWindow.document.write('<div class="section-title">ЗАКЛЮЧЕНИЕ КОМИССИИ</div>');
+                printWindow.document.write('<p>По результатам сверки комиссия установила:</p>');
+                printWindow.document.write('<p>1. Фактическое наличие материально-технических ценностей ______________________</p>');
+                printWindow.document.write('<p style="margin-left:20px">(соответствует / не соответствует)</p>');
+                printWindow.document.write('<p>   данным бухгалтерского учёта.</p>');
+                printWindow.document.write('<p>2. Выявлены расхождения: _________________________________________________</p>');
+                printWindow.document.write('<p>   ____________________________________________________________________</p>');
+                printWindow.document.write('<p>3. Рекомендации комиссии: ________________________________________________</p>');
+                printWindow.document.write('<p>   ____________________________________________________________________</p>');
+                printWindow.document.write('</div>');
+
+                // Подписи
+                printWindow.document.write('<div class="signatures">');
+                printWindow.document.write('<div class="sig-row">');
+                printWindow.document.write('<div class="sig-item"><div class="sig-line"></div><div class="sig-label">Председатель комиссии (подпись, ФИО)</div></div>');
+                printWindow.document.write('<div class="sig-item"><div class="sig-line"></div><div class="sig-label">Дата</div></div>');
+                printWindow.document.write('</div>');
+                printWindow.document.write('<div class="sig-row">');
+                printWindow.document.write('<div class="sig-item"><div class="sig-line"></div><div class="sig-label">Член комиссии (подпись, ФИО)</div></div>');
+                printWindow.document.write('<div class="sig-item"><div class="sig-line"></div><div class="sig-label">Дата</div></div>');
+                printWindow.document.write('</div>');
+                printWindow.document.write('<div class="sig-row">');
+                printWindow.document.write('<div class="sig-item"><div class="sig-line"></div><div class="sig-label">Член комиссии (подпись, ФИО)</div></div>');
+                printWindow.document.write('<div class="sig-item"><div class="sig-line"></div><div class="sig-label">Дата</div></div>');
+                printWindow.document.write('</div>');
+                printWindow.document.write('<div style="text-align:center;margin-top:20px"><div class="stamp-place">М.П.</div></div>');
+                printWindow.document.write('</div>');
+
+                printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
+                printWindow.document.close();
+
+                setAnalyticsModal({ open: false });
+                showToast('📋 Акт сверки сформирован');
             };
 
             const handleExportJSON = () => {
