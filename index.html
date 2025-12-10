@@ -1074,7 +1074,7 @@
             );
         };
 
-        const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenStats, onOpenExport, onOpenSettings, onOpenHistory, problemCount }) => (
+        const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenStats, onOpenExport, onOpenSettings, onOpenHistory, onOpenNotes, problemCount, notesCount }) => (
             <div className="nav-rail w-16 bg-gray-900 flex flex-col items-center py-4 flex-shrink-0">
                 <button onClick={onShowInfo} className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mb-6" title="О программе">
                     <span className="text-white font-bold text-sm">102</span>
@@ -1089,18 +1089,22 @@
                     <button onClick={onOpenHistory} className="nav-btn text-gray-400 hover:text-white" title="История">
                         📜
                     </button>
-                    
+                    <button onClick={onOpenNotes} className="nav-btn text-gray-400 hover:text-white relative" title="Заметки">
+                        📝
+                        {notesCount > 0 && <span className="nav-btn-badge">{notesCount}</span>}
+                    </button>
+
                     <div className="w-8 h-px bg-gray-700 my-2"></div>
-                    
+
                     <button onClick={onOpenRooms} className="nav-btn text-gray-400 hover:text-white" title="Кабинеты">
                         🚪
                     </button>
                     <button onClick={onOpenPeople} className="nav-btn text-gray-400 hover:text-white" title="Сотрудники">
                         👥
                     </button>
-                    
+
                     <div className="w-8 h-px bg-gray-700 my-2"></div>
-                    
+
                     <button onClick={onOpenExport} className="nav-btn text-gray-400 hover:text-white" title="Экспорт/Импорт">
                         📤
                     </button>
@@ -1723,10 +1727,99 @@
         const RoomDevicesModal = ({ isOpen, onClose, building, floor, room, equipment, onViewItem }) => {
             if (!isOpen) return null;
 
-            const devices = equipment.filter(item => 
+            const devices = equipment.filter(item =>
                 item.building === building && item.location === room
             );
             const checkedCount = devices.filter(d => d.checked || d.writeOff).length;
+
+            // Функция печати устройств кабинета
+            const handlePrintRoom = () => {
+                const printContent = `
+                    <!DOCTYPE html>
+                    <html><head>
+                        <meta charset="UTF-8">
+                        <title>Оборудование - ${room} (${building})</title>
+                        <style>
+                            * { margin: 0; padding: 0; box-sizing: border-box; }
+                            body { font-family: Arial, sans-serif; padding: 20px; font-size: 12px; }
+                            .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 15px; }
+                            .header h1 { font-size: 18px; margin-bottom: 5px; }
+                            .header .subtitle { color: #666; font-size: 14px; }
+                            .info-row { display: flex; justify-content: space-between; margin-bottom: 15px; padding: 10px; background: #f5f5f5; border-radius: 5px; }
+                            .info-item { text-align: center; }
+                            .info-label { font-size: 10px; color: #666; }
+                            .info-value { font-weight: bold; font-size: 14px; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                            th { background: #4a5568; color: white; font-size: 11px; }
+                            td { font-size: 11px; }
+                            tr:nth-child(even) { background: #f9f9f9; }
+                            .status-checked { color: #16a34a; font-weight: bold; }
+                            .status-writeoff { color: #dc2626; font-weight: bold; }
+                            .status-pending { color: #d97706; }
+                            .inv-number { font-family: monospace; font-weight: bold; color: #1d4ed8; }
+                            .footer { margin-top: 20px; text-align: center; font-size: 10px; color: #999; }
+                            @media print { body { padding: 10px; } }
+                        </style>
+                    </head><body>
+                        <div class="header">
+                            <h1>📍 Кабинет ${room}</h1>
+                            <div class="subtitle">ГКОУ СКОШИ №102 — ${building}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-item">
+                                <div class="info-label">Здание</div>
+                                <div class="info-value">${building}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Этаж</div>
+                                <div class="info-value">${floor}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Всего устройств</div>
+                                <div class="info-value">${devices.length}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Проверено</div>
+                                <div class="info-value" style="color: #16a34a;">${checkedCount}</div>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 30px;">№</th>
+                                    <th style="width: 100px;">Инв. номер</th>
+                                    <th>Наименование</th>
+                                    <th style="width: 80px;">Категория</th>
+                                    <th style="width: 100px;">Ответственный</th>
+                                    <th style="width: 70px;">Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${devices.map((d, i) => `
+                                    <tr>
+                                        <td>${i + 1}</td>
+                                        <td class="inv-number">${d.invNumber || '-'}</td>
+                                        <td>${d.name}</td>
+                                        <td>${d.category || '-'}</td>
+                                        <td>${d.responsible || '-'}</td>
+                                        <td class="${d.writeOff ? 'status-writeoff' : d.checked ? 'status-checked' : 'status-pending'}">
+                                            ${d.writeOff ? 'Списание' : d.checked ? 'Проверено' : 'Ожидает'}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        <div class="footer">
+                            Дата формирования: ${new Date().toLocaleDateString('ru-RU')} | Инвентаризация ГКОУ СКОШИ №102
+                        </div>
+                    </body></html>
+                `;
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(printContent);
+                printWindow.document.close();
+                printWindow.print();
+            };
 
             return (
                 <Modal isOpen={isOpen} onClose={onClose} title={`📍 Кабинет ${room}`} size="lg">
@@ -1740,9 +1833,20 @@
                                 <div className="font-semibold text-gray-800">{building}</div>
                                 <div className="text-xs text-gray-500">{floor} этаж</div>
                             </div>
-                            <div className="text-right">
-                                <div className="text-sm font-bold text-gray-700">{devices.length} устр.</div>
-                                <div className="text-xs text-green-600">{checkedCount} проверено</div>
+                            <div className="text-right flex items-center gap-3">
+                                <div>
+                                    <div className="text-sm font-bold text-gray-700">{devices.length} устр.</div>
+                                    <div className="text-xs text-green-600">{checkedCount} проверено</div>
+                                </div>
+                                {devices.length > 0 && (
+                                    <button
+                                        onClick={handlePrintRoom}
+                                        className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center gap-1"
+                                        title="Печать списка"
+                                    >
+                                        🖨️ Печать
+                                    </button>
+                                )}
                             </div>
                         </div>
 
@@ -1792,6 +1896,145 @@
                                         </div>
                                     );
                                 })}
+                            </div>
+                        )}
+                    </div>
+                </Modal>
+            );
+        };
+
+        // Модальное окно просмотра всех заметок
+        const NotesModal = ({ isOpen, onClose, equipment, onViewItem }) => {
+            const [filter, setFilter] = useState('all'); // all, note, inventoryNote
+            const [searchQuery, setSearchQuery] = useState('');
+
+            if (!isOpen) return null;
+
+            // Получаем все устройства с заметками
+            const itemsWithNotes = equipment.filter(item => {
+                const hasNote = item.note && item.note.trim() && item.note !== 'оргтехника';
+                const hasInventoryNote = item.inventoryNote && item.inventoryNote.trim();
+                if (filter === 'note') return hasNote;
+                if (filter === 'inventoryNote') return hasInventoryNote;
+                return hasNote || hasInventoryNote;
+            });
+
+            // Поиск
+            const filteredItems = itemsWithNotes.filter(item => {
+                if (!searchQuery.trim()) return true;
+                const q = searchQuery.toLowerCase();
+                return item.name?.toLowerCase().includes(q) ||
+                       item.invNumber?.toLowerCase().includes(q) ||
+                       item.note?.toLowerCase().includes(q) ||
+                       item.inventoryNote?.toLowerCase().includes(q);
+            });
+
+            // Группировка по типу заметки
+            const noteStats = {
+                all: equipment.filter(i => (i.note && i.note.trim() && i.note !== 'оргтехника') || (i.inventoryNote && i.inventoryNote.trim())).length,
+                note: equipment.filter(i => i.note && i.note.trim() && i.note !== 'оргтехника').length,
+                inventoryNote: equipment.filter(i => i.inventoryNote && i.inventoryNote.trim()).length
+            };
+
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title="📝 Все заметки" size="lg">
+                    <div className="space-y-4">
+                        {/* Фильтры */}
+                        <div className="flex gap-2 flex-wrap">
+                            <button
+                                onClick={() => setFilter('all')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                            >
+                                Все ({noteStats.all})
+                            </button>
+                            <button
+                                onClick={() => setFilter('note')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${filter === 'note' ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                            >
+                                📋 Примечания ({noteStats.note})
+                            </button>
+                            <button
+                                onClick={() => setFilter('inventoryNote')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${filter === 'inventoryNote' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                            >
+                                ✏️ Инвент. заметки ({noteStats.inventoryNote})
+                            </button>
+                        </div>
+
+                        {/* Поиск */}
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="🔍 Поиск по заметкам..."
+                            className="w-full p-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm"
+                        />
+
+                        {/* Список */}
+                        <div className="max-h-96 overflow-y-auto custom-scroll space-y-2">
+                            {filteredItems.length === 0 ? (
+                                <div className="text-center py-8 text-gray-400">
+                                    <div className="text-4xl mb-2">📝</div>
+                                    <div>Заметок не найдено</div>
+                                </div>
+                            ) : (
+                                filteredItems.map(item => {
+                                    const config = categoryConfig[item.category] || defaultCatConfig;
+                                    const hasNote = item.note && item.note.trim() && item.note !== 'оргтехника';
+                                    const hasInventoryNote = item.inventoryNote && item.inventoryNote.trim();
+
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            onClick={() => { onClose(); onViewItem(item); }}
+                                            className="p-3 bg-gray-50 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors border border-gray-200"
+                                        >
+                                            <div className="flex items-start gap-3">
+                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg flex-shrink-0 ${
+                                                    item.writeOff ? 'bg-red-100 text-red-600' :
+                                                    item.checked ? 'bg-green-100 text-green-600' :
+                                                    'bg-blue-100 text-blue-600'
+                                                }`}>
+                                                    {config.icon}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-mono font-bold">
+                                                            {item.invNumber}
+                                                        </span>
+                                                        {item.building && (
+                                                            <span className="text-xs text-gray-500">
+                                                                {item.building === 'Нансена' ? '🏫' : '🏢'} {item.building}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-sm text-gray-800 font-medium line-clamp-1 mb-2">{item.name}</div>
+
+                                                    {/* Заметки */}
+                                                    {hasNote && (
+                                                        <div className="flex items-start gap-2 mb-1 p-2 bg-amber-50 rounded-lg border border-amber-200">
+                                                            <span className="text-amber-500 flex-shrink-0">📋</span>
+                                                            <div className="text-xs text-amber-800 line-clamp-2">{item.note}</div>
+                                                        </div>
+                                                    )}
+                                                    {hasInventoryNote && (
+                                                        <div className="flex items-start gap-2 p-2 bg-green-50 rounded-lg border border-green-200">
+                                                            <span className="text-green-500 flex-shrink-0">✏️</span>
+                                                            <div className="text-xs text-green-800 line-clamp-2">{item.inventoryNote}</div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+
+                        {/* Счётчик */}
+                        {filteredItems.length > 0 && (
+                            <div className="text-center text-xs text-gray-400">
+                                Показано: {filteredItems.length} из {noteStats.all}
                             </div>
                         )}
                     </div>
@@ -2201,13 +2444,16 @@
         };
 
         // Модальное окно для отчёта по фильтру
-        const ReportFilterModal = ({ isOpen, onClose, filterType, filterValue, filterBuilding, onFilterTypeChange, onFilterValueChange, onBuildingChange, onPrint, uniqueResponsibles, uniqueLocations, uniqueBuildings, uniqueYears, getFloorsByBuilding }) => {
+        const ReportFilterModal = ({ isOpen, onClose, filterType, filterValue, filterBuilding, onFilterTypeChange, onFilterValueChange, onBuildingChange, onPrint, uniqueResponsibles, uniqueLocations, uniqueBuildings, uniqueYears, getFloorsByBuilding, getLocationsByBuilding }) => {
             if (!isOpen) return null;
+
+            // Требуют выбора здания: location и floor
+            const needsBuilding = filterType === 'floor' || filterType === 'location';
 
             const getOptions = () => {
                 switch (filterType) {
                     case 'responsible': return uniqueResponsibles;
-                    case 'location': return uniqueLocations;
+                    case 'location': return filterBuilding ? getLocationsByBuilding(filterBuilding) : [];
                     case 'floor': return filterBuilding ? getFloorsByBuilding(filterBuilding) : [];
                     case 'year': return uniqueYears;
                     default: return [];
@@ -2217,14 +2463,14 @@
             const getPlaceholder = () => {
                 switch (filterType) {
                     case 'responsible': return 'Выберите ответственного';
-                    case 'location': return 'Выберите кабинет';
+                    case 'location': return filterBuilding ? 'Выберите кабинет' : 'Сначала выберите здание';
                     case 'floor': return filterBuilding ? 'Выберите этаж' : 'Сначала выберите здание';
                     case 'year': return 'Выберите год';
                     default: return 'Выберите значение';
                 }
             };
 
-            const canPrint = filterType === 'floor' ? (filterBuilding && filterValue) : filterValue;
+            const canPrint = needsBuilding ? (filterBuilding && filterValue) : filterValue;
 
             return (
                 <Modal isOpen={isOpen} onClose={onClose} title="📋 Отчёт по фильтру" size="sm">
@@ -2259,7 +2505,7 @@
                             </div>
                         </div>
 
-                        {filterType === 'floor' && (
+                        {needsBuilding && (
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">🏫 Здание</label>
                                 <select
@@ -2282,19 +2528,19 @@
                             <select
                                 value={filterValue}
                                 onChange={(e) => onFilterValueChange(e.target.value)}
-                                disabled={filterType === 'floor' && !filterBuilding}
-                                className={`w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-base ${filterType === 'floor' && !filterBuilding ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                disabled={needsBuilding && !filterBuilding}
+                                className={`w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-base ${needsBuilding && !filterBuilding ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                             >
                                 <option value="">{getPlaceholder()}</option>
                                 {getOptions().map(opt => (
                                     <option key={opt} value={opt}>{opt}</option>
                                 ))}
                             </select>
-                            {getOptions().length === 0 && filterType !== 'floor' && (
+                            {getOptions().length === 0 && !needsBuilding && (
                                 <p className="mt-2 text-sm text-amber-600">⚠️ Нет данных для выбранного типа фильтра</p>
                             )}
-                            {filterType === 'floor' && filterBuilding && getOptions().length === 0 && (
-                                <p className="mt-2 text-sm text-amber-600">⚠️ В этом здании нет этажей с оборудованием</p>
+                            {needsBuilding && filterBuilding && getOptions().length === 0 && (
+                                <p className="mt-2 text-sm text-amber-600">⚠️ В этом здании нет {filterType === 'floor' ? 'этажей' : 'кабинетов'} с оборудованием</p>
                             )}
                         </div>
 
@@ -2409,6 +2655,7 @@
             const [infoModal, setInfoModal] = useState({ open: false });
             const [statsModal, setStatsModal] = useState({ open: false });
             const [historyModal, setHistoryModal] = useState({ open: false });
+            const [notesModal, setNotesModal] = useState({ open: false });
             const [exportModal, setExportModal] = useState({ open: false });
             const [settingsModal, setSettingsModal] = useState({ open: false });
             const [analyticsModal, setAnalyticsModal] = useState({ open: false });
@@ -2450,8 +2697,13 @@
                 equipment.filter(i => i.checkedAt).sort((a, b) => new Date(b.checkedAt) - new Date(a.checkedAt)).slice(0, 5),
             [equipment]);
 
-            const problemItems = useMemo(() => 
+            const problemItems = useMemo(() =>
                 equipment.filter(i => i.hasLabel === false || (i.checked && !i.building)),
+            [equipment]);
+
+            // Количество заметок (для бейджа в навигации)
+            const notesCount = useMemo(() =>
+                equipment.filter(i => (i.note && i.note.trim() && i.note !== 'оргтехника') || (i.inventoryNote && i.inventoryNote.trim())).length,
             [equipment]);
 
             const categories = useMemo(() => {
@@ -2498,6 +2750,12 @@
             const getFloorsByBuilding = useCallback((building) => {
                 if (!building) return [];
                 return [...new Set(equipment.filter(i => i.building === building).map(i => i.floor).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b)));
+            }, [equipment]);
+
+            // Кабинеты конкретного здания
+            const getLocationsByBuilding = useCallback((building) => {
+                if (!building) return [];
+                return [...new Set(equipment.filter(i => i.building === building).map(i => i.location).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
             }, [equipment]);
 
             const filteredEquipment = useMemo(() => equipment.filter(item => {
@@ -2797,9 +3055,9 @@
                         subtitle = filterValue;
                         break;
                     case 'location':
-                        items = equipment.filter(i => i.location === filterValue);
+                        items = equipment.filter(i => i.building === filterBuilding && i.location === filterValue);
                         title = '🚪 ОБОРУДОВАНИЕ ПО КАБИНЕТУ';
-                        subtitle = filterValue;
+                        subtitle = filterBuilding + ', каб. ' + filterValue;
                         break;
                     case 'floor':
                         items = equipment.filter(i => i.building === filterBuilding && String(i.floor) === String(filterValue));
@@ -3492,7 +3750,7 @@
 
             return (
                 <div className="flex bg-gray-50" style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
-                    <NavRail 
+                    <NavRail
                         onOpenRooms={() => setRoomsModal({ ...roomsModal, open: true })}
                         onOpenPeople={() => setPeopleModal({ ...peopleModal, open: true })}
                         onAddEquipment={() => openEditModal()}
@@ -3502,7 +3760,9 @@
                         onOpenExport={() => setExportModal({ open: true })}
                         onOpenSettings={() => setSettingsModal({ open: true })}
                         onOpenHistory={() => setHistoryModal({ open: true })}
+                        onOpenNotes={() => setNotesModal({ open: true })}
                         problemCount={problemItems.length}
+                        notesCount={notesCount}
                     />
 
                     {/* ИЗМЕНЕНО: добавлен onRoomClick */}
@@ -3656,6 +3916,7 @@
                         uniqueBuildings={uniqueBuildings}
                         uniqueYears={uniqueYears}
                         getFloorsByBuilding={getFloorsByBuilding}
+                        getLocationsByBuilding={getLocationsByBuilding}
                     />
                     <SettingsModal isOpen={settingsModal.open} onClose={() => setSettingsModal({ open: false })} stats={stats} />
                     <CheckWizardModal isOpen={checkWizardModal.open} onClose={() => setCheckWizardModal({ open: false, item: null })} item={checkWizardModal.item} onComplete={handleCheckComplete} directories={directories} />
@@ -3667,6 +3928,14 @@
                         building={roomDevicesModal.building}
                         floor={roomDevicesModal.floor}
                         room={roomDevicesModal.room}
+                        equipment={equipment}
+                        onViewItem={openDetails}
+                    />
+
+                    {/* Модальное окно заметок */}
+                    <NotesModal
+                        isOpen={notesModal.open}
+                        onClose={() => setNotesModal({ open: false })}
                         equipment={equipment}
                         onViewItem={openDetails}
                     />
