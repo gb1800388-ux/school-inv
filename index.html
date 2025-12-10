@@ -1907,8 +1907,94 @@
         const NotesModal = ({ isOpen, onClose, equipment, onViewItem }) => {
             const [filter, setFilter] = useState('all'); // all, note, inventoryNote
             const [searchQuery, setSearchQuery] = useState('');
+            const [selectedNotes, setSelectedNotes] = useState(new Set());
 
             if (!isOpen) return null;
+
+            // Переключение выбора заметки
+            const toggleNoteSelection = (itemId, e) => {
+                e.stopPropagation();
+                setSelectedNotes(prev => {
+                    const newSet = new Set(prev);
+                    if (newSet.has(itemId)) {
+                        newSet.delete(itemId);
+                    } else {
+                        newSet.add(itemId);
+                    }
+                    return newSet;
+                });
+            };
+
+            // Выбрать/снять все
+            const toggleSelectAll = (items) => {
+                if (selectedNotes.size === items.length) {
+                    setSelectedNotes(new Set());
+                } else {
+                    setSelectedNotes(new Set(items.map(i => i.id)));
+                }
+            };
+
+            // Печать выбранных заметок
+            const handlePrintSelected = () => {
+                const selectedItems = equipment.filter(item => selectedNotes.has(item.id));
+                if (selectedItems.length === 0) return;
+
+                const date = new Date().toLocaleDateString('ru-RU');
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>Заметки</title><style>');
+                printWindow.document.write('*{margin:0;padding:0;box-sizing:border-box}');
+                printWindow.document.write('body{font-family:"Segoe UI",Tahoma,sans-serif;padding:20px;color:#333;font-size:12px}');
+                printWindow.document.write('.header{text-align:center;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid #10b981}');
+                printWindow.document.write('.header h1{font-size:20px;color:#047857;margin-bottom:5px}');
+                printWindow.document.write('.header h2{font-size:14px;color:#6b7280;font-weight:normal}');
+                printWindow.document.write('.note-item{margin-bottom:15px;padding:15px;border:1px solid #d1d5db;border-radius:8px;break-inside:avoid;background:#fafafa}');
+                printWindow.document.write('.note-header{display:flex;align-items:center;gap:15px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e5e7eb}');
+                printWindow.document.write('.inv-number{font-family:monospace;font-weight:bold;color:#1f2937;font-size:14px;background:#dbeafe;padding:4px 10px;border-radius:4px}');
+                printWindow.document.write('.item-name{font-size:13px;color:#374151;font-weight:500}');
+                printWindow.document.write('.item-location{font-size:11px;color:#6b7280}');
+                printWindow.document.write('.note-content{padding:10px;border-radius:6px;margin-top:8px}');
+                printWindow.document.write('.note-type-note{background:#fef3c7;border-left:3px solid #f59e0b}');
+                printWindow.document.write('.note-type-inventory{background:#d1fae5;border-left:3px solid #10b981}');
+                printWindow.document.write('.note-label{font-size:10px;font-weight:600;color:#6b7280;margin-bottom:4px;text-transform:uppercase}');
+                printWindow.document.write('.note-text{font-size:12px;color:#1f2937;line-height:1.5;white-space:pre-wrap}');
+                printWindow.document.write('.footer{margin-top:25px;text-align:center;font-size:10px;color:#9ca3af;padding-top:15px;border-top:1px solid #e5e7eb}');
+                printWindow.document.write('@media print{body{padding:15px}@page{margin:15mm;size:A4}.note-item{box-shadow:none}}');
+                printWindow.document.write('</style></head><body>');
+
+                printWindow.document.write('<div class="header"><h1>📝 ЗАМЕТКИ К ОБОРУДОВАНИЮ</h1><h2>ГКОУ СКОШИ №102 • ' + date + ' • Выбрано: ' + selectedItems.length + '</h2></div>');
+
+                selectedItems.forEach(item => {
+                    const hasNote = item.note && item.note.trim() && item.note !== 'оргтехника';
+                    const hasInventoryNote = item.inventoryNote && item.inventoryNote.trim();
+
+                    printWindow.document.write('<div class="note-item">');
+                    printWindow.document.write('<div class="note-header">');
+                    printWindow.document.write('<span class="inv-number">' + (item.invNumber || '—') + '</span>');
+                    printWindow.document.write('<div><div class="item-name">' + (item.name || 'Без названия') + '</div>');
+                    printWindow.document.write('<div class="item-location">' + [item.building, item.floor ? 'Этаж ' + item.floor : '', item.location].filter(Boolean).join(' • ') + '</div></div>');
+                    printWindow.document.write('</div>');
+
+                    if (hasNote) {
+                        printWindow.document.write('<div class="note-content note-type-note">');
+                        printWindow.document.write('<div class="note-label">📋 Примечание</div>');
+                        printWindow.document.write('<div class="note-text">' + item.note.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>');
+                        printWindow.document.write('</div>');
+                    }
+
+                    if (hasInventoryNote) {
+                        printWindow.document.write('<div class="note-content note-type-inventory">');
+                        printWindow.document.write('<div class="note-label">✏️ Инвентаризационная заметка</div>');
+                        printWindow.document.write('<div class="note-text">' + item.inventoryNote.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>');
+                        printWindow.document.write('</div>');
+                    }
+
+                    printWindow.document.write('</div>');
+                });
+
+                printWindow.document.write('<div class="footer">Сформировано: ' + new Date().toLocaleString('ru-RU') + '</div>');
+                printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
+                printWindow.document.close();
+            };
 
             // Получаем все устройства с заметками
             const itemsWithNotes = equipment.filter(item => {
@@ -1970,6 +2056,36 @@
                             className="w-full p-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm"
                         />
 
+                        {/* Панель выбора и печати */}
+                        {filteredItems.length > 0 && (
+                            <div className="flex items-center justify-between gap-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => toggleSelectAll(filteredItems)}
+                                        className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-200 hover:bg-gray-300 text-gray-700 transition-all"
+                                    >
+                                        {selectedNotes.size === filteredItems.length ? '☐ Снять всё' : '☑ Выбрать всё'}
+                                    </button>
+                                    {selectedNotes.size > 0 && (
+                                        <span className="text-sm text-gray-500">
+                                            Выбрано: <strong className="text-blue-600">{selectedNotes.size}</strong>
+                                        </span>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={handlePrintSelected}
+                                    disabled={selectedNotes.size === 0}
+                                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                                        selectedNotes.size > 0
+                                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                    }`}
+                                >
+                                    🖨️ Печать
+                                </button>
+                            </div>
+                        )}
+
                         {/* Список */}
                         <div className="max-h-96 overflow-y-auto custom-scroll space-y-2">
                             {filteredItems.length === 0 ? (
@@ -1983,13 +2099,28 @@
                                     const hasNote = item.note && item.note.trim() && item.note !== 'оргтехника';
                                     const hasInventoryNote = item.inventoryNote && item.inventoryNote.trim();
 
+                                    const isSelected = selectedNotes.has(item.id);
+
                                     return (
                                         <div
                                             key={item.id}
                                             onClick={() => { onClose(); onViewItem(item); }}
-                                            className="p-3 bg-gray-50 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors border border-gray-200"
+                                            className={`p-3 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors border ${
+                                                isSelected ? 'bg-blue-50 border-blue-300' : 'bg-gray-50 border-gray-200'
+                                            }`}
                                         >
                                             <div className="flex items-start gap-3">
+                                                {/* Чекбокс */}
+                                                <div
+                                                    onClick={(e) => toggleNoteSelection(item.id, e)}
+                                                    className={`w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 cursor-pointer border-2 transition-all ${
+                                                        isSelected
+                                                            ? 'bg-blue-600 border-blue-600 text-white'
+                                                            : 'bg-white border-gray-300 hover:border-blue-400'
+                                                    }`}
+                                                >
+                                                    {isSelected && <span className="text-sm">✓</span>}
+                                                </div>
                                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg flex-shrink-0 ${
                                                     item.writeOff ? 'bg-red-100 text-red-600' :
                                                     item.checked ? 'bg-green-100 text-green-600' :
