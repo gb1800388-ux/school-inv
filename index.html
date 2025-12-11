@@ -648,40 +648,50 @@
         // Справочник моделей картриджей
         const initialCartridgeModels = [
             // HP
-            { id: 'hp_85a', name: 'HP 85A (CE285A)', type: 'black', pageYield: 1600, avgPrice: 1500, compatiblePrinters: ['HP LaserJet P1102', 'HP LJ P1102', 'HP LJ P 1102', 'Лазерный принтер HP "LaserJet P1102"'] },
-            { id: 'hp_59a', name: 'HP 59A (CF259A)', type: 'black', pageYield: 3000, avgPrice: 4500, compatiblePrinters: ['HP LaserJetProM428fdn', 'HP LaserJet Pro M428fdn', 'Многофункциональное устройство HP LaserJetProM428fdn'] },
-            { id: 'hp_05a', name: 'HP 05A (CE505A)', type: 'black', pageYield: 2300, avgPrice: 2500, compatiblePrinters: ['HP Laser Jet P2055d', 'HP LaserJet P2055'] },
-            { id: 'hp_12a', name: 'HP 12A (Q2612A)', type: 'black', pageYield: 2000, avgPrice: 1800, compatiblePrinters: ['HP 1010', 'Принтер лазерн. HP 1010'] },
+            { id: 'hp_85a', name: 'HP 85A (CE285A)', type: 'black', pageYield: 1600, avgPrice: 1500, compatiblePrinters: ['HP LaserJet P1102', 'HP LJ P1102', 'HP LJ P 1102', 'Лазерный принтер HP "LaserJet P1102"'], minStock: 10, replacementDays: 60 },
+            { id: 'hp_59a', name: 'HP 59A (CF259A)', type: 'black', pageYield: 3000, avgPrice: 4500, compatiblePrinters: ['HP LaserJetProM428fdn', 'HP LaserJet Pro M428fdn', 'Многофункциональное устройство HP LaserJetProM428fdn'], minStock: 5, replacementDays: 90 },
+            { id: 'hp_26a', name: 'HP 26A (CF226A)', type: 'black', pageYield: 3100, avgPrice: 4000, compatiblePrinters: ['HP LaserJet Pro M426fdn', 'HP M426fdn', 'МФУ А4 сетевое ч/б лазерное печатающее устройство'], minStock: 5, replacementDays: 90 },
+            { id: 'hp_05a', name: 'HP 05A (CE505A)', type: 'black', pageYield: 2300, avgPrice: 2500, compatiblePrinters: ['HP Laser Jet P2055d', 'HP LaserJet P2055', 'HP P2055d'], minStock: 2, replacementDays: 120 },
+            { id: 'hp_12a', name: 'HP 12A (Q2612A)', type: 'black', pageYield: 2000, avgPrice: 1800, compatiblePrinters: ['HP 1010', 'HP LaserJet 1010', 'HP 1020', 'HP LaserJet 1020', 'Принтер лазерн. HP 1010'], minStock: 2, replacementDays: 90 },
+            { id: 'hp_90a', name: 'HP 90A (CE390A)', type: 'black', pageYield: 10000, avgPrice: 6500, compatiblePrinters: ['HP LaserJet Enterprise M725', 'HP M725', 'МФУ А 3 монохромное Печатающее устройство'], minStock: 2, replacementDays: 180 },
             // Canon
-            { id: 'canon_exv22', name: 'Canon C-EXV 22', type: 'black', pageYield: 48000, avgPrice: 3500, compatiblePrinters: ['Canon iR 1133', 'Canon iR 1133 A', 'Canon imageRUNNER 1133A', 'Многофункциональное устройство "Canon iR 1133 A"', 'Копировально-множительный аппарат Canon iR 1133 A', 'МФУ Canon imageRUNNER 1133A'] },
+            { id: 'canon_exv22', name: 'Canon C-EXV 22', type: 'black', pageYield: 48000, avgPrice: 3500, compatiblePrinters: ['Canon iR 1133', 'Canon iR 1133 A', 'Canon imageRUNNER 1133A', 'Canon iR1133A', 'Многофункциональное устройство "Canon iR 1133 A"', 'Копировально-множительный аппарат Canon iR 1133 A', 'МФУ Canon imageRUNNER 1133A'], minStock: 2, replacementDays: 120 },
+            { id: 'canon_exv18', name: 'Canon C-EXV 18', type: 'black', pageYield: 8400, avgPrice: 2800, compatiblePrinters: ['Canon iR2016', 'Canon imageRUNNER 2016', 'Canon IR2016'], minStock: 2, replacementDays: 90 },
             // Xerox VersaLink C7025 (цветной)
-            { id: 'xerox_c7025_k', name: 'Xerox 106R03745 (Black)', type: 'black', pageYield: 23600, avgPrice: 8500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'] },
-            { id: 'xerox_c7025_c', name: 'Xerox 106R03748 (Cyan)', type: 'cyan', pageYield: 16500, avgPrice: 7500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'] },
-            { id: 'xerox_c7025_m', name: 'Xerox 106R03747 (Magenta)', type: 'magenta', pageYield: 16500, avgPrice: 7500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'] },
-            { id: 'xerox_c7025_y', name: 'Xerox 106R03746 (Yellow)', type: 'yellow', pageYield: 16500, avgPrice: 7500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'] },
+            { id: 'xerox_c7025_k', name: 'Xerox 106R03745 (Black)', type: 'black', pageYield: 23600, avgPrice: 8500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'], minStock: 2, replacementDays: 90 },
+            { id: 'xerox_c7025_c', name: 'Xerox 106R03748 (Cyan)', type: 'cyan', pageYield: 16500, avgPrice: 7500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'], minStock: 2, replacementDays: 120 },
+            { id: 'xerox_c7025_m', name: 'Xerox 106R03747 (Magenta)', type: 'magenta', pageYield: 16500, avgPrice: 7500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'], minStock: 2, replacementDays: 120 },
+            { id: 'xerox_c7025_y', name: 'Xerox 106R03746 (Yellow)', type: 'yellow', pageYield: 16500, avgPrice: 7500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'], minStock: 2, replacementDays: 120 },
             // Xerox AltaLink B8075
-            { id: 'xerox_b8075', name: 'Xerox 006R01605 (Black)', type: 'black', pageYield: 100000, avgPrice: 5500, compatiblePrinters: ['XeroxAltaLink B8075', 'Xerox AltaLink B8075', 'МФУ XeroxAltaLink B8075'] },
+            { id: 'xerox_b8075', name: 'Xerox 006R01605 (Black)', type: 'black', pageYield: 100000, avgPrice: 5500, compatiblePrinters: ['XeroxAltaLink B8075', 'Xerox AltaLink B8075', 'МФУ XeroxAltaLink B8075'], minStock: 1, replacementDays: 180 },
             // OKI MC563dn (цветной)
-            { id: 'oki_mc563_k', name: 'OKI 46490608 (Black)', type: 'black', pageYield: 7000, avgPrice: 6000, compatiblePrinters: ['OKI MC563dn', 'МФУ групповое, цветное OKI MC563dn'] },
-            { id: 'oki_mc563_c', name: 'OKI 46490607 (Cyan)', type: 'cyan', pageYield: 6000, avgPrice: 5500, compatiblePrinters: ['OKI MC563dn', 'МФУ групповое, цветное OKI MC563dn'] },
-            { id: 'oki_mc563_m', name: 'OKI 46490606 (Magenta)', type: 'magenta', pageYield: 6000, avgPrice: 5500, compatiblePrinters: ['OKI MC563dn', 'МФУ групповое, цветное OKI MC563dn'] },
-            { id: 'oki_mc563_y', name: 'OKI 46490605 (Yellow)', type: 'yellow', pageYield: 6000, avgPrice: 5500, compatiblePrinters: ['OKI MC563dn', 'МФУ групповое, цветное OKI MC563dn'] },
+            { id: 'oki_mc563_k', name: 'OKI 46490608 (Black)', type: 'black', pageYield: 7000, avgPrice: 6000, compatiblePrinters: ['OKI MC563dn', 'Oki MC563', 'МФУ групповое, цветное OKI MC563dn'], minStock: 1, replacementDays: 90 },
+            { id: 'oki_mc563_c', name: 'OKI 46490607 (Cyan)', type: 'cyan', pageYield: 6000, avgPrice: 5500, compatiblePrinters: ['OKI MC563dn', 'Oki MC563', 'МФУ групповое, цветное OKI MC563dn'], minStock: 1, replacementDays: 120 },
+            { id: 'oki_mc563_m', name: 'OKI 46490606 (Magenta)', type: 'magenta', pageYield: 6000, avgPrice: 5500, compatiblePrinters: ['OKI MC563dn', 'Oki MC563', 'МФУ групповое, цветное OKI MC563dn'], minStock: 1, replacementDays: 120 },
+            { id: 'oki_mc563_y', name: 'OKI 46490605 (Yellow)', type: 'yellow', pageYield: 6000, avgPrice: 5500, compatiblePrinters: ['OKI MC563dn', 'Oki MC563', 'МФУ групповое, цветное OKI MC563dn'], minStock: 1, replacementDays: 120 },
             // Epson
-            { id: 'epson_t9651', name: 'Epson T9651 (Black XXL)', type: 'black', pageYield: 10000, avgPrice: 8000, compatiblePrinters: ['Epson WorkForce Pro WF-M5190DW', 'Принтер групповой Epson WorkForce Pro WF-M5190DW'] },
+            { id: 'epson_t9651', name: 'Epson T9651 (Black XXL)', type: 'black', pageYield: 10000, avgPrice: 8000, compatiblePrinters: ['Epson WorkForce Pro WF-M5190DW', 'Epson WorkForce M5190', 'Epson M5190', 'Принтер групповой Epson WorkForce Pro WF-M5190DW'], minStock: 2, replacementDays: 120 },
             // Катюша М247е
-            { id: 'katusha_m247', name: 'Катюша TK-M247', type: 'black', pageYield: 12000, avgPrice: 4000, compatiblePrinters: ['Катюша М247е', 'Многофункциональное устройство (МФУ) Катюша М247е'] },
+            { id: 'katusha_m247', name: 'Катюша TK-M247', type: 'black', pageYield: 12000, avgPrice: 4000, compatiblePrinters: ['Катюша М247е', 'Катюша M247e', 'Многофункциональное устройство (МФУ) Катюша М247е'], minStock: 3, replacementDays: 120 },
             // Sindoh
-            { id: 'sindoh_d332', name: 'Sindoh D201 (Black)', type: 'black', pageYield: 15000, avgPrice: 5000, compatiblePrinters: ['Sindoh D332e', 'Sindoh D332', 'Многофункциональное устройство (МФУ) Sindoh D332e'] },
-            { id: 'sindoh_c300_k', name: 'Sindoh С300 (Black)', type: 'black', pageYield: 8000, avgPrice: 4500, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'] },
-            { id: 'sindoh_c300_c', name: 'Sindoh С300 (Cyan)', type: 'cyan', pageYield: 5000, avgPrice: 4000, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'] },
-            { id: 'sindoh_c300_m', name: 'Sindoh С300 (Magenta)', type: 'magenta', pageYield: 5000, avgPrice: 4000, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'] },
-            { id: 'sindoh_c300_y', name: 'Sindoh С300 (Yellow)', type: 'yellow', pageYield: 5000, avgPrice: 4000, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'] },
-            { id: 'sindoh_c332_k', name: 'Sindoh С332 (Black)', type: 'black', pageYield: 10000, avgPrice: 5000, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'] },
-            { id: 'sindoh_c332_c', name: 'Sindoh С332 (Cyan)', type: 'cyan', pageYield: 6000, avgPrice: 4500, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'] },
-            { id: 'sindoh_c332_m', name: 'Sindoh С332 (Magenta)', type: 'magenta', pageYield: 6000, avgPrice: 4500, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'] },
-            { id: 'sindoh_c332_y', name: 'Sindoh С332 (Yellow)', type: 'yellow', pageYield: 6000, avgPrice: 4500, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'] },
+            { id: 'sindoh_d332', name: 'Sindoh D201 (Black)', type: 'black', pageYield: 15000, avgPrice: 5000, compatiblePrinters: ['Sindoh D332e', 'Sindoh D332E', 'Sindoh D332', 'Многофункциональное устройство (МФУ) Sindoh D332e'], minStock: 1, replacementDays: 150 },
+            { id: 'sindoh_c300_k', name: 'Sindoh С300 (Black)', type: 'black', pageYield: 8000, avgPrice: 4500, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'], minStock: 2, replacementDays: 90 },
+            { id: 'sindoh_c300_c', name: 'Sindoh С300 (Cyan)', type: 'cyan', pageYield: 5000, avgPrice: 4000, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'], minStock: 2, replacementDays: 120 },
+            { id: 'sindoh_c300_m', name: 'Sindoh С300 (Magenta)', type: 'magenta', pageYield: 5000, avgPrice: 4000, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'], minStock: 2, replacementDays: 120 },
+            { id: 'sindoh_c300_y', name: 'Sindoh С300 (Yellow)', type: 'yellow', pageYield: 5000, avgPrice: 4000, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'], minStock: 2, replacementDays: 120 },
+            { id: 'sindoh_c332_k', name: 'Sindoh С332 (Black)', type: 'black', pageYield: 10000, avgPrice: 5000, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'], minStock: 2, replacementDays: 120 },
+            { id: 'sindoh_c332_c', name: 'Sindoh С332 (Cyan)', type: 'cyan', pageYield: 6000, avgPrice: 4500, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'], minStock: 2, replacementDays: 150 },
+            { id: 'sindoh_c332_m', name: 'Sindoh С332 (Magenta)', type: 'magenta', pageYield: 6000, avgPrice: 4500, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'], minStock: 2, replacementDays: 150 },
+            { id: 'sindoh_c332_y', name: 'Sindoh С332 (Yellow)', type: 'yellow', pageYield: 6000, avgPrice: 4500, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'], minStock: 2, replacementDays: 150 },
             // Samsung
-            { id: 'samsung_clt', name: 'Samsung CLT-K504S (Black)', type: 'black', pageYield: 2500, avgPrice: 3500, compatiblePrinters: ['Samsung', 'Принтер лазерный цветной Samsung'] },
+            { id: 'samsung_clt_k', name: 'Samsung CLT-K504S (Black)', type: 'black', pageYield: 2500, avgPrice: 3500, compatiblePrinters: ['Samsung CLP-320', 'Samsung', 'Принтер лазерный цветной Samsung'], minStock: 1, replacementDays: 120 },
+            { id: 'samsung_clt_c', name: 'Samsung CLT-C504S (Cyan)', type: 'cyan', pageYield: 1800, avgPrice: 3000, compatiblePrinters: ['Samsung CLP-320', 'Samsung', 'Принтер лазерный цветной Samsung'], minStock: 1, replacementDays: 150 },
+            { id: 'samsung_clt_m', name: 'Samsung CLT-M504S (Magenta)', type: 'magenta', pageYield: 1800, avgPrice: 3000, compatiblePrinters: ['Samsung CLP-320', 'Samsung', 'Принтер лазерный цветной Samsung'], minStock: 1, replacementDays: 150 },
+            { id: 'samsung_clt_y', name: 'Samsung CLT-Y504S (Yellow)', type: 'yellow', pageYield: 1800, avgPrice: 3000, compatiblePrinters: ['Samsung CLP-320', 'Samsung', 'Принтер лазерный цветной Samsung'], minStock: 1, replacementDays: 150 },
+            // Brother
+            { id: 'brother_tn3390', name: 'Brother TN-3390 (Black)', type: 'black', pageYield: 12000, avgPrice: 4500, compatiblePrinters: ['Brother HL-5240', 'Brother HL L5100dn'], minStock: 1, replacementDays: 150 },
+            // Epson L550 (СНПЧ - чернила)
+            { id: 'epson_l550_bk', name: 'Epson T6641 (Black)', type: 'black', pageYield: 6500, avgPrice: 500, compatiblePrinters: ['Epson L550'], minStock: 2, replacementDays: 180 },
         ];
 
         // Цвета картриджей для UI
@@ -2382,7 +2392,9 @@
             const criticalItems = useMemo(() => {
                 return cartridgeModels.filter(m => {
                     const stock = stockByModel[m.id];
-                    return !stock || stock.quantity <= (stock.minQuantity || 2);
+                    const currentQty = stock?.quantity || 0;
+                    const minQty = m.minStock || 2; // Используем minStock из модели картриджа
+                    return currentQty <= minQty;
                 });
             }, [cartridgeModels, stockByModel]);
 
@@ -2436,6 +2448,63 @@
                     return { printer, compatible, stockInfo, totalStock, hasLow, hasEmpty, replacements };
                 });
             }, [printers, cartridgeModels, stockByModel, cartridgeHistory]);
+
+            // Прогнозирование замен картриджей
+            const forecastData = useMemo(() => {
+                const forecasts = [];
+                const today = new Date();
+
+                printers.forEach(printer => {
+                    // Находим совместимые картриджи
+                    const compatible = cartridgeModels.filter(m =>
+                        m.compatiblePrinters.some(p =>
+                            printer.name.toLowerCase().includes(p.toLowerCase()) ||
+                            p.toLowerCase().includes(printer.name.toLowerCase().split(' ').slice(0, 3).join(' '))
+                        )
+                    );
+
+                    compatible.forEach(model => {
+                        // Находим последнюю замену этого картриджа на этом принтере
+                        const lastReplacement = cartridgeHistory
+                            .filter(h => h.printerId === printer.id && h.cartridgeModelId === model.id)
+                            .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+
+                        if (lastReplacement) {
+                            const lastDate = new Date(lastReplacement.date);
+                            const replacementDays = model.replacementDays || 90;
+                            const nextDate = new Date(lastDate);
+                            nextDate.setDate(nextDate.getDate() + replacementDays);
+
+                            const daysUntilReplacement = Math.ceil((nextDate - today) / (1000 * 60 * 60 * 24));
+                            const stock = stockByModel[model.id];
+                            const currentStock = stock?.quantity || 0;
+
+                            forecasts.push({
+                                printer,
+                                model,
+                                lastReplacement: lastDate,
+                                nextReplacement: nextDate,
+                                daysUntilReplacement,
+                                currentStock,
+                                isOverdue: daysUntilReplacement < 0,
+                                isUrgent: daysUntilReplacement >= 0 && daysUntilReplacement <= 14,
+                                isWarning: daysUntilReplacement > 14 && daysUntilReplacement <= 30
+                            });
+                        }
+                    });
+                });
+
+                // Сортируем: просроченные -> срочные -> предупреждения -> остальные
+                return forecasts.sort((a, b) => {
+                    if (a.isOverdue && !b.isOverdue) return -1;
+                    if (!a.isOverdue && b.isOverdue) return 1;
+                    if (a.isUrgent && !b.isUrgent) return -1;
+                    if (!a.isUrgent && b.isUrgent) return 1;
+                    if (a.isWarning && !b.isWarning) return -1;
+                    if (!a.isWarning && b.isWarning) return 1;
+                    return a.daysUntilReplacement - b.daysUntilReplacement;
+                });
+            }, [printers, cartridgeModels, cartridgeHistory, stockByModel]);
 
             // Ранний выход если модальное окно закрыто (после всех хуков!)
             if (!isOpen) return null;
@@ -2572,9 +2641,10 @@
                 const items = criticalItems.map(m => {
                     const stock = stockByModel[m.id];
                     const currentQty = stock?.quantity || 0;
-                    const minQty = stock?.minQuantity || 2;
+                    const minQty = m.minStock || 2; // Используем minStock из модели картриджа
+                    // Заказываем в 2 раза больше минимума, чтобы создать запас
                     const orderQty = Math.max(minQty * 2 - currentQty, minQty);
-                    return { model: m, currentQty, orderQty, include: true };
+                    return { model: m, currentQty, minQty, orderQty, include: true };
                 }).filter(i => i.orderQty > 0);
                 setPurchaseOrder(items);
                 setShowPurchaseEditor(true);
@@ -2608,7 +2678,7 @@
                 printWindow.document.write('</style></head><body>');
 
                 printWindow.document.write('<div class="header"><h1>🖨️ ЗАЯВКА НА ЗАКУПКУ КАРТРИДЖЕЙ</h1><h2>ГКОУ СКОШИ №102 • ' + date + '</h2></div>');
-                printWindow.document.write('<table><thead><tr><th>№</th><th>Наименование картриджа</th><th>Цвет</th><th>На складе</th><th>Заказать</th></tr></thead><tbody>');
+                printWindow.document.write('<table><thead><tr><th>№</th><th>Наименование картриджа</th><th>Цвет</th><th>На складе</th><th>Мин. уровень</th><th>Заказать</th></tr></thead><tbody>');
 
                 itemsToOrder.forEach((item, idx) => {
                     const colorInfo = cartridgeColors[item.model.type];
@@ -2617,6 +2687,7 @@
                     printWindow.document.write('<td><strong>' + item.model.name + '</strong></td>');
                     printWindow.document.write('<td><span class="color-badge color-' + item.model.type + '">' + colorInfo.name + '</span></td>');
                     printWindow.document.write('<td style="text-align:center">' + item.currentQty + ' шт.</td>');
+                    printWindow.document.write('<td style="text-align:center;color:#6b7280">' + item.minQty + ' шт.</td>');
                     printWindow.document.write('<td style="text-align:center;font-weight:bold;color:#dc2626">' + item.orderQty + ' шт.</td>');
                     printWindow.document.write('</tr>');
                 });
@@ -2646,6 +2717,7 @@
                         <div className="flex gap-1 p-1 bg-gray-100 rounded-lg">
                             {[
                                 { id: 'stock', label: '📦 Склад', badge: criticalItems.length },
+                                { id: 'forecast', label: '🔮 Прогноз', badge: forecastData.filter(f => f.isOverdue || f.isUrgent).length },
                                 { id: 'printers', label: '🖨️ Принтеры', badge: printers.length },
                                 { id: 'history', label: '📋 История', badge: cartridgeHistory.length },
                                 { id: 'stats', label: '📊 Статистика' },
@@ -2663,7 +2735,7 @@
                                     {t.label}
                                     {t.badge > 0 && (
                                         <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                                            t.id === 'stock' ? 'bg-red-100 text-red-600' : 'bg-gray-200 text-gray-600'
+                                            t.id === 'stock' || t.id === 'forecast' ? 'bg-red-100 text-red-600' : 'bg-gray-200 text-gray-600'
                                         }`}>{t.badge}</span>
                                     )}
                                 </button>
@@ -2723,7 +2795,7 @@
                                         .map(model => {
                                             const stock = stockByModel[model.id];
                                             const qty = stock?.quantity || 0;
-                                            const minQty = stock?.minQuantity || 2;
+                                            const minQty = model.minStock || 2; // Используем minStock из модели
                                             const status = qty === 0 ? 'empty' : qty <= minQty ? 'low' : 'ok';
                                             const colorInfo = cartridgeColors[model.type];
 
@@ -2755,6 +2827,95 @@
                                             );
                                         })}
                                 </div>
+                            </div>
+                        )}
+
+                        {/* Вкладка: Прогноз */}
+                        {tab === 'forecast' && (
+                            <div className="space-y-4">
+                                <div className="text-sm text-gray-500 mb-3">
+                                    Прогнозируемых замен: {forecastData.length} •
+                                    <span className="text-red-600 font-semibold ml-2">Просрочено: {forecastData.filter(f => f.isOverdue).length}</span> •
+                                    <span className="text-orange-600 font-semibold ml-2">Срочно (≤14 дн): {forecastData.filter(f => f.isUrgent).length}</span>
+                                </div>
+
+                                {forecastData.length === 0 ? (
+                                    <div className="text-center py-12 text-gray-400">
+                                        <div className="text-5xl mb-3">🔮</div>
+                                        <div className="text-lg font-medium">Нет данных для прогнозирования</div>
+                                        <div className="text-sm mt-2">Зарегистрируйте замены картриджей для построения прогноза</div>
+                                    </div>
+                                ) : (
+                                    <div className="max-h-96 overflow-y-auto space-y-3">
+                                        {forecastData.map((forecast, idx) => {
+                                            const colorInfo = cartridgeColors[forecast.model.type];
+                                            const bgClass = forecast.isOverdue ? 'bg-red-50 border-red-300' :
+                                                          forecast.isUrgent ? 'bg-orange-50 border-orange-300' :
+                                                          forecast.isWarning ? 'bg-yellow-50 border-yellow-300' :
+                                                          'bg-gray-50 border-gray-200';
+
+                                            return (
+                                                <div key={idx} className={`p-4 rounded-xl border-2 ${bgClass}`}>
+                                                    <div className="flex items-start gap-3">
+                                                        {/* Иконка принтера */}
+                                                        <div className="text-2xl">🖨️</div>
+
+                                                        {/* Основная информация */}
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="font-semibold text-sm text-gray-900">{forecast.printer.name}</div>
+                                                            <div className="text-xs text-gray-500 mt-0.5">
+                                                                {forecast.printer.location && <span className="mr-2">📍 {forecast.printer.location}</span>}
+                                                                {forecast.printer.responsible && <span>👤 {forecast.printer.responsible}</span>}
+                                                            </div>
+
+                                                            {/* Информация о картридже */}
+                                                            <div className="mt-2 flex items-center gap-2">
+                                                                <span className="w-6 h-6 rounded flex items-center justify-center font-bold text-xs"
+                                                                    style={{ backgroundColor: colorInfo.bg, color: colorInfo.color }}>
+                                                                    {colorInfo.short}
+                                                                </span>
+                                                                <span className="text-sm text-gray-700">{forecast.model.name}</span>
+                                                            </div>
+
+                                                            {/* Даты */}
+                                                            <div className="mt-2 text-xs text-gray-600 space-y-1">
+                                                                <div>Последняя замена: <span className="font-medium">{forecast.lastReplacement.toLocaleDateString('ru-RU')}</span></div>
+                                                                <div>Прогноз замены: <span className="font-medium">{forecast.nextReplacement.toLocaleDateString('ru-RU')}</span></div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Информация о сроках и остатках */}
+                                                        <div className="flex flex-col items-end gap-2">
+                                                            {/* Количество дней */}
+                                                            <div className={`px-3 py-2 rounded-lg text-center ${
+                                                                forecast.isOverdue ? 'bg-red-600 text-white' :
+                                                                forecast.isUrgent ? 'bg-orange-500 text-white' :
+                                                                forecast.isWarning ? 'bg-yellow-500 text-white' :
+                                                                'bg-blue-500 text-white'
+                                                            }`}>
+                                                                <div className="text-xl font-bold">
+                                                                    {forecast.isOverdue ? `−${Math.abs(forecast.daysUntilReplacement)}` : forecast.daysUntilReplacement}
+                                                                </div>
+                                                                <div className="text-[9px] leading-tight">
+                                                                    {forecast.isOverdue ? 'просрочено' : 'дней'}
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Остаток на складе */}
+                                                            <div className={`px-2 py-1 rounded text-xs font-semibold ${
+                                                                forecast.currentStock === 0 ? 'bg-red-100 text-red-700' :
+                                                                forecast.currentStock <= 2 ? 'bg-orange-100 text-orange-700' :
+                                                                'bg-green-100 text-green-700'
+                                                            }`}>
+                                                                Склад: {forecast.currentStock} шт
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </div>
                         )}
 
