@@ -2879,27 +2879,49 @@
                                         </select>
 
                                         {/* Выбор цветов для цветных принтеров */}
-                                        {addHistoryForm.cartridgeModelId && (
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-sm text-gray-600">Цвета:</span>
-                                                {Object.entries(cartridgeColors).map(([key, info]) => (
-                                                    <label key={key} className="flex items-center gap-1.5 cursor-pointer">
-                                                        <input type="checkbox"
-                                                            checked={addHistoryForm.colors.includes(key)}
-                                                            onChange={e => {
-                                                                if (e.target.checked) {
-                                                                    setAddHistoryForm(prev => ({ ...prev, colors: [...prev.colors, key] }));
-                                                                } else {
-                                                                    setAddHistoryForm(prev => ({ ...prev, colors: prev.colors.filter(c => c !== key) }));
-                                                                }
-                                                            }}
-                                                            className="rounded" />
-                                                        <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold"
-                                                            style={{ backgroundColor: info.bg, color: info.color }}>{info.short}</span>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                        )}
+                                        {addHistoryForm.cartridgeModelId && (() => {
+                                            const selectedModel = cartridgeModels.find(m => m.id === addHistoryForm.cartridgeModelId);
+                                            const isMonochrome = selectedModel?.type === 'black';
+
+                                            // Автоматически устанавливаем черный цвет для монохромных картриджей
+                                            if (isMonochrome && !addHistoryForm.colors.includes('K')) {
+                                                setTimeout(() => setAddHistoryForm(prev => ({ ...prev, colors: ['K'] })), 0);
+                                            }
+
+                                            // Для монохромных картриджей не показываем выбор цвета
+                                            if (isMonochrome) {
+                                                return (
+                                                    <div className="flex items-center gap-3 bg-gray-100 px-3 py-2 rounded-lg">
+                                                        <span className="text-sm text-gray-600">Цвет:</span>
+                                                        <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold bg-gray-800 text-white">K</span>
+                                                        <span className="text-xs text-gray-500">(Монохромный картридж)</span>
+                                                    </div>
+                                                );
+                                            }
+
+                                            // Для цветных картриджей показываем полный выбор
+                                            return (
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-sm text-gray-600">Цвета:</span>
+                                                    {Object.entries(cartridgeColors).map(([key, info]) => (
+                                                        <label key={key} className="flex items-center gap-1.5 cursor-pointer">
+                                                            <input type="checkbox"
+                                                                checked={addHistoryForm.colors.includes(key)}
+                                                                onChange={e => {
+                                                                    if (e.target.checked) {
+                                                                        setAddHistoryForm(prev => ({ ...prev, colors: [...prev.colors, key] }));
+                                                                    } else {
+                                                                        setAddHistoryForm(prev => ({ ...prev, colors: prev.colors.filter(c => c !== key) }));
+                                                                    }
+                                                                }}
+                                                                className="rounded" />
+                                                            <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold"
+                                                                style={{ backgroundColor: info.bg, color: info.color }}>{info.short}</span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            );
+                                        })()}
 
                                         <input type="text" value={addHistoryForm.notes} onChange={e => setAddHistoryForm(prev => ({ ...prev, notes: e.target.value }))}
                                             placeholder="Примечание (необязательно)" className="w-full px-3 py-2 border rounded-lg text-sm" />
@@ -4313,7 +4335,7 @@
 
                     catItems.sort((a, b) => (a.invNumber || '').localeCompare(b.invNumber || '')).forEach((item, idx) => {
                         const location = [item.building, item.floor ? 'эт.' + item.floor : '', item.location].filter(Boolean).join(', ') || '-';
-                        const status = item.writeOff ? '📝 Списано' : item.checked ? '✓ Проверено' : '⏳ Ожидает';
+                        const status = item.writeOff ? '📝 Списание' : item.checked ? '✓ Проверено' : '⏳ Ожидает';
                         const statusClass = item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending';
                         const notes = (item.inventoryNote || '').trim() || '-';
                         sectionsHtml += '<tr><td>' + (idx + 1) + '</td><td class="inv-number">' + (item.invNumber || '-') + '</td><td>' + (item.name || '-') + '</td><td class="location">' + location + '</td><td>' + (item.responsible || '-') + '</td><td class="notes">' + notes + '</td><td class="' + statusClass + '">' + status + '</td></tr>';
@@ -4344,7 +4366,7 @@
                 printWindow.document.write('.status-writeoff{color:#e53e3e;font-weight:bold}');
                 printWindow.document.write('.status-pending{color:#d69e2e}');
                 printWindow.document.write('.footer{margin-top:20px;text-align:center;font-size:10px;color:#718096}');
-                printWindow.document.write('@media print{body{padding:10px}@page{margin:10mm;size:A4 landscape}}');
+                printWindow.document.write('@media print{body{padding:10px}@page{margin:10mm;size:A4 portrait}}');
                 printWindow.document.write('</style></head><body>');
 
                 printWindow.document.write('<div class="header"><h1>📋 ВЫБРАННОЕ ОБОРУДОВАНИЕ</h1><h2>ГКОУ СКОШИ №102</h2></div>');
