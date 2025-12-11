@@ -2395,65 +2395,6 @@
                 setShowAddModel(false);
             };
 
-            // Экспорт заявки на закупку
-            const handleExportPurchaseOrder = () => {
-                const itemsToOrder = criticalItems.map(m => {
-                    const stock = stockByModel[m.id];
-                    const currentQty = stock?.quantity || 0;
-                    const minQty = stock?.minQuantity || 2;
-                    const orderQty = Math.max(minQty * 2 - currentQty, minQty);
-                    return { model: m, currentQty, orderQty };
-                }).filter(i => i.orderQty > 0);
-
-                const totalCost = itemsToOrder.reduce((sum, i) => sum + (i.model.avgPrice * i.orderQty), 0);
-                const date = new Date().toLocaleDateString('ru-RU');
-
-                const printWindow = window.open('', '_blank');
-                printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>Заявка на закупку картриджей</title><style>');
-                printWindow.document.write('*{margin:0;padding:0;box-sizing:border-box}');
-                printWindow.document.write('body{font-family:"Segoe UI",Tahoma,sans-serif;padding:20px;color:#333;font-size:12px}');
-                printWindow.document.write('.header{text-align:center;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid #6366f1}');
-                printWindow.document.write('.header h1{font-size:18px;color:#4f46e5;margin-bottom:5px}');
-                printWindow.document.write('.header h2{font-size:14px;color:#6b7280;font-weight:normal}');
-                printWindow.document.write('table{width:100%;border-collapse:collapse;margin-bottom:20px}');
-                printWindow.document.write('th{background:#4f46e5;color:white;padding:10px;text-align:left;font-size:11px}');
-                printWindow.document.write('td{padding:10px;border:1px solid #e5e7eb}');
-                printWindow.document.write('tr:nth-child(even){background:#f9fafb}');
-                printWindow.document.write('.total{text-align:right;font-size:16px;font-weight:bold;color:#4f46e5;margin-top:20px}');
-                printWindow.document.write('.color-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}');
-                printWindow.document.write('.color-black{background:#1a1a1a;color:white}');
-                printWindow.document.write('.color-cyan{background:#0891b2;color:white}');
-                printWindow.document.write('.color-magenta{background:#be185d;color:white}');
-                printWindow.document.write('.color-yellow{background:#ca8a04;color:white}');
-                printWindow.document.write('.signatures{margin-top:40px;display:flex;justify-content:space-between}');
-                printWindow.document.write('.signature-line{width:200px;border-top:1px solid #333;padding-top:5px;font-size:11px;color:#6b7280}');
-                printWindow.document.write('@media print{body{padding:15px}@page{margin:15mm;size:A4}}');
-                printWindow.document.write('</style></head><body>');
-
-                printWindow.document.write('<div class="header"><h1>🖨️ ЗАЯВКА НА ЗАКУПКУ КАРТРИДЖЕЙ</h1><h2>ГКОУ СКОШИ №102 • ' + date + '</h2></div>');
-
-                printWindow.document.write('<table><thead><tr><th>№</th><th>Наименование картриджа</th><th>Цвет</th><th>На складе</th><th>Заказать</th><th>Цена (ориент.)</th><th>Сумма</th></tr></thead><tbody>');
-
-                itemsToOrder.forEach((item, idx) => {
-                    const colorInfo = cartridgeColors[item.model.type];
-                    printWindow.document.write('<tr>');
-                    printWindow.document.write('<td>' + (idx + 1) + '</td>');
-                    printWindow.document.write('<td><strong>' + item.model.name + '</strong></td>');
-                    printWindow.document.write('<td><span class="color-badge color-' + item.model.type + '">' + colorInfo.name + '</span></td>');
-                    printWindow.document.write('<td style="text-align:center">' + item.currentQty + ' шт.</td>');
-                    printWindow.document.write('<td style="text-align:center;font-weight:bold;color:#dc2626">' + item.orderQty + ' шт.</td>');
-                    printWindow.document.write('<td style="text-align:right">' + item.model.avgPrice.toLocaleString('ru-RU') + ' ₽</td>');
-                    printWindow.document.write('<td style="text-align:right;font-weight:bold">' + (item.model.avgPrice * item.orderQty).toLocaleString('ru-RU') + ' ₽</td>');
-                    printWindow.document.write('</tr>');
-                });
-
-                printWindow.document.write('</tbody></table>');
-                printWindow.document.write('<div class="total">ИТОГО: ' + totalCost.toLocaleString('ru-RU') + ' ₽</div>');
-                printWindow.document.write('<div class="signatures"><div class="signature-line">Составил: _______________</div><div class="signature-line">Утвердил: _______________</div></div>');
-                printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
-                printWindow.document.close();
-            };
-
             // Получение совместимых картриджей для принтера
             const getCompatibleCartridges = (printerName) => {
                 return cartridgeModels.filter(m =>
@@ -2510,7 +2451,7 @@
                                         <button onClick={() => setShowAddStock(true)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">
                                             ➕ Приход
                                         </button>
-                                        <button onClick={handleExportPurchaseOrder} disabled={criticalItems.length === 0} className={`px-4 py-2 rounded-lg text-sm font-medium ${criticalItems.length > 0 ? 'bg-purple-600 text-white hover:bg-purple-700' : 'bg-gray-200 text-gray-400'}`}>
+                                        <button onClick={openPurchaseEditor} disabled={criticalItems.length === 0} className={`px-4 py-2 rounded-lg text-sm font-medium ${criticalItems.length > 0 ? 'bg-purple-600 text-white hover:bg-purple-700' : 'bg-gray-200 text-gray-400'}`}>
                                             📄 Заявка
                                         </button>
                                     </div>
@@ -2695,31 +2636,79 @@
                                         </div>
                                     ) : filteredHistory.map(h => {
                                         const model = cartridgeModels.find(m => m.id === h.cartridgeModelId);
+                                        const isEditing = editingHistoryId === h.id;
                                         return (
                                             <div key={h.id} className="p-3 bg-gray-50 rounded-xl border border-gray-200">
-                                                <div className="flex items-start gap-3">
-                                                    <div className="text-center">
-                                                        <div className="text-xs text-gray-500">{new Date(h.date).toLocaleDateString('ru-RU')}</div>
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="font-medium text-sm text-gray-900">{model?.name || 'Неизвестный картридж'}</div>
-                                                        <div className="text-xs text-gray-500 mt-0.5">
-                                                            {h.printerName && <span className="mr-2">🖨️ {h.printerName}</span>}
-                                                            {h.location && <span className="mr-2">📍 {h.location}</span>}
-                                                            {h.responsible && <span>👤 {h.responsible}</span>}
+                                                {isEditing ? (
+                                                    <div className="space-y-3">
+                                                        <div className="grid grid-cols-2 gap-2">
+                                                            <input type="date" value={editHistoryForm.date}
+                                                                onChange={e => setEditHistoryForm(prev => ({ ...prev, date: e.target.value }))}
+                                                                className="px-2 py-1 border rounded text-xs" />
+                                                            <select value={editHistoryForm.printerId}
+                                                                onChange={e => {
+                                                                    const printer = printers.find(p => p.id === e.target.value);
+                                                                    setEditHistoryForm(prev => ({ ...prev, printerId: e.target.value, printerName: printer?.name || '' }));
+                                                                }}
+                                                                className="px-2 py-1 border rounded text-xs">
+                                                                <option value="">Выберите принтер...</option>
+                                                                {printers.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                                            </select>
+                                                            <input type="text" value={editHistoryForm.location}
+                                                                onChange={e => setEditHistoryForm(prev => ({ ...prev, location: e.target.value }))}
+                                                                placeholder="Кабинет" className="px-2 py-1 border rounded text-xs" />
+                                                            <input type="text" value={editHistoryForm.responsible}
+                                                                onChange={e => setEditHistoryForm(prev => ({ ...prev, responsible: e.target.value }))}
+                                                                placeholder="ФИО" className="px-2 py-1 border rounded text-xs" />
                                                         </div>
-                                                        {h.notes && <div className="text-xs text-gray-400 mt-1 italic">{h.notes}</div>}
+                                                        <select value={editHistoryForm.cartridgeModelId}
+                                                            onChange={e => setEditHistoryForm(prev => ({ ...prev, cartridgeModelId: e.target.value }))}
+                                                            className="w-full px-2 py-1 border rounded text-xs">
+                                                            <option value="">Выберите картридж...</option>
+                                                            {cartridgeModels.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                                                        </select>
+                                                        <input type="text" value={editHistoryForm.notes || ''}
+                                                            onChange={e => setEditHistoryForm(prev => ({ ...prev, notes: e.target.value }))}
+                                                            placeholder="Примечание" className="w-full px-2 py-1 border rounded text-xs" />
+                                                        <div className="flex gap-2">
+                                                            <button onClick={saveEditHistory} className="flex-1 py-1.5 bg-green-600 text-white rounded text-xs font-medium hover:bg-green-700">
+                                                                ✓ Сохранить
+                                                            </button>
+                                                            <button onClick={() => { setEditingHistoryId(null); setEditHistoryForm(null); }}
+                                                                className="flex-1 py-1.5 bg-gray-300 text-gray-700 rounded text-xs font-medium hover:bg-gray-400">
+                                                                ✕ Отмена
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex gap-1">
-                                                        {h.colors?.map(c => {
-                                                            const info = cartridgeColors[c];
-                                                            return (
-                                                                <span key={c} className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold"
-                                                                    style={{ backgroundColor: info?.bg, color: info?.color }}>{info?.short}</span>
-                                                            );
-                                                        })}
+                                                ) : (
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="text-center">
+                                                            <div className="text-xs text-gray-500">{new Date(h.date).toLocaleDateString('ru-RU')}</div>
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="font-medium text-sm text-gray-900">{model?.name || 'Неизвестный картридж'}</div>
+                                                            <div className="text-xs text-gray-500 mt-0.5">
+                                                                {h.printerName && <span className="mr-2">🖨️ {h.printerName}</span>}
+                                                                {h.location && <span className="mr-2">📍 {h.location}</span>}
+                                                                {h.responsible && <span>👤 {h.responsible}</span>}
+                                                            </div>
+                                                            {h.notes && <div className="text-xs text-gray-400 mt-1 italic">{h.notes}</div>}
+                                                        </div>
+                                                        <div className="flex gap-1">
+                                                            {h.colors?.map(c => {
+                                                                const info = cartridgeColors[c];
+                                                                return (
+                                                                    <span key={c} className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold"
+                                                                        style={{ backgroundColor: info?.bg, color: info?.color }}>{info?.short}</span>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                        <div className="flex gap-1">
+                                                            <button onClick={() => startEditHistory(h)} className="p-1.5 text-blue-600 hover:bg-blue-100 rounded" title="Редактировать">✏️</button>
+                                                            <button onClick={() => deleteHistoryEntry(h.id)} className="p-1.5 text-red-600 hover:bg-red-100 rounded" title="Удалить">🗑️</button>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                )}
                                             </div>
                                         );
                                     })}
@@ -2791,6 +2780,85 @@
                             </div>
                         )}
 
+                        {/* Вкладка: Принтеры/МФУ */}
+                        {tab === 'printers' && (
+                            <div className="space-y-4">
+                                <div className="text-sm text-gray-500 mb-3">
+                                    Принтеров всего: {printers.length} • Замен выполнено: {cartridgeHistory.length}
+                                </div>
+                                <div className="max-h-96 overflow-y-auto space-y-3">
+                                    {printerCartridgeStats.length === 0 ? (
+                                        <div className="text-center py-8 text-gray-400">
+                                            <div className="text-4xl mb-2">🖨️</div>
+                                            <div>Нет данных о принтерах</div>
+                                        </div>
+                                    ) : printerCartridgeStats.map(stat => (
+                                        <div key={stat.printer.id} className={`p-4 rounded-xl border-2 ${stat.hasEmpty ? 'bg-red-50 border-red-300' : stat.hasLow ? 'bg-yellow-50 border-yellow-300' : 'bg-green-50 border-green-200'}`}>
+                                            <div className="flex items-start gap-3">
+                                                <div className="text-3xl">🖨️</div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-semibold text-sm text-gray-900">{stat.printer.name}</div>
+                                                    <div className="text-xs text-gray-500 mt-0.5">
+                                                        {stat.printer.invNumber && <span className="mr-2">📋 {stat.printer.invNumber}</span>}
+                                                        {stat.printer.location && <span className="mr-2">📍 {stat.printer.location}</span>}
+                                                        {stat.printer.responsible && <span>👤 {stat.printer.responsible}</span>}
+                                                    </div>
+
+                                                    {/* Информация о картриджах */}
+                                                    <div className="mt-3 space-y-2">
+                                                        <div className="text-xs font-semibold text-gray-700">Совместимые картриджи:</div>
+                                                        {stat.compatible.length === 0 ? (
+                                                            <div className="text-xs text-gray-400 italic">Картриджи не найдены</div>
+                                                        ) : (
+                                                            <div className="space-y-1.5">
+                                                                {stat.stockInfo.map(info => {
+                                                                    const colorInfo = cartridgeColors[info.model.type];
+                                                                    return (
+                                                                        <div key={info.model.id} className="flex items-center gap-2 text-xs">
+                                                                            <span className="w-6 h-6 rounded flex items-center justify-center font-bold text-xs"
+                                                                                style={{ backgroundColor: colorInfo.bg, color: colorInfo.color }}>
+                                                                                {colorInfo.short}
+                                                                            </span>
+                                                                            <span className="flex-1 text-gray-700">{info.model.name}</span>
+                                                                            <span className={`px-2 py-0.5 rounded-full font-semibold ${
+                                                                                info.quantity === 0 ? 'bg-red-100 text-red-700' :
+                                                                                info.quantity <= 2 ? 'bg-yellow-100 text-yellow-700' :
+                                                                                'bg-green-100 text-green-700'
+                                                                            }`}>
+                                                                                {info.quantity} шт
+                                                                            </span>
+                                                                        </div>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                {/* Счётчик замен */}
+                                                <div className="flex flex-col items-center gap-1">
+                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                                                        stat.hasEmpty ? 'bg-red-500' :
+                                                        stat.hasLow ? 'bg-yellow-500' :
+                                                        'bg-green-500'
+                                                    }`}>
+                                                        <div className="text-center text-white">
+                                                            <div className="text-2xl font-bold">{stat.totalStock}</div>
+                                                            <div className="text-[8px] leading-none">картр.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-xs text-gray-500 text-center mt-1">
+                                                        <div className="font-semibold">{stat.replacements}</div>
+                                                        <div className="text-[10px]">замен</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Вкладка: Справочник */}
                         {tab === 'catalog' && (
                             <div className="space-y-4">
@@ -2832,20 +2900,60 @@
                                 <div className="max-h-72 overflow-y-auto space-y-2">
                                     {cartridgeModels.map(model => {
                                         const colorInfo = cartridgeColors[model.type];
+                                        const isEditing = editingModelId === model.id;
                                         return (
                                             <div key={model.id} className="p-3 bg-gray-50 rounded-xl border border-gray-200">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
-                                                        style={{ backgroundColor: colorInfo.bg, color: colorInfo.color }}>
-                                                        {colorInfo.short}
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="font-medium text-sm">{model.name}</div>
-                                                        <div className="text-xs text-gray-500">
-                                                            ~{model.pageYield.toLocaleString()} стр. • ~{model.avgPrice.toLocaleString()} ₽
+                                                {isEditing ? (
+                                                    <div className="space-y-3">
+                                                        <div className="grid grid-cols-2 gap-2">
+                                                            <input type="text" value={editModelForm.name}
+                                                                onChange={e => setEditModelForm(prev => ({ ...prev, name: e.target.value }))}
+                                                                placeholder="Название" className="px-2 py-1 border rounded text-xs" />
+                                                            <select value={editModelForm.type}
+                                                                onChange={e => setEditModelForm(prev => ({ ...prev, type: e.target.value }))}
+                                                                className="px-2 py-1 border rounded text-xs">
+                                                                {Object.entries(cartridgeColors).map(([key, info]) => (
+                                                                    <option key={key} value={key}>{info.name}</option>
+                                                                ))}
+                                                            </select>
+                                                            <input type="number" value={editModelForm.pageYield}
+                                                                onChange={e => setEditModelForm(prev => ({ ...prev, pageYield: e.target.value }))}
+                                                                placeholder="Ресурс (страниц)" className="px-2 py-1 border rounded text-xs" />
+                                                            <input type="number" value={editModelForm.avgPrice}
+                                                                onChange={e => setEditModelForm(prev => ({ ...prev, avgPrice: e.target.value }))}
+                                                                placeholder="Цена (руб)" className="px-2 py-1 border rounded text-xs" />
+                                                        </div>
+                                                        <input type="text" value={editModelForm.compatiblePrinters}
+                                                            onChange={e => setEditModelForm(prev => ({ ...prev, compatiblePrinters: e.target.value }))}
+                                                            placeholder="Совместимые принтеры (через запятую)" className="w-full px-2 py-1 border rounded text-xs" />
+                                                        <div className="flex gap-2">
+                                                            <button onClick={saveEditModel} className="flex-1 py-1.5 bg-green-600 text-white rounded text-xs font-medium hover:bg-green-700">
+                                                                ✓ Сохранить
+                                                            </button>
+                                                            <button onClick={() => { setEditingModelId(null); setEditModelForm(null); }}
+                                                                className="flex-1 py-1.5 bg-gray-300 text-gray-700 rounded text-xs font-medium hover:bg-gray-400">
+                                                                ✕ Отмена
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+                                                            style={{ backgroundColor: colorInfo.bg, color: colorInfo.color }}>
+                                                            {colorInfo.short}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="font-medium text-sm">{model.name}</div>
+                                                            <div className="text-xs text-gray-500">
+                                                                ~{model.pageYield.toLocaleString()} стр. • ~{model.avgPrice.toLocaleString()} ₽
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex gap-1">
+                                                            <button onClick={() => startEditModel(model)} className="p-1.5 text-blue-600 hover:bg-blue-100 rounded" title="Редактировать">✏️</button>
+                                                            <button onClick={() => deleteModel(model.id)} className="p-1.5 text-red-600 hover:bg-red-100 rounded" title="Удалить">🗑️</button>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         );
                                     })}
@@ -2854,7 +2962,76 @@
                         )}
                     </div>
                 </Modal>
-            );
+
+                {/* Модальное окно редактора заявки на закупку */}
+                {showPurchaseEditor && (
+                    <Modal isOpen={showPurchaseEditor} onClose={() => setShowPurchaseEditor(false)} title="📝 Редактор заявки на закупку" size="lg">
+                        <div className="space-y-4">
+                            <div className="text-sm text-gray-600">
+                                Выберите позиции для заказа и укажите необходимое количество. Вы можете исключить ненужные позиции.
+                            </div>
+
+                            <div className="max-h-96 overflow-y-auto space-y-2">
+                                {purchaseOrder.map((item, idx) => {
+                                    const colorInfo = cartridgeColors[item.model.type];
+                                    return (
+                                        <div key={idx} className="p-3 bg-gray-50 rounded-xl border border-gray-200">
+                                            <div className="flex items-center gap-3">
+                                                <input type="checkbox" checked={item.include}
+                                                    onChange={e => setPurchaseOrder(prev => prev.map((p, i) => i === idx ? { ...p, include: e.target.checked } : p))}
+                                                    className="w-5 h-5 rounded" />
+                                                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+                                                    style={{ backgroundColor: colorInfo.bg, color: colorInfo.color }}>
+                                                    {colorInfo.short}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-medium text-sm">{item.model.name}</div>
+                                                    <div className="text-xs text-gray-500">
+                                                        На складе: {item.currentQty} шт • Цена: {item.model.avgPrice.toLocaleString()} ₽
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs text-gray-500">Заказать:</span>
+                                                    <input type="number" min="1" value={item.orderQty}
+                                                        onChange={e => setPurchaseOrder(prev => prev.map((p, i) => i === idx ? { ...p, orderQty: parseInt(e.target.value) || 1 } : p))}
+                                                        className="w-16 px-2 py-1 border rounded text-sm text-center" />
+                                                    <span className="text-xs text-gray-500">шт</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="p-4 bg-blue-50 rounded-xl">
+                                <div className="flex justify-between items-center">
+                                    <div className="text-sm text-gray-600">
+                                        Выбрано позиций: <strong>{purchaseOrder.filter(i => i.include).length}</strong>
+                                    </div>
+                                    <div className="text-lg font-bold text-blue-600">
+                                        Итого: {purchaseOrder.filter(i => i.include).reduce((sum, i) => sum + (i.model.avgPrice * i.orderQty), 0).toLocaleString()} ₽
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button onClick={printPurchaseOrder} disabled={purchaseOrder.filter(i => i.include).length === 0}
+                                    className={`flex-1 py-3 rounded-lg text-sm font-medium ${
+                                        purchaseOrder.filter(i => i.include).length > 0
+                                            ? 'bg-purple-600 text-white hover:bg-purple-700'
+                                            : 'bg-gray-200 text-gray-400'
+                                    }`}>
+                                    🖨️ Печать заявки
+                                </button>
+                                <button onClick={() => setShowPurchaseEditor(false)} className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300">
+                                    Отмена
+                                </button>
+                            </div>
+                        </div>
+                    </Modal>
+                )}
+            </React.Fragment>
+        );
         };
 
         const StatsModal = ({ isOpen, onClose, stats, equipment }) => {
