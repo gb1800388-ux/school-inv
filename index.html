@@ -1637,8 +1637,8 @@
 
         const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
             if (!isOpen) return null;
-            const sizeClass = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-xl' }[size];
-            
+            const sizeClass = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-2xl', '2xl': 'max-w-4xl' }[size];
+
             return (
                 <div className="modal-base modal-z-600" onClick={onClose}>
                     <div className={`modal-animate bg-white rounded-xl shadow-xl w-full ${sizeClass}`} onClick={e => e.stopPropagation()}>
@@ -1648,7 +1648,7 @@
                                 <Icons.X />
                             </button>
                         </div>
-                        <div className="p-4 max-h-[70vh] overflow-y-auto custom-scroll">{children}</div>
+                        <div className="p-4 max-h-[82vh] overflow-y-auto custom-scroll">{children}</div>
                     </div>
                 </div>
             );
@@ -2351,6 +2351,9 @@
             const [editModelForm, setEditModelForm] = useState(null);
             const [showPurchaseEditor, setShowPurchaseEditor] = useState(false);
             const [purchaseOrder, setPurchaseOrder] = useState([]);
+            const [showManualMapping, setShowManualMapping] = useState(false);
+            const [mappingPrinter, setMappingPrinter] = useState(null);
+            const [selectedCartridgeForMapping, setSelectedCartridgeForMapping] = useState('');
 
             // Получаем принтеры из оборудования
             const printers = useMemo(() =>
@@ -2431,12 +2434,8 @@
             // Статистика картриджей по принтерам
             const printerCartridgeStats = useMemo(() => {
                 return printers.map(printer => {
-                    const compatible = cartridgeModels.filter(m =>
-                        m.compatiblePrinters.some(p =>
-                            printer.name.toLowerCase().includes(p.toLowerCase()) ||
-                            p.toLowerCase().includes(printer.name.toLowerCase().split(' ').slice(0, 3).join(' '))
-                        )
-                    );
+                    // Используем getCompatibleCartridges для получения всех совместимых картриджей (авто + ручные)
+                    const compatible = getCompatibleCartridges(printer.name, printer.id);
                     const stockInfo = compatible.map(m => {
                         const stock = stockByModel[m.id];
                         return { model: m, quantity: stock?.quantity || 0 };
@@ -2445,9 +2444,13 @@
                     const hasLow = stockInfo.some(s => s.quantity <= 2);
                     const hasEmpty = stockInfo.some(s => s.quantity === 0);
                     const replacements = cartridgeHistory.filter(h => h.printerId === printer.id).length;
-                    return { printer, compatible, stockInfo, totalStock, hasLow, hasEmpty, replacements };
+
+                    // Определяем есть ли ручные привязки
+                    const hasManualMappings = manualCartridgeMapping[printer.id]?.length > 0;
+
+                    return { printer, compatible, stockInfo, totalStock, hasLow, hasEmpty, replacements, hasManualMappings };
                 });
-            }, [printers, cartridgeModels, stockByModel, cartridgeHistory]);
+            }, [printers, cartridgeModels, stockByModel, cartridgeHistory, manualCartridgeMapping]);
 
             // Прогнозирование замен картриджей
             const forecastData = useMemo(() => {
@@ -2455,13 +2458,8 @@
                 const today = new Date();
 
                 printers.forEach(printer => {
-                    // Находим совместимые картриджи
-                    const compatible = cartridgeModels.filter(m =>
-                        m.compatiblePrinters.some(p =>
-                            printer.name.toLowerCase().includes(p.toLowerCase()) ||
-                            p.toLowerCase().includes(printer.name.toLowerCase().split(' ').slice(0, 3).join(' '))
-                        )
-                    );
+                    // Используем getCompatibleCartridges для получения всех совместимых картриджей (авто + ручные)
+                    const compatible = getCompatibleCartridges(printer.name, printer.id);
 
                     compatible.forEach(model => {
                         // Находим последнюю замену этого картриджа на этом принтере
@@ -2504,7 +2502,7 @@
                     if (!a.isWarning && b.isWarning) return 1;
                     return a.daysUntilReplacement - b.daysUntilReplacement;
                 });
-            }, [printers, cartridgeModels, cartridgeHistory, stockByModel]);
+            }, [printers, cartridgeModels, cartridgeHistory, stockByModel, manualCartridgeMapping]);
 
             // Ранний выход если модальное окно закрыто (после всех хуков!)
             if (!isOpen) return null;
@@ -2700,13 +2698,85 @@
             };
 
             // Получение совместимых картриджей для принтера
-            const getCompatibleCartridges = (printerName) => {
-                return cartridgeModels.filter(m =>
+            const getCompatibleCartridges = (printerName, printerId = null) => {
+                // Автоматически найденные картриджи по названию принтера
+                const autoCompatible = cartridgeModels.filter(m =>
                     m.compatiblePrinters.some(p =>
                         printerName.toLowerCase().includes(p.toLowerCase()) ||
                         p.toLowerCase().includes(printerName.toLowerCase().split(' ').slice(0, 3).join(' '))
                     )
                 );
+
+                // Если есть printerId, добавляем вручную привязанные картриджи
+                if (printerId && manualCartridgeMapping[printerId]) {
+                    const manualIds = manualCartridgeMapping[printerId];
+                    const manualCartridges = cartridgeModels.filter(m => manualIds.includes(m.id));
+
+                    // Объединяем автоматические и ручные, убирая дубликаты
+                    const combined = [...autoCompatible];
+                    manualCartridges.forEach(mc => {
+                        if (!combined.find(c => c.id === mc.id)) {
+                            combined.push(mc);
+                        }
+                    });
+                    return combined;
+                }
+
+                return autoCompatible;
+            };
+
+            // Открыть модальное окно для добавления картриджа к принтеру
+            const openManualMapping = (printer) => {
+                setMappingPrinter(printer);
+                setSelectedCartridgeForMapping('');
+                setShowManualMapping(true);
+            };
+
+            // Добавить ручную привязку картриджа к принтеру
+            const addManualMapping = () => {
+                if (!selectedCartridgeForMapping || !mappingPrinter) return;
+
+                setManualCartridgeMapping(prev => {
+                    const printerId = mappingPrinter.id;
+                    const existing = prev[printerId] || [];
+
+                    // Не добавляем если уже есть
+                    if (existing.includes(selectedCartridgeForMapping)) {
+                        showToast('⚠️ Этот картридж уже привязан');
+                        return prev;
+                    }
+
+                    return {
+                        ...prev,
+                        [printerId]: [...existing, selectedCartridgeForMapping]
+                    };
+                });
+
+                showToast('✅ Картридж добавлен к принтеру');
+                setSelectedCartridgeForMapping('');
+                setShowManualMapping(false);
+            };
+
+            // Удалить ручную привязку картриджа от принтера
+            const removeManualMapping = (printerId, cartridgeId) => {
+                setManualCartridgeMapping(prev => {
+                    const existing = prev[printerId] || [];
+                    const updated = existing.filter(id => id !== cartridgeId);
+
+                    if (updated.length === 0) {
+                        // Удаляем ключ если нет привязок
+                        const newMapping = { ...prev };
+                        delete newMapping[printerId];
+                        return newMapping;
+                    }
+
+                    return {
+                        ...prev,
+                        [printerId]: updated
+                    };
+                });
+
+                showToast('🗑️ Картридж удален');
             };
 
             return (
@@ -3273,13 +3343,25 @@
 
                                                     {/* Информация о картриджах */}
                                                     <div className="mt-3 space-y-2">
-                                                        <div className="text-xs font-semibold text-gray-700">Совместимые картриджи:</div>
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="text-xs font-semibold text-gray-700">Совместимые картриджи:</div>
+                                                            <button
+                                                                onClick={() => openManualMapping(stat.printer)}
+                                                                className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                                                                title="Добавить картридж вручную"
+                                                            >
+                                                                ➕ Добавить
+                                                            </button>
+                                                        </div>
                                                         {stat.compatible.length === 0 ? (
-                                                            <div className="text-xs text-gray-400 italic">Картриджи не найдены</div>
+                                                            <div className="text-xs text-gray-400 italic">
+                                                                Картриджи не найдены. Нажмите "Добавить" для ручной привязки.
+                                                            </div>
                                                         ) : (
                                                             <div className="space-y-1.5">
                                                                 {stat.stockInfo.map(info => {
                                                                     const colorInfo = cartridgeColors[info.model.type];
+                                                                    const isManual = manualCartridgeMapping[stat.printer.id]?.includes(info.model.id);
                                                                     return (
                                                                         <div key={info.model.id} className="flex items-center gap-2 text-xs">
                                                                             <span className="w-6 h-6 rounded flex items-center justify-center font-bold text-xs"
@@ -3287,6 +3369,11 @@
                                                                                 {colorInfo.short}
                                                                             </span>
                                                                             <span className="flex-1 text-gray-700">{info.model.name}</span>
+                                                                            {isManual && (
+                                                                                <span className="px-1.5 py-0.5 text-[10px] bg-purple-100 text-purple-700 rounded" title="Добавлено вручную">
+                                                                                    ручн.
+                                                                                </span>
+                                                                            )}
                                                                             <span className={`px-2 py-0.5 rounded-full font-semibold ${
                                                                                 info.quantity === 0 ? 'bg-red-100 text-red-700' :
                                                                                 info.quantity <= 2 ? 'bg-yellow-100 text-yellow-700' :
@@ -3294,6 +3381,15 @@
                                                                             }`}>
                                                                                 {info.quantity} шт
                                                                             </span>
+                                                                            {isManual && (
+                                                                                <button
+                                                                                    onClick={() => removeManualMapping(stat.printer.id, info.model.id)}
+                                                                                    className="p-1 text-red-600 hover:bg-red-100 rounded"
+                                                                                    title="Удалить привязку"
+                                                                                >
+                                                                                    ✕
+                                                                                </button>
+                                                                            )}
                                                                         </div>
                                                                     );
                                                                 })}
@@ -3491,6 +3587,87 @@
                                     🖨️ Печать заявки
                                 </button>
                                 <button onClick={() => setShowPurchaseEditor(false)} className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300">
+                                    Отмена
+                                </button>
+                            </div>
+                        </div>
+                    </Modal>
+                )}
+
+                {/* Модальное окно для добавления картриджа к принтеру */}
+                {showManualMapping && mappingPrinter && (
+                    <Modal isOpen={true} onClose={() => setShowManualMapping(false)} title={`Добавить картридж к ${mappingPrinter.name}`} size="md">
+                        <div className="space-y-4">
+                            <div className="text-sm text-gray-600">
+                                Выберите картридж из справочника для добавления к этому принтеру:
+                            </div>
+
+                            <select
+                                value={selectedCartridgeForMapping}
+                                onChange={e => setSelectedCartridgeForMapping(e.target.value)}
+                                className="w-full px-3 py-2 border rounded-lg text-sm"
+                            >
+                                <option value="">Выберите картридж...</option>
+                                {cartridgeModels
+                                    .filter(m => {
+                                        // Фильтруем уже добавленные картриджи
+                                        const existingCompatible = getCompatibleCartridges(mappingPrinter.name, mappingPrinter.id);
+                                        return !existingCompatible.find(c => c.id === m.id);
+                                    })
+                                    .map(m => (
+                                        <option key={m.id} value={m.id}>
+                                            {m.name} ({cartridgeColors[m.type]?.name})
+                                        </option>
+                                    ))
+                                }
+                            </select>
+
+                            {selectedCartridgeForMapping && (() => {
+                                const model = cartridgeModels.find(m => m.id === selectedCartridgeForMapping);
+                                if (!model) return null;
+                                const colorInfo = cartridgeColors[model.type];
+                                const stock = stockByModel[model.id];
+                                return (
+                                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold"
+                                                style={{ backgroundColor: colorInfo.bg, color: colorInfo.color }}>
+                                                {colorInfo.short}
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="font-medium text-sm">{model.name}</div>
+                                                <div className="text-xs text-gray-500">
+                                                    Ресурс: {model.pageYield.toLocaleString()} стр • Цена: {model.avgPrice.toLocaleString()} ₽
+                                                </div>
+                                            </div>
+                                            <div className={`px-2 py-1 rounded text-xs font-semibold ${
+                                                (stock?.quantity || 0) === 0 ? 'bg-red-100 text-red-700' :
+                                                (stock?.quantity || 0) <= 2 ? 'bg-yellow-100 text-yellow-700' :
+                                                'bg-green-100 text-green-700'
+                                            }`}>
+                                                {stock?.quantity || 0} шт
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={addManualMapping}
+                                    disabled={!selectedCartridgeForMapping}
+                                    className={`flex-1 py-2 rounded-lg text-sm font-medium ${
+                                        selectedCartridgeForMapping
+                                            ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                            : 'bg-gray-200 text-gray-400'
+                                    }`}
+                                >
+                                    ✅ Добавить
+                                </button>
+                                <button
+                                    onClick={() => setShowManualMapping(false)}
+                                    className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300"
+                                >
                                     Отмена
                                 </button>
                             </div>
@@ -4117,6 +4294,14 @@
                 } catch (e) { return []; }
             });
 
+            // Ручные привязки картриджей к принтерам: { printerId: [cartridgeModelIds] }
+            const [manualCartridgeMapping, setManualCartridgeMapping] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('inv_102_manual_cartridge_mapping');
+                    return saved ? JSON.parse(saved) : {};
+                } catch (e) { return {}; }
+            });
+
             const [cartridgesModal, setCartridgesModal] = useState({ open: false, tab: 'stock' });
             const [cartridgeReplaceModal, setCartridgeReplaceModal] = useState({ open: false, printer: null });
 
@@ -4158,6 +4343,7 @@
             useEffect(() => { localStorage.setItem('inv_102_cartridge_models', JSON.stringify(cartridgeModels)); }, [cartridgeModels]);
             useEffect(() => { localStorage.setItem('inv_102_cartridge_stock', JSON.stringify(cartridgeStock)); }, [cartridgeStock]);
             useEffect(() => { localStorage.setItem('inv_102_cartridge_history', JSON.stringify(cartridgeHistory)); }, [cartridgeHistory]);
+            useEffect(() => { localStorage.setItem('inv_102_manual_cartridge_mapping', JSON.stringify(manualCartridgeMapping)); }, [manualCartridgeMapping]);
 
             const addToHistory = useCallback((action, item, actionText) => {
                 setHistory(prev => [{
