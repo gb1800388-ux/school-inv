@@ -2329,7 +2329,6 @@
                 location: '',
                 responsible: '',
                 cartridgeModelId: '',
-                colors: ['black'],
                 notes: ''
             });
             const [printerSearch, setPrinterSearch] = useState('');
@@ -2411,10 +2410,8 @@
                     const month = h.date.substring(0, 7); // YYYY-MM
                     if (!stats[month]) stats[month] = { total: 0, byModel: {} };
                     stats[month].total++;
-                    h.colors?.forEach(color => {
-                        const key = `${h.cartridgeModelId}_${color}`;
-                        stats[month].byModel[key] = (stats[month].byModel[key] || 0) + 1;
-                    });
+                    const key = h.cartridgeModelId;
+                    stats[month].byModel[key] = (stats[month].byModel[key] || 0) + 1;
                 });
                 return Object.entries(stats).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 12);
             }, [cartridgeHistory]);
@@ -2480,32 +2477,23 @@
                     location: addHistoryForm.location,
                     responsible: addHistoryForm.responsible,
                     cartridgeModelId: addHistoryForm.cartridgeModelId,
-                    colors: addHistoryForm.colors,
                     notes: addHistoryForm.notes,
                     createdAt: new Date().toISOString()
                 };
                 setCartridgeHistory(prev => [newEntry, ...prev]);
 
-                // Списываем со склада (по 1 картриджу каждого выбранного цвета)
-                addHistoryForm.colors.forEach(color => {
-                    const modelForColor = cartridgeModels.find(m =>
-                        m.id === addHistoryForm.cartridgeModelId ||
-                        (m.id.startsWith(addHistoryForm.cartridgeModelId.split('_')[0]) && m.type === color)
-                    );
-                    if (modelForColor) {
-                        setCartridgeStock(prev => prev.map(s =>
-                            s.modelId === modelForColor.id && s.quantity > 0
-                                ? { ...s, quantity: s.quantity - 1, lastUpdated: new Date().toISOString() }
-                                : s
-                        ));
-                    }
-                });
+                // Списываем со склада 1 картридж выбранной модели
+                setCartridgeStock(prev => prev.map(s =>
+                    s.modelId === addHistoryForm.cartridgeModelId && s.quantity > 0
+                        ? { ...s, quantity: s.quantity - 1, lastUpdated: new Date().toISOString() }
+                        : s
+                ));
 
                 showToast('✅ Замена картриджа зарегистрирована');
                 setAddHistoryForm({
                     date: new Date().toISOString().split('T')[0],
                     printerId: '', printerName: '', location: '', responsible: '',
-                    cartridgeModelId: '', colors: ['black'], notes: ''
+                    cartridgeModelId: '', notes: ''
                 });
                 setShowAddHistory(false);
             };
@@ -2878,51 +2866,6 @@
                                             ))}
                                         </select>
 
-                                        {/* Выбор цветов для цветных принтеров */}
-                                        {addHistoryForm.cartridgeModelId && (() => {
-                                            const selectedModel = cartridgeModels.find(m => m.id === addHistoryForm.cartridgeModelId);
-                                            const isMonochrome = selectedModel?.type === 'black';
-
-                                            // Автоматически устанавливаем черный цвет для монохромных картриджей
-                                            if (isMonochrome && !addHistoryForm.colors.includes('K')) {
-                                                setTimeout(() => setAddHistoryForm(prev => ({ ...prev, colors: ['K'] })), 0);
-                                            }
-
-                                            // Для монохромных картриджей не показываем выбор цвета
-                                            if (isMonochrome) {
-                                                return (
-                                                    <div className="flex items-center gap-3 bg-gray-100 px-3 py-2 rounded-lg">
-                                                        <span className="text-sm text-gray-600">Цвет:</span>
-                                                        <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold bg-gray-800 text-white">K</span>
-                                                        <span className="text-xs text-gray-500">(Монохромный картридж)</span>
-                                                    </div>
-                                                );
-                                            }
-
-                                            // Для цветных картриджей показываем полный выбор
-                                            return (
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-sm text-gray-600">Цвета:</span>
-                                                    {Object.entries(cartridgeColors).map(([key, info]) => (
-                                                        <label key={key} className="flex items-center gap-1.5 cursor-pointer">
-                                                            <input type="checkbox"
-                                                                checked={addHistoryForm.colors.includes(key)}
-                                                                onChange={e => {
-                                                                    if (e.target.checked) {
-                                                                        setAddHistoryForm(prev => ({ ...prev, colors: [...prev.colors, key] }));
-                                                                    } else {
-                                                                        setAddHistoryForm(prev => ({ ...prev, colors: prev.colors.filter(c => c !== key) }));
-                                                                    }
-                                                                }}
-                                                                className="rounded" />
-                                                            <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold"
-                                                                style={{ backgroundColor: info.bg, color: info.color }}>{info.short}</span>
-                                                        </label>
-                                                    ))}
-                                                </div>
-                                            );
-                                        })()}
-
                                         <input type="text" value={addHistoryForm.notes} onChange={e => setAddHistoryForm(prev => ({ ...prev, notes: e.target.value }))}
                                             placeholder="Примечание (необязательно)" className="w-full px-3 py-2 border rounded-lg text-sm" />
                                         <button onClick={handleAddHistory} className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
@@ -2999,13 +2942,17 @@
                                                             {h.notes && <div className="text-xs text-gray-400 mt-1 italic">{h.notes}</div>}
                                                         </div>
                                                         <div className="flex gap-1">
-                                                            {h.colors?.map(c => {
-                                                                const info = cartridgeColors[c];
+                                                            {model && (() => {
+                                                                const colorKey = model.type === 'black' ? 'K' :
+                                                                                model.type === 'cyan' ? 'C' :
+                                                                                model.type === 'magenta' ? 'M' :
+                                                                                model.type === 'yellow' ? 'Y' : 'K';
+                                                                const info = cartridgeColors[colorKey];
                                                                 return (
-                                                                    <span key={c} className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold"
+                                                                    <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold"
                                                                         style={{ backgroundColor: info?.bg, color: info?.color }}>{info?.short}</span>
                                                                 );
-                                                            })}
+                                                            })()}
                                                         </div>
                                                         <div className="flex gap-1">
                                                             <button onClick={() => startEditHistory(h)} className="p-1.5 text-blue-600 hover:bg-blue-100 rounded" title="Редактировать">✏️</button>
