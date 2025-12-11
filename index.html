@@ -2325,6 +2325,7 @@
             cartridgeModels, setCartridgeModels,
             cartridgeStock, setCartridgeStock,
             cartridgeHistory, setCartridgeHistory,
+            manualCartridgeMapping, setManualCartridgeMapping,
             equipment, directories, showToast
         }) => {
             const [stockFilter, setStockFilter] = useState('all');
@@ -5734,6 +5735,8 @@
                         setCartridgeStock={setCartridgeStock}
                         cartridgeHistory={cartridgeHistory}
                         setCartridgeHistory={setCartridgeHistory}
+                        manualCartridgeMapping={manualCartridgeMapping}
+                        setManualCartridgeMapping={setManualCartridgeMapping}
                         equipment={equipment}
                         directories={directories}
                         showToast={showToast}
