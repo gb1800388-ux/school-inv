@@ -2341,6 +2341,27 @@
                 return Object.entries(stats).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 12);
             }, [cartridgeHistory]);
 
+            // Статистика картриджей по принтерам
+            const printerCartridgeStats = useMemo(() => {
+                return printers.map(printer => {
+                    const compatible = cartridgeModels.filter(m =>
+                        m.compatiblePrinters.some(p =>
+                            printer.name.toLowerCase().includes(p.toLowerCase()) ||
+                            p.toLowerCase().includes(printer.name.toLowerCase().split(' ').slice(0, 3).join(' '))
+                        )
+                    );
+                    const stockInfo = compatible.map(m => {
+                        const stock = stockByModel[m.id];
+                        return { model: m, quantity: stock?.quantity || 0 };
+                    });
+                    const totalStock = stockInfo.reduce((sum, s) => sum + s.quantity, 0);
+                    const hasLow = stockInfo.some(s => s.quantity <= 2);
+                    const hasEmpty = stockInfo.some(s => s.quantity === 0);
+                    const replacements = cartridgeHistory.filter(h => h.printerId === printer.id).length;
+                    return { printer, compatible, stockInfo, totalStock, hasLow, hasEmpty, replacements };
+                });
+            }, [printers, cartridgeModels, stockByModel, cartridgeHistory]);
+
             // Ранний выход если модальное окно закрыто (после всех хуков!)
             if (!isOpen) return null;
 
@@ -2549,6 +2570,7 @@
                         <div className="flex gap-1 p-1 bg-gray-100 rounded-lg">
                             {[
                                 { id: 'stock', label: '📦 Склад', badge: criticalItems.length },
+                                { id: 'printers', label: '🖨️ Принтеры', badge: printers.length },
                                 { id: 'history', label: '📋 История', badge: cartridgeHistory.length },
                                 { id: 'stats', label: '📊 Статистика' },
                                 { id: 'catalog', label: '📚 Справочник' }
