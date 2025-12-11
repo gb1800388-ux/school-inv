@@ -648,50 +648,50 @@
         // Справочник моделей картриджей
         const initialCartridgeModels = [
             // HP
-            { id: 'hp_85a', name: 'HP 85A (CE285A)', type: 'black', pageYield: 1600, avgPrice: 1500, compatiblePrinters: ['HP LaserJet P1102', 'HP LJ P1102', 'HP LJ P 1102', 'Лазерный принтер HP "LaserJet P1102"'], minStock: 10, replacementDays: 60 },
-            { id: 'hp_59a', name: 'HP 59A (CF259A)', type: 'black', pageYield: 3000, avgPrice: 4500, compatiblePrinters: ['HP LaserJetProM428fdn', 'HP LaserJet Pro M428fdn', 'Многофункциональное устройство HP LaserJetProM428fdn'], minStock: 5, replacementDays: 90 },
-            { id: 'hp_26a', name: 'HP 26A (CF226A)', type: 'black', pageYield: 3100, avgPrice: 4000, compatiblePrinters: ['HP LaserJet Pro M426fdn', 'HP M426fdn', 'МФУ А4 сетевое ч/б лазерное печатающее устройство'], minStock: 5, replacementDays: 90 },
-            { id: 'hp_05a', name: 'HP 05A (CE505A)', type: 'black', pageYield: 2300, avgPrice: 2500, compatiblePrinters: ['HP Laser Jet P2055d', 'HP LaserJet P2055', 'HP P2055d'], minStock: 2, replacementDays: 120 },
-            { id: 'hp_12a', name: 'HP 12A (Q2612A)', type: 'black', pageYield: 2000, avgPrice: 1800, compatiblePrinters: ['HP 1010', 'HP LaserJet 1010', 'HP 1020', 'HP LaserJet 1020', 'Принтер лазерн. HP 1010'], minStock: 2, replacementDays: 90 },
-            { id: 'hp_90a', name: 'HP 90A (CE390A)', type: 'black', pageYield: 10000, avgPrice: 6500, compatiblePrinters: ['HP LaserJet Enterprise M725', 'HP M725', 'МФУ А 3 монохромное Печатающее устройство'], minStock: 2, replacementDays: 180 },
+            { id: 'hp_85a', name: 'HP 85A (CE285A)', type: 'black', pageYield: 1600, avgPrice: 1500, compatiblePrinters: [], minStock: 10, replacementDays: 60 },
+            { id: 'hp_59a', name: 'HP 59A (CF259A)', type: 'black', pageYield: 3000, avgPrice: 4500, compatiblePrinters: [], minStock: 5, replacementDays: 90 },
+            { id: 'hp_26a', name: 'HP 26A (CF226A)', type: 'black', pageYield: 3100, avgPrice: 4000, compatiblePrinters: [], minStock: 5, replacementDays: 90 },
+            { id: 'hp_05a', name: 'HP 05A (CE505A)', type: 'black', pageYield: 2300, avgPrice: 2500, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
+            { id: 'hp_12a', name: 'HP 12A (Q2612A)', type: 'black', pageYield: 2000, avgPrice: 1800, compatiblePrinters: [], minStock: 2, replacementDays: 90 },
+            { id: 'hp_90a', name: 'HP 90A (CE390A)', type: 'black', pageYield: 10000, avgPrice: 6500, compatiblePrinters: [], minStock: 2, replacementDays: 180 },
             // Canon
-            { id: 'canon_exv22', name: 'Canon C-EXV 22', type: 'black', pageYield: 48000, avgPrice: 3500, compatiblePrinters: ['Canon iR 1133', 'Canon iR 1133 A', 'Canon imageRUNNER 1133A', 'Canon iR1133A', 'Многофункциональное устройство "Canon iR 1133 A"', 'Копировально-множительный аппарат Canon iR 1133 A', 'МФУ Canon imageRUNNER 1133A'], minStock: 2, replacementDays: 120 },
-            { id: 'canon_exv18', name: 'Canon C-EXV 18', type: 'black', pageYield: 8400, avgPrice: 2800, compatiblePrinters: ['Canon iR2016', 'Canon imageRUNNER 2016', 'Canon IR2016'], minStock: 2, replacementDays: 90 },
+            { id: 'canon_exv22', name: 'Canon C-EXV 22', type: 'black', pageYield: 48000, avgPrice: 3500, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
+            { id: 'canon_exv18', name: 'Canon C-EXV 18', type: 'black', pageYield: 8400, avgPrice: 2800, compatiblePrinters: [], minStock: 2, replacementDays: 90 },
             // Xerox VersaLink C7025 (цветной)
-            { id: 'xerox_c7025_k', name: 'Xerox 106R03745 (Black)', type: 'black', pageYield: 23600, avgPrice: 8500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'], minStock: 2, replacementDays: 90 },
-            { id: 'xerox_c7025_c', name: 'Xerox 106R03748 (Cyan)', type: 'cyan', pageYield: 16500, avgPrice: 7500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'], minStock: 2, replacementDays: 120 },
-            { id: 'xerox_c7025_m', name: 'Xerox 106R03747 (Magenta)', type: 'magenta', pageYield: 16500, avgPrice: 7500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'], minStock: 2, replacementDays: 120 },
-            { id: 'xerox_c7025_y', name: 'Xerox 106R03746 (Yellow)', type: 'yellow', pageYield: 16500, avgPrice: 7500, compatiblePrinters: ['XeroxVersaLinkC7025', 'Xerox VersaLink C7025', 'МФУ XeroxVersaLinkC7025'], minStock: 2, replacementDays: 120 },
+            { id: 'xerox_c7025_k', name: 'Xerox 106R03745 (Black)', type: 'black', pageYield: 23600, avgPrice: 8500, compatiblePrinters: [], minStock: 2, replacementDays: 90 },
+            { id: 'xerox_c7025_c', name: 'Xerox 106R03748 (Cyan)', type: 'cyan', pageYield: 16500, avgPrice: 7500, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
+            { id: 'xerox_c7025_m', name: 'Xerox 106R03747 (Magenta)', type: 'magenta', pageYield: 16500, avgPrice: 7500, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
+            { id: 'xerox_c7025_y', name: 'Xerox 106R03746 (Yellow)', type: 'yellow', pageYield: 16500, avgPrice: 7500, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
             // Xerox AltaLink B8075
-            { id: 'xerox_b8075', name: 'Xerox 006R01605 (Black)', type: 'black', pageYield: 100000, avgPrice: 5500, compatiblePrinters: ['XeroxAltaLink B8075', 'Xerox AltaLink B8075', 'МФУ XeroxAltaLink B8075'], minStock: 1, replacementDays: 180 },
+            { id: 'xerox_b8075', name: 'Xerox 006R01605 (Black)', type: 'black', pageYield: 100000, avgPrice: 5500, compatiblePrinters: [], minStock: 1, replacementDays: 180 },
             // OKI MC563dn (цветной)
-            { id: 'oki_mc563_k', name: 'OKI 46490608 (Black)', type: 'black', pageYield: 7000, avgPrice: 6000, compatiblePrinters: ['OKI MC563dn', 'Oki MC563', 'МФУ групповое, цветное OKI MC563dn'], minStock: 1, replacementDays: 90 },
-            { id: 'oki_mc563_c', name: 'OKI 46490607 (Cyan)', type: 'cyan', pageYield: 6000, avgPrice: 5500, compatiblePrinters: ['OKI MC563dn', 'Oki MC563', 'МФУ групповое, цветное OKI MC563dn'], minStock: 1, replacementDays: 120 },
-            { id: 'oki_mc563_m', name: 'OKI 46490606 (Magenta)', type: 'magenta', pageYield: 6000, avgPrice: 5500, compatiblePrinters: ['OKI MC563dn', 'Oki MC563', 'МФУ групповое, цветное OKI MC563dn'], minStock: 1, replacementDays: 120 },
-            { id: 'oki_mc563_y', name: 'OKI 46490605 (Yellow)', type: 'yellow', pageYield: 6000, avgPrice: 5500, compatiblePrinters: ['OKI MC563dn', 'Oki MC563', 'МФУ групповое, цветное OKI MC563dn'], minStock: 1, replacementDays: 120 },
+            { id: 'oki_mc563_k', name: 'OKI 46490608 (Black)', type: 'black', pageYield: 7000, avgPrice: 6000, compatiblePrinters: [], minStock: 1, replacementDays: 90 },
+            { id: 'oki_mc563_c', name: 'OKI 46490607 (Cyan)', type: 'cyan', pageYield: 6000, avgPrice: 5500, compatiblePrinters: [], minStock: 1, replacementDays: 120 },
+            { id: 'oki_mc563_m', name: 'OKI 46490606 (Magenta)', type: 'magenta', pageYield: 6000, avgPrice: 5500, compatiblePrinters: [], minStock: 1, replacementDays: 120 },
+            { id: 'oki_mc563_y', name: 'OKI 46490605 (Yellow)', type: 'yellow', pageYield: 6000, avgPrice: 5500, compatiblePrinters: [], minStock: 1, replacementDays: 120 },
             // Epson
-            { id: 'epson_t9651', name: 'Epson T9651 (Black XXL)', type: 'black', pageYield: 10000, avgPrice: 8000, compatiblePrinters: ['Epson WorkForce Pro WF-M5190DW', 'Epson WorkForce M5190', 'Epson M5190', 'Принтер групповой Epson WorkForce Pro WF-M5190DW'], minStock: 2, replacementDays: 120 },
+            { id: 'epson_t9651', name: 'Epson T9651 (Black XXL)', type: 'black', pageYield: 10000, avgPrice: 8000, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
             // Катюша М247е
-            { id: 'katusha_m247', name: 'Катюша TK-M247', type: 'black', pageYield: 12000, avgPrice: 4000, compatiblePrinters: ['Катюша М247е', 'Катюша M247e', 'Многофункциональное устройство (МФУ) Катюша М247е'], minStock: 3, replacementDays: 120 },
+            { id: 'katusha_m247', name: 'Катюша TK-M247', type: 'black', pageYield: 12000, avgPrice: 4000, compatiblePrinters: [], minStock: 3, replacementDays: 120 },
             // Sindoh
-            { id: 'sindoh_d332', name: 'Sindoh D201 (Black)', type: 'black', pageYield: 15000, avgPrice: 5000, compatiblePrinters: ['Sindoh D332e', 'Sindoh D332E', 'Sindoh D332', 'Многофункциональное устройство (МФУ) Sindoh D332e'], minStock: 1, replacementDays: 150 },
-            { id: 'sindoh_c300_k', name: 'Sindoh С300 (Black)', type: 'black', pageYield: 8000, avgPrice: 4500, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'], minStock: 2, replacementDays: 90 },
-            { id: 'sindoh_c300_c', name: 'Sindoh С300 (Cyan)', type: 'cyan', pageYield: 5000, avgPrice: 4000, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'], minStock: 2, replacementDays: 120 },
-            { id: 'sindoh_c300_m', name: 'Sindoh С300 (Magenta)', type: 'magenta', pageYield: 5000, avgPrice: 4000, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'], minStock: 2, replacementDays: 120 },
-            { id: 'sindoh_c300_y', name: 'Sindoh С300 (Yellow)', type: 'yellow', pageYield: 5000, avgPrice: 4000, compatiblePrinters: ['Sindoh C300', 'Многофункциональное устройство (МФУ) Sindoh C300'], minStock: 2, replacementDays: 120 },
-            { id: 'sindoh_c332_k', name: 'Sindoh С332 (Black)', type: 'black', pageYield: 10000, avgPrice: 5000, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'], minStock: 2, replacementDays: 120 },
-            { id: 'sindoh_c332_c', name: 'Sindoh С332 (Cyan)', type: 'cyan', pageYield: 6000, avgPrice: 4500, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'], minStock: 2, replacementDays: 150 },
-            { id: 'sindoh_c332_m', name: 'Sindoh С332 (Magenta)', type: 'magenta', pageYield: 6000, avgPrice: 4500, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'], minStock: 2, replacementDays: 150 },
-            { id: 'sindoh_c332_y', name: 'Sindoh С332 (Yellow)', type: 'yellow', pageYield: 6000, avgPrice: 4500, compatiblePrinters: ['Sindoh C332е', 'Sindoh C332e', 'Многофункциональное устройство (МФУ) Sindoh C332е'], minStock: 2, replacementDays: 150 },
+            { id: 'sindoh_d332', name: 'Sindoh D201 (Black)', type: 'black', pageYield: 15000, avgPrice: 5000, compatiblePrinters: [], minStock: 1, replacementDays: 150 },
+            { id: 'sindoh_c300_k', name: 'Sindoh С300 (Black)', type: 'black', pageYield: 8000, avgPrice: 4500, compatiblePrinters: [], minStock: 2, replacementDays: 90 },
+            { id: 'sindoh_c300_c', name: 'Sindoh С300 (Cyan)', type: 'cyan', pageYield: 5000, avgPrice: 4000, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
+            { id: 'sindoh_c300_m', name: 'Sindoh С300 (Magenta)', type: 'magenta', pageYield: 5000, avgPrice: 4000, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
+            { id: 'sindoh_c300_y', name: 'Sindoh С300 (Yellow)', type: 'yellow', pageYield: 5000, avgPrice: 4000, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
+            { id: 'sindoh_c332_k', name: 'Sindoh С332 (Black)', type: 'black', pageYield: 10000, avgPrice: 5000, compatiblePrinters: [], minStock: 2, replacementDays: 120 },
+            { id: 'sindoh_c332_c', name: 'Sindoh С332 (Cyan)', type: 'cyan', pageYield: 6000, avgPrice: 4500, compatiblePrinters: [], minStock: 2, replacementDays: 150 },
+            { id: 'sindoh_c332_m', name: 'Sindoh С332 (Magenta)', type: 'magenta', pageYield: 6000, avgPrice: 4500, compatiblePrinters: [], minStock: 2, replacementDays: 150 },
+            { id: 'sindoh_c332_y', name: 'Sindoh С332 (Yellow)', type: 'yellow', pageYield: 6000, avgPrice: 4500, compatiblePrinters: [], minStock: 2, replacementDays: 150 },
             // Samsung
-            { id: 'samsung_clt_k', name: 'Samsung CLT-K504S (Black)', type: 'black', pageYield: 2500, avgPrice: 3500, compatiblePrinters: ['Samsung CLP-320', 'Samsung', 'Принтер лазерный цветной Samsung'], minStock: 1, replacementDays: 120 },
-            { id: 'samsung_clt_c', name: 'Samsung CLT-C504S (Cyan)', type: 'cyan', pageYield: 1800, avgPrice: 3000, compatiblePrinters: ['Samsung CLP-320', 'Samsung', 'Принтер лазерный цветной Samsung'], minStock: 1, replacementDays: 150 },
-            { id: 'samsung_clt_m', name: 'Samsung CLT-M504S (Magenta)', type: 'magenta', pageYield: 1800, avgPrice: 3000, compatiblePrinters: ['Samsung CLP-320', 'Samsung', 'Принтер лазерный цветной Samsung'], minStock: 1, replacementDays: 150 },
-            { id: 'samsung_clt_y', name: 'Samsung CLT-Y504S (Yellow)', type: 'yellow', pageYield: 1800, avgPrice: 3000, compatiblePrinters: ['Samsung CLP-320', 'Samsung', 'Принтер лазерный цветной Samsung'], minStock: 1, replacementDays: 150 },
+            { id: 'samsung_clt_k', name: 'Samsung CLT-K504S (Black)', type: 'black', pageYield: 2500, avgPrice: 3500, compatiblePrinters: [], minStock: 1, replacementDays: 120 },
+            { id: 'samsung_clt_c', name: 'Samsung CLT-C504S (Cyan)', type: 'cyan', pageYield: 1800, avgPrice: 3000, compatiblePrinters: [], minStock: 1, replacementDays: 150 },
+            { id: 'samsung_clt_m', name: 'Samsung CLT-M504S (Magenta)', type: 'magenta', pageYield: 1800, avgPrice: 3000, compatiblePrinters: [], minStock: 1, replacementDays: 150 },
+            { id: 'samsung_clt_y', name: 'Samsung CLT-Y504S (Yellow)', type: 'yellow', pageYield: 1800, avgPrice: 3000, compatiblePrinters: [], minStock: 1, replacementDays: 150 },
             // Brother
-            { id: 'brother_tn3390', name: 'Brother TN-3390 (Black)', type: 'black', pageYield: 12000, avgPrice: 4500, compatiblePrinters: ['Brother HL-5240', 'Brother HL L5100dn'], minStock: 1, replacementDays: 150 },
+            { id: 'brother_tn3390', name: 'Brother TN-3390 (Black)', type: 'black', pageYield: 12000, avgPrice: 4500, compatiblePrinters: [], minStock: 1, replacementDays: 150 },
             // Epson L550 (СНПЧ - чернила)
-            { id: 'epson_l550_bk', name: 'Epson T6641 (Black)', type: 'black', pageYield: 6500, avgPrice: 500, compatiblePrinters: ['Epson L550'], minStock: 2, replacementDays: 180 },
+            { id: 'epson_l550_bk', name: 'Epson T6641 (Black)', type: 'black', pageYield: 6500, avgPrice: 500, compatiblePrinters: [], minStock: 2, replacementDays: 180 },
         ];
 
         // Цвета картриджей для UI
@@ -2332,6 +2332,7 @@
             const [historyFilter, setHistoryFilter] = useState({ search: '', dateFrom: '', dateTo: '' });
             const [showAddStock, setShowAddStock] = useState(false);
             const [showAddHistory, setShowAddHistory] = useState(false);
+            const [editingStockModelId, setEditingStockModelId] = useState(null);
             const [addStockForm, setAddStockForm] = useState({ modelId: '', quantity: 1 });
             const [addHistoryForm, setAddHistoryForm] = useState({
                 date: new Date().toISOString().split('T')[0],
@@ -2558,6 +2559,37 @@
                 showToast('📦 Картриджи добавлены на склад');
                 setAddStockForm({ modelId: '', quantity: 1 });
                 setShowAddStock(false);
+            };
+
+            // Корректировка остатка на складе
+            const handleAdjustStock = (modelId, newQuantity) => {
+                if (newQuantity < 0) return;
+
+                setCartridgeStock(prev => {
+                    const existing = prev.find(s => s.modelId === modelId);
+                    if (existing) {
+                        if (newQuantity === 0) {
+                            // Удаляем запись если количество = 0
+                            return prev.filter(s => s.modelId !== modelId);
+                        }
+                        return prev.map(s =>
+                            s.modelId === modelId
+                                ? { ...s, quantity: newQuantity, lastUpdated: new Date().toISOString() }
+                                : s
+                        );
+                    } else if (newQuantity > 0) {
+                        // Создаем новую запись если её не было
+                        return [...prev, {
+                            id: `stock_${Date.now()}`,
+                            modelId,
+                            quantity: newQuantity,
+                            minQuantity: 2,
+                            lastUpdated: new Date().toISOString()
+                        }];
+                    }
+                    return prev;
+                });
+                showToast('✅ Остаток обновлен');
             };
 
             // Добавление записи в историю (замена картриджа)
@@ -2884,16 +2916,52 @@
                                                         <div className="font-medium text-sm text-gray-900 truncate">{model.name}</div>
                                                         <div className="text-xs text-gray-500">~{model.pageYield.toLocaleString()} стр.</div>
                                                     </div>
-                                                    <div className={`text-lg font-bold ${
-                                                        status === 'empty' ? 'text-red-600' :
-                                                        status === 'low' ? 'text-amber-600' :
-                                                        'text-green-600'
-                                                    }`}>
-                                                        {qty} шт.
-                                                    </div>
-                                                    <div className="text-xs text-gray-400">
-                                                        мин: {minQty}
-                                                    </div>
+
+                                                    {editingStockModelId === model.id ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <input
+                                                                type="number"
+                                                                min="0"
+                                                                defaultValue={qty}
+                                                                className="w-20 px-2 py-1 border rounded text-sm text-center"
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        handleAdjustStock(model.id, parseInt(e.target.value) || 0);
+                                                                        setEditingStockModelId(null);
+                                                                    } else if (e.key === 'Escape') {
+                                                                        setEditingStockModelId(null);
+                                                                    }
+                                                                }}
+                                                                autoFocus
+                                                            />
+                                                            <button
+                                                                onClick={() => setEditingStockModelId(null)}
+                                                                className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                                                            >
+                                                                ✕
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <div className={`text-lg font-bold ${
+                                                                status === 'empty' ? 'text-red-600' :
+                                                                status === 'low' ? 'text-amber-600' :
+                                                                'text-green-600'
+                                                            }`}>
+                                                                {qty} шт.
+                                                            </div>
+                                                            <div className="text-xs text-gray-400">
+                                                                мин: {minQty}
+                                                            </div>
+                                                            <button
+                                                                onClick={() => setEditingStockModelId(model.id)}
+                                                                className="p-1.5 text-blue-600 hover:bg-blue-100 rounded"
+                                                                title="Изменить количество"
+                                                            >
+                                                                ✏️
+                                                            </button>
+                                                        </>
+                                                    )}
                                                 </div>
                                             );
                                         })}
@@ -3450,8 +3518,6 @@
                                             </select>
                                             <input type="number" value={newModelForm.pageYield} onChange={e => setNewModelForm(prev => ({ ...prev, pageYield: e.target.value }))}
                                                 placeholder="Ресурс (страниц)" className="px-3 py-2 border rounded-lg text-sm" />
-                                            <input type="number" value={newModelForm.avgPrice} onChange={e => setNewModelForm(prev => ({ ...prev, avgPrice: e.target.value }))}
-                                                placeholder="Цена (руб)" className="px-3 py-2 border rounded-lg text-sm" />
                                         </div>
                                         <input type="text" value={newModelForm.compatiblePrinters} onChange={e => setNewModelForm(prev => ({ ...prev, compatiblePrinters: e.target.value }))}
                                             placeholder="Совместимые принтеры (через запятую)" className="w-full px-3 py-2 border rounded-lg text-sm" />
@@ -3483,9 +3549,6 @@
                                                             <input type="number" value={editModelForm.pageYield}
                                                                 onChange={e => setEditModelForm(prev => ({ ...prev, pageYield: e.target.value }))}
                                                                 placeholder="Ресурс (страниц)" className="px-2 py-1 border rounded text-xs" />
-                                                            <input type="number" value={editModelForm.avgPrice}
-                                                                onChange={e => setEditModelForm(prev => ({ ...prev, avgPrice: e.target.value }))}
-                                                                placeholder="Цена (руб)" className="px-2 py-1 border rounded text-xs" />
                                                         </div>
                                                         <input type="text" value={editModelForm.compatiblePrinters}
                                                             onChange={e => setEditModelForm(prev => ({ ...prev, compatiblePrinters: e.target.value }))}
@@ -3509,7 +3572,7 @@
                                                         <div className="flex-1">
                                                             <div className="font-medium text-sm">{model.name}</div>
                                                             <div className="text-xs text-gray-500">
-                                                                ~{model.pageYield.toLocaleString()} стр. • ~{model.avgPrice.toLocaleString()} ₽
+                                                                ~{model.pageYield.toLocaleString()} стр.
                                                             </div>
                                                         </div>
                                                         <div className="flex gap-1">
@@ -3551,7 +3614,7 @@
                                                 <div className="flex-1 min-w-0">
                                                     <div className="font-medium text-sm">{item.model.name}</div>
                                                     <div className="text-xs text-gray-500">
-                                                        На складе: {item.currentQty} шт • Цена: {item.model.avgPrice.toLocaleString()} ₽
+                                                        На складе: {item.currentQty} шт
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">
@@ -3568,13 +3631,8 @@
                             </div>
 
                             <div className="p-4 bg-blue-50 rounded-xl">
-                                <div className="flex justify-between items-center">
-                                    <div className="text-sm text-gray-600">
-                                        Выбрано позиций: <strong>{purchaseOrder.filter(i => i.include).length}</strong>
-                                    </div>
-                                    <div className="text-lg font-bold text-blue-600">
-                                        Итого: {purchaseOrder.filter(i => i.include).reduce((sum, i) => sum + (i.model.avgPrice * i.orderQty), 0).toLocaleString()} ₽
-                                    </div>
+                                <div className="text-sm text-gray-600 text-center">
+                                    Выбрано позиций: <strong>{purchaseOrder.filter(i => i.include).length}</strong>
                                 </div>
                             </div>
 
@@ -3638,7 +3696,7 @@
                                             <div className="flex-1">
                                                 <div className="font-medium text-sm">{model.name}</div>
                                                 <div className="text-xs text-gray-500">
-                                                    Ресурс: {model.pageYield.toLocaleString()} стр • Цена: {model.avgPrice.toLocaleString()} ₽
+                                                    Ресурс: {model.pageYield.toLocaleString()} стр
                                                 </div>
                                             </div>
                                             <div className={`px-2 py-1 rounded text-xs font-semibold ${
