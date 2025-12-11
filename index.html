@@ -1250,11 +1250,16 @@
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 p-3 border-b border-gray-100">
+                        <div className="grid grid-cols-3 gap-2 p-3 border-b border-gray-100">
                             <div onClick={() => setActiveFilter(activeFilter === 'writeoff' ? 'all' : 'writeoff')}
                                 className={`quick-stat-card bg-red-50 ${activeFilter === 'writeoff' ? 'active' : ''}`}>
                                 <div className="quick-stat-value text-red-600">{stats.writeOff}</div>
                                 <div className="quick-stat-label">Списание</div>
+                            </div>
+                            <div onClick={() => setActiveFilter(activeFilter === 'pending' ? 'all' : 'pending')}
+                                className={`quick-stat-card bg-blue-50 ${activeFilter === 'pending' ? 'active' : ''}`}>
+                                <div className="quick-stat-value text-blue-600">{stats.pending}</div>
+                                <div className="quick-stat-label">Ожидает</div>
                             </div>
                             <div onClick={() => setActiveFilter(activeFilter === 'nolabel' ? 'all' : 'nolabel')}
                                 className={`quick-stat-card bg-amber-50 ${activeFilter === 'nolabel' ? 'active' : ''}`}>
@@ -2571,7 +2576,11 @@
                                     <span className="text-gray-400">—</span>
                                     <input type="date" value={historyFilter.dateTo} onChange={e => setHistoryFilter(prev => ({ ...prev, dateTo: e.target.value }))}
                                         className="px-3 py-2 border rounded-lg text-sm" />
-                                    <button onClick={() => setShowAddHistory(true)} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
+                                    <button onClick={() => {
+                                        setShowAddHistory(true);
+                                        setPrinterSearch('');
+                                        setSelectedRoom('');
+                                    }} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
                                         ➕ Замена
                                     </button>
                                 </div>
@@ -2583,9 +2592,33 @@
                                             <span className="font-semibold text-blue-800">Регистрация замены картриджа</span>
                                             <button onClick={() => setShowAddHistory(false)} className="text-gray-400 hover:text-gray-600">✕</button>
                                         </div>
+                                        {/* Шаг 1: Дата и Кабинет */}
                                         <div className="grid grid-cols-2 gap-3">
                                             <input type="date" value={addHistoryForm.date} onChange={e => setAddHistoryForm(prev => ({ ...prev, date: e.target.value }))}
                                                 className="px-3 py-2 border rounded-lg text-sm" />
+                                            <div>
+                                                <select value={selectedRoom} onChange={e => {
+                                                    setSelectedRoom(e.target.value);
+                                                    setAddHistoryForm(prev => ({ ...prev, printerId: '', printerName: '', location: e.target.value }));
+                                                }} className="w-full px-3 py-2 border rounded-lg text-sm">
+                                                    <option value="">Все кабинеты</option>
+                                                    {roomsFromPrinters.map(room => (
+                                                        <option key={room} value={room}>{room}</option>
+                                                    ))}
+                                                </select>
+                                                {selectedRoom && (
+                                                    <div className="text-xs text-gray-500 mt-1">
+                                                        Принтеров в кабинете: {filteredPrinters.length}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Шаг 2: Поиск и выбор принтера */}
+                                        <div className="space-y-2">
+                                            <input type="text" value={printerSearch} onChange={e => setPrinterSearch(e.target.value)}
+                                                placeholder="🔍 Поиск принтера (название, инв.номер, кабинет, ФИО)..."
+                                                className="w-full px-3 py-2 border rounded-lg text-sm" />
                                             <select value={addHistoryForm.printerId} onChange={e => {
                                                 const printer = printers.find(p => p.id === e.target.value);
                                                 setAddHistoryForm(prev => ({
@@ -2595,19 +2628,35 @@
                                                     location: printer?.location || prev.location,
                                                     responsible: printer?.responsible || prev.responsible
                                                 }));
-                                            }} className="px-3 py-2 border rounded-lg text-sm">
+                                                if (printer && !selectedRoom) {
+                                                    setSelectedRoom(printer.location || '');
+                                                }
+                                            }} className="w-full px-3 py-2 border rounded-lg text-sm">
                                                 <option value="">Выберите принтер...</option>
-                                                {printers.map(p => (
-                                                    <option key={p.id} value={p.id}>{p.name} ({p.invNumber})</option>
+                                                {filteredPrinters.length === 0 && (printerSearch || selectedRoom) ? (
+                                                    <option disabled>Принтеры не найдены</option>
+                                                ) : filteredPrinters.map(p => (
+                                                    <option key={p.id} value={p.id}>
+                                                        {p.name} {p.invNumber ? `(${p.invNumber})` : ''} {p.location ? `• ${p.location}` : ''}
+                                                    </option>
                                                 ))}
                                             </select>
+                                            {filteredPrinters.length === 0 && !printerSearch && !selectedRoom && (
+                                                <div className="text-xs text-gray-500">
+                                                    💡 Используйте фильтр по кабинету или поиск для быстрого нахождения принтера
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Шаг 3: Автозаполненные данные (можно редактировать) */}
+                                        <div className="grid grid-cols-2 gap-3">
                                             <input type="text" value={addHistoryForm.location} onChange={e => setAddHistoryForm(prev => ({ ...prev, location: e.target.value }))}
-                                                placeholder="Кабинет" className="px-3 py-2 border rounded-lg text-sm" list="locations-list" />
+                                                placeholder="Кабинет" className="px-3 py-2 border rounded-lg text-sm bg-gray-50" list="locations-list" />
                                             <datalist id="locations-list">
                                                 {directories.rooms?.map(r => <option key={r} value={r} />)}
                                             </datalist>
                                             <input type="text" value={addHistoryForm.responsible} onChange={e => setAddHistoryForm(prev => ({ ...prev, responsible: e.target.value }))}
-                                                placeholder="ФИО" className="px-3 py-2 border rounded-lg text-sm" list="people-list" />
+                                                placeholder="ФИО" className="px-3 py-2 border rounded-lg text-sm bg-gray-50" list="people-list" />
                                             <datalist id="people-list">
                                                 {directories.people?.map(p => <option key={p} value={p} />)}
                                             </datalist>
