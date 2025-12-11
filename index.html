@@ -2381,6 +2381,34 @@
                 return filtered;
             }, [printers, selectedRoom, printerSearch]);
 
+            // Получение совместимых картриджей для принтера
+            const getCompatibleCartridges = useCallback((printerName, printerId = null) => {
+                // Автоматически найденные картриджи по названию принтера
+                const autoCompatible = cartridgeModels.filter(m =>
+                    m.compatiblePrinters.some(p =>
+                        printerName.toLowerCase().includes(p.toLowerCase()) ||
+                        p.toLowerCase().includes(printerName.toLowerCase().split(' ').slice(0, 3).join(' '))
+                    )
+                );
+
+                // Если есть printerId, добавляем вручную привязанные картриджи
+                if (printerId && manualCartridgeMapping[printerId]) {
+                    const manualIds = manualCartridgeMapping[printerId];
+                    const manualCartridges = cartridgeModels.filter(m => manualIds.includes(m.id));
+
+                    // Объединяем автоматические и ручные, убирая дубликаты
+                    const combined = [...autoCompatible];
+                    manualCartridges.forEach(mc => {
+                        if (!combined.find(c => c.id === mc.id)) {
+                            combined.push(mc);
+                        }
+                    });
+                    return combined;
+                }
+
+                return autoCompatible;
+            }, [cartridgeModels, manualCartridgeMapping]);
+
             // Подсчёт остатков на складе по моделям
             const stockByModel = useMemo(() => {
                 const result = {};
@@ -2451,7 +2479,7 @@
 
                     return { printer, compatible, stockInfo, totalStock, hasLow, hasEmpty, replacements, hasManualMappings };
                 });
-            }, [printers, cartridgeModels, stockByModel, cartridgeHistory, manualCartridgeMapping]);
+            }, [printers, stockByModel, cartridgeHistory, getCompatibleCartridges, manualCartridgeMapping]);
 
             // Прогнозирование замен картриджей
             const forecastData = useMemo(() => {
@@ -2503,7 +2531,7 @@
                     if (!a.isWarning && b.isWarning) return 1;
                     return a.daysUntilReplacement - b.daysUntilReplacement;
                 });
-            }, [printers, cartridgeModels, cartridgeHistory, stockByModel, manualCartridgeMapping]);
+            }, [printers, cartridgeHistory, stockByModel, getCompatibleCartridges]);
 
             // Ранний выход если модальное окно закрыто (после всех хуков!)
             if (!isOpen) return null;
@@ -2696,34 +2724,6 @@
                 printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
                 printWindow.document.close();
                 setShowPurchaseEditor(false);
-            };
-
-            // Получение совместимых картриджей для принтера
-            const getCompatibleCartridges = (printerName, printerId = null) => {
-                // Автоматически найденные картриджи по названию принтера
-                const autoCompatible = cartridgeModels.filter(m =>
-                    m.compatiblePrinters.some(p =>
-                        printerName.toLowerCase().includes(p.toLowerCase()) ||
-                        p.toLowerCase().includes(printerName.toLowerCase().split(' ').slice(0, 3).join(' '))
-                    )
-                );
-
-                // Если есть printerId, добавляем вручную привязанные картриджи
-                if (printerId && manualCartridgeMapping[printerId]) {
-                    const manualIds = manualCartridgeMapping[printerId];
-                    const manualCartridges = cartridgeModels.filter(m => manualIds.includes(m.id));
-
-                    // Объединяем автоматические и ручные, убирая дубликаты
-                    const combined = [...autoCompatible];
-                    manualCartridges.forEach(mc => {
-                        if (!combined.find(c => c.id === mc.id)) {
-                            combined.push(mc);
-                        }
-                    });
-                    return combined;
-                }
-
-                return autoCompatible;
             };
 
             // Открыть модальное окно для добавления картриджа к принтеру
