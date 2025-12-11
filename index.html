@@ -2249,13 +2249,41 @@
                 colors: ['black'],
                 notes: ''
             });
+            const [printerSearch, setPrinterSearch] = useState('');
+            const [selectedRoom, setSelectedRoom] = useState('');
             const [showAddModel, setShowAddModel] = useState(false);
             const [newModelForm, setNewModelForm] = useState({ name: '', type: 'black', pageYield: '', avgPrice: '', compatiblePrinters: '' });
+            const [editingHistoryId, setEditingHistoryId] = useState(null);
+            const [editHistoryForm, setEditHistoryForm] = useState(null);
+            const [editingModelId, setEditingModelId] = useState(null);
+            const [editModelForm, setEditModelForm] = useState(null);
+            const [showPurchaseEditor, setShowPurchaseEditor] = useState(false);
+            const [purchaseOrder, setPurchaseOrder] = useState([]);
 
             // Получаем принтеры из оборудования
             const printers = useMemo(() =>
                 equipment.filter(item => item.category === 'Принтеры и МФУ' && !item.writeOff),
             [equipment]);
+
+            const roomsFromPrinters = useMemo(() => {
+                const rooms = [...new Set(printers.map(p => p.location).filter(Boolean))];
+                return rooms.sort();
+            }, [printers]);
+
+            const filteredPrinters = useMemo(() => {
+                let filtered = printers;
+                if (selectedRoom) filtered = filtered.filter(p => p.location === selectedRoom);
+                if (printerSearch) {
+                    const q = printerSearch.toLowerCase();
+                    filtered = filtered.filter(p =>
+                        p.name.toLowerCase().includes(q) ||
+                        p.invNumber?.toLowerCase().includes(q) ||
+                        p.location?.toLowerCase().includes(q) ||
+                        p.responsible?.toLowerCase().includes(q)
+                    );
+                }
+                return filtered;
+            }, [printers, selectedRoom, printerSearch]);
 
             // Подсчёт остатков на складе по моделям
             const stockByModel = useMemo(() => {
@@ -2394,6 +2422,15 @@
                 setNewModelForm({ name: '', type: 'black', pageYield: '', avgPrice: '', compatiblePrinters: '' });
                 setShowAddModel(false);
             };
+
+            const startEditHistory = h => { setEditingHistoryId(h.id); setEditHistoryForm({ ...h }); };
+            const saveEditHistory = () => { if (!editHistoryForm) return; setCartridgeHistory(prev => prev.map(h => h.id === editingHistoryId ? { ...editHistoryForm } : h)); setEditingHistoryId(null); setEditHistoryForm(null); showToast('✅ Запись обновлена'); };
+            const deleteHistoryEntry = id => { if (!confirm('Удалить эту запись?')) return; setCartridgeHistory(prev => prev.filter(h => h.id !== id)); showToast('🗑️ Запись удалена'); };
+            const startEditModel = m => { setEditingModelId(m.id); setEditModelForm({ ...m, compatiblePrinters: m.compatiblePrinters.join(', ') }); };
+            const saveEditModel = () => { if (!editModelForm) return; const updated = { ...editModelForm, pageYield: parseInt(editModelForm.pageYield) || 0, avgPrice: parseInt(editModelForm.avgPrice) || 0, compatiblePrinters: editModelForm.compatiblePrinters.split(',').map(s => s.trim()).filter(Boolean) }; setCartridgeModels(prev => prev.map(m => m.id === editingModelId ? updated : m)); setEditingModelId(null); setEditModelForm(null); showToast('✅ Модель обновлена'); };
+            const deleteModel = id => { if (!confirm('Удалить эту модель картриджа?')) return; setCartridgeModels(prev => prev.filter(m => m.id !== id)); showToast('🗑️ Модель удалена'); };
+            const openPurchaseEditor = () => { const items = criticalItems.map(m => { const stock = stockByModel[m.id]; const currentQty = stock?.quantity || 0; const minQty = stock?.minQuantity || 2; const orderQty = Math.max(minQty * 2 - currentQty, minQty); return { model: m, currentQty, orderQty, include: true }; }).filter(i => i.orderQty > 0); setPurchaseOrder(items); setShowPurchaseEditor(true); };
+            const printPurchaseOrder = () => { const itemsToOrder = purchaseOrder.filter(i => i.include); if (itemsToOrder.length === 0) return; const date = new Date().toLocaleDateString('ru-RU'); const printWindow = window.open('', '_blank'); printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>Заявка на закупку картриджей</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:"Segoe UI",Tahoma,sans-serif;padding:20px;color:#333;font-size:12px}.header{text-align:center;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid #6366f1}.header h1{font-size:18px;color:#4f46e5;margin-bottom:5px}.header h2{font-size:14px;color:#6b7280;font-weight:normal}table{width:100%;border-collapse:collapse;margin-bottom:20px}th{background:#4f46e5;color:white;padding:10px;text-align:left;font-size:11px}td{padding:10px;border:1px solid #e5e7eb}tr:nth-child(even){background:#f9fafb}.color-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}.color-black{background:#1a1a1a;color:white}.color-cyan{background:#0891b2;color:white}.color-magenta{background:#be185d;color:white}.color-yellow{background:#ca8a04;color:white}.signatures{margin-top:40px;display:flex;justify-content:space-between}.signature-line{width:200px;border-top:1px solid #333;padding-top:5px;font-size:11px;color:#6b7280}@media print{body{padding:15mm}@page{margin:15mm;size:A4}}</style></head><body>'); printWindow.document.write('<div class="header"><h1>🖨️ ЗАЯВКА НА ЗАКУПКУ КАРТРИДЖЕЙ</h1><h2>ГКОУ СКОШИ №102 • ' + date + '</h2></div>'); printWindow.document.write('<table><thead><tr><th>№</th><th>Наименование картриджа</th><th>Цвет</th><th>На складе</th><th>Заказать</th></tr></thead><tbody>'); itemsToOrder.forEach((item, idx) => { const colorInfo = cartridgeColors[item.model.type]; printWindow.document.write('<tr>'); printWindow.document.write('<td>' + (idx + 1) + '</td>'); printWindow.document.write('<td><strong>' + item.model.name + '</strong></td>'); printWindow.document.write('<td><span class="color-badge color-' + item.model.type + '">' + colorInfo.name + '</span></td>'); printWindow.document.write('<td style="text-align:center">' + item.currentQty + ' шт.</td>'); printWindow.document.write('<td style="text-align:center;font-weight:bold;color:#dc2626">' + item.orderQty + ' шт.</td>'); printWindow.document.write('</tr>'); }); printWindow.document.write('</tbody></table>'); printWindow.document.write('<div class="signatures"><div class="signature-line">Составил: _______________</div><div class="signature-line">Утвердил: _______________</div></div>'); printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>'); printWindow.document.close(); setShowPurchaseEditor(false); };
 
             // Получение совместимых картриджей для принтера
             const getCompatibleCartridges = (printerName) => {
