@@ -410,7 +410,30 @@
             font-weight: 600;
         }
         .dropdown-item.active .item-count { background: #bee3f8; }
-        
+
+        .item-count-dual {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .dropdown-item.active .item-count-dual { background: #bee3f8; }
+        .count-total { color: #2d3748; }
+        .count-separator { color: #a0aec0; font-weight: 400; }
+        .count-pending {
+            color: #d69e2e;
+            font-weight: 700;
+            background: #fef5e7;
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+        .dropdown-item.active .count-pending { background: #fef3c7; }
+
         .building-selector {
             display: flex;
             align-items: stretch;
@@ -1579,7 +1602,21 @@
                                     onClick={() => { onChange(opt.value); setIsOpen(false); }}>
                                     {opt.icon && <span className="item-icon">{opt.icon}</span>}
                                     <span className="flex-1 truncate">{opt.label}</span>
-                                    {opt.count !== undefined && <span className="item-count">{opt.count}</span>}
+                                    {opt.count !== undefined && (
+                                        opt.pending !== undefined ? (
+                                            <span className="item-count-dual">
+                                                <span className="count-total">{opt.count}</span>
+                                                {opt.pending > 0 && (
+                                                    <>
+                                                        <span className="count-separator">/</span>
+                                                        <span className="count-pending">{opt.pending}</span>
+                                                    </>
+                                                )}
+                                            </span>
+                                        ) : (
+                                            <span className="item-count">{opt.count}</span>
+                                        )
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -3957,6 +3994,7 @@
                 new: equipment.filter(i => i.isUserAdded && !i.deleted).length,
                 noBuilding: equipment.filter(i => !i.building && !i.deleted).length,
                 byCategory: equipment.filter(i => !i.deleted).reduce((acc, i) => { acc[i.category] = (acc[i.category] || 0) + 1; return acc; }, {}),
+                pendingByCategory: equipment.filter(i => !i.checked && !i.writeOff && !i.deleted).reduce((acc, i) => { acc[i.category] = (acc[i.category] || 0) + 1; return acc; }, {}),
                 byBuilding: equipment.filter(i => !i.deleted).reduce((acc, i) => { const b = i.building || 'Не указано'; acc[b] = (acc[b] || 0) + 1; return acc; }, {}),
             }), [equipment]);
 
@@ -4082,9 +4120,9 @@
             ], [stats]);
 
             const categoryOptions = useMemo(() => [
-                { value: 'Все оборудование', label: 'Все оборудование', icon: '📋', count: stats.total },
+                { value: 'Все оборудование', label: 'Все оборудование', icon: '📋', count: stats.total, pending: stats.pending },
                 ...categories.filter(c => c !== 'Все оборудование').map(cat => ({
-                    value: cat, label: cat, icon: categoryConfig[cat]?.icon || '📦', count: stats.byCategory[cat] || 0
+                    value: cat, label: cat, icon: categoryConfig[cat]?.icon || '📦', count: stats.byCategory[cat] || 0, pending: stats.pendingByCategory[cat] || 0
                 }))
             ], [categories, stats]);
 
