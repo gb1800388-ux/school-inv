@@ -4271,13 +4271,14 @@
                 Object.entries(byCategory).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([category, catItems]) => {
                     sectionsHtml += '<div class="category-section">';
                     sectionsHtml += '<div class="category-header">' + category + ' (' + catItems.length + ' шт.)</div>';
-                    sectionsHtml += '<table><thead><tr><th style="width:3%">№</th><th style="width:12%">Инв. №</th><th style="width:35%">Название</th><th style="width:20%">Местоположение</th><th style="width:15%">Ответственный</th><th style="width:15%">Статус</th></tr></thead><tbody>';
+                    sectionsHtml += '<table><thead><tr><th style="width:3%">№</th><th style="width:10%">Инв. №</th><th style="width:25%">Название</th><th style="width:15%">Местоположение</th><th style="width:12%">Ответственный</th><th style="width:20%">Заметки</th><th style="width:15%">Статус</th></tr></thead><tbody>';
 
                     catItems.sort((a, b) => (a.invNumber || '').localeCompare(b.invNumber || '')).forEach((item, idx) => {
                         const location = [item.building, item.floor ? 'эт.' + item.floor : '', item.location].filter(Boolean).join(', ') || '-';
                         const status = item.writeOff ? '📝 Списано' : item.checked ? '✓ Проверено' : '⏳ Ожидает';
                         const statusClass = item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending';
-                        sectionsHtml += '<tr><td>' + (idx + 1) + '</td><td class="inv-number">' + (item.invNumber || '-') + '</td><td>' + (item.name || '-') + '</td><td class="location">' + location + '</td><td>' + (item.responsible || '-') + '</td><td class="' + statusClass + '">' + status + '</td></tr>';
+                        const notes = (item.inventoryNote || '').trim() || '-';
+                        sectionsHtml += '<tr><td>' + (idx + 1) + '</td><td class="inv-number">' + (item.invNumber || '-') + '</td><td>' + (item.name || '-') + '</td><td class="location">' + location + '</td><td>' + (item.responsible || '-') + '</td><td class="notes">' + notes + '</td><td class="' + statusClass + '">' + status + '</td></tr>';
                     });
 
                     sectionsHtml += '</tbody></table></div>';
@@ -4300,11 +4301,12 @@
                 printWindow.document.write('tr:nth-child(even){background:#f7fafc}');
                 printWindow.document.write('.inv-number{font-family:monospace;font-weight:bold;color:#2d3748;white-space:nowrap}');
                 printWindow.document.write('.location{color:#718096;font-size:9px}');
+                printWindow.document.write('.notes{color:#4a5568;font-size:9px;font-style:italic}');
                 printWindow.document.write('.status-checked{color:#38a169;font-weight:bold}');
                 printWindow.document.write('.status-writeoff{color:#e53e3e;font-weight:bold}');
                 printWindow.document.write('.status-pending{color:#d69e2e}');
                 printWindow.document.write('.footer{margin-top:20px;text-align:center;font-size:10px;color:#718096}');
-                printWindow.document.write('@media print{body{padding:10px}@page{margin:10mm;size:A4}}');
+                printWindow.document.write('@media print{body{padding:10px}@page{margin:10mm;size:A4 landscape}}');
                 printWindow.document.write('</style></head><body>');
 
                 printWindow.document.write('<div class="header"><h1>📋 ВЫБРАННОЕ ОБОРУДОВАНИЕ</h1><h2>ГКОУ СКОШИ №102</h2></div>');
