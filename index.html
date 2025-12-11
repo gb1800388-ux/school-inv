@@ -2328,7 +2328,7 @@
                 printerName: '',
                 location: '',
                 responsible: '',
-                cartridgeModelId: '',
+                selectedCartridges: [], // Массив ID выбранных картриджей
                 notes: ''
             });
             const [printerSearch, setPrinterSearch] = useState('');
@@ -2466,34 +2466,43 @@
 
             // Добавление записи в историю (замена картриджа)
             const handleAddHistory = () => {
-                if (!addHistoryForm.cartridgeModelId || !addHistoryForm.date) return;
+                if (addHistoryForm.selectedCartridges.length === 0 || !addHistoryForm.date) return;
 
-                // Добавляем запись
-                const newEntry = {
-                    id: `hist_${Date.now()}`,
-                    date: addHistoryForm.date,
-                    printerId: addHistoryForm.printerId,
-                    printerName: addHistoryForm.printerName,
-                    location: addHistoryForm.location,
-                    responsible: addHistoryForm.responsible,
-                    cartridgeModelId: addHistoryForm.cartridgeModelId,
-                    notes: addHistoryForm.notes,
-                    createdAt: new Date().toISOString()
-                };
-                setCartridgeHistory(prev => [newEntry, ...prev]);
+                const timestamp = Date.now();
+                const newEntries = [];
 
-                // Списываем со склада 1 картридж выбранной модели
-                setCartridgeStock(prev => prev.map(s =>
-                    s.modelId === addHistoryForm.cartridgeModelId && s.quantity > 0
-                        ? { ...s, quantity: s.quantity - 1, lastUpdated: new Date().toISOString() }
-                        : s
-                ));
+                // Создаем отдельную запись для каждого выбранного картриджа
+                addHistoryForm.selectedCartridges.forEach((modelId, index) => {
+                    const newEntry = {
+                        id: `hist_${timestamp}_${index}`,
+                        date: addHistoryForm.date,
+                        printerId: addHistoryForm.printerId,
+                        printerName: addHistoryForm.printerName,
+                        location: addHistoryForm.location,
+                        responsible: addHistoryForm.responsible,
+                        cartridgeModelId: modelId,
+                        notes: addHistoryForm.notes,
+                        createdAt: new Date().toISOString()
+                    };
+                    newEntries.push(newEntry);
 
-                showToast('✅ Замена картриджа зарегистрирована');
+                    // Списываем со склада 1 картридж этой модели
+                    setCartridgeStock(prev => prev.map(s =>
+                        s.modelId === modelId && s.quantity > 0
+                            ? { ...s, quantity: s.quantity - 1, lastUpdated: new Date().toISOString() }
+                            : s
+                    ));
+                });
+
+                setCartridgeHistory(prev => [...newEntries, ...prev]);
+
+                const count = addHistoryForm.selectedCartridges.length;
+                showToast(`✅ Замена ${count} ${count === 1 ? 'картриджа' : count < 5 ? 'картриджей' : 'картриджей'} зарегистрирована`);
+
                 setAddHistoryForm({
                     date: new Date().toISOString().split('T')[0],
                     printerId: '', printerName: '', location: '', responsible: '',
-                    cartridgeModelId: '', notes: ''
+                    selectedCartridges: [], notes: ''
                 });
                 setShowAddHistory(false);
             };
@@ -2845,31 +2854,77 @@
                                                 {directories.people?.map(p => <option key={p} value={p} />)}
                                             </datalist>
                                         </div>
-                                        <select value={addHistoryForm.cartridgeModelId} onChange={e => setAddHistoryForm(prev => ({ ...prev, cartridgeModelId: e.target.value }))}
-                                            className="w-full px-3 py-2 border rounded-lg text-sm">
-                                            <option value="">Выберите картридж...</option>
-                                            {addHistoryForm.printerName ? (
-                                                <>
-                                                    <optgroup label="Совместимые">
-                                                        {getCompatibleCartridges(addHistoryForm.printerName).map(m => (
-                                                            <option key={m.id} value={m.id}>{m.name}</option>
-                                                        ))}
-                                                    </optgroup>
-                                                    <optgroup label="Все картриджи">
-                                                        {cartridgeModels.map(m => (
-                                                            <option key={m.id} value={m.id}>{m.name}</option>
-                                                        ))}
-                                                    </optgroup>
-                                                </>
-                                            ) : cartridgeModels.map(m => (
-                                                <option key={m.id} value={m.id}>{m.name}</option>
-                                            ))}
-                                        </select>
+
+                                        {/* Выбор картриджей (мультивыбор) */}
+                                        <div className="border rounded-lg p-3 bg-gray-50">
+                                            <div className="text-xs font-semibold text-gray-600 mb-2">
+                                                Выберите картриджи для замены:
+                                                {addHistoryForm.selectedCartridges.length > 0 && (
+                                                    <span className="ml-2 px-2 py-0.5 bg-blue-500 text-white rounded-full text-xs">
+                                                        {addHistoryForm.selectedCartridges.length}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="space-y-2 max-h-48 overflow-y-auto">
+                                                {addHistoryForm.printerName ? (
+                                                    <>
+                                                        {/* Совместимые картриджи */}
+                                                        {(() => {
+                                                            const compatible = getCompatibleCartridges(addHistoryForm.printerName);
+                                                            if (compatible.length > 0) {
+                                                                return (
+                                                                    <>
+                                                                        <div className="text-xs font-semibold text-blue-600 mb-1">Совместимые:</div>
+                                                                        {compatible.map(m => {
+                                                                            const isSelected = addHistoryForm.selectedCartridges.includes(m.id);
+                                                                            const colorKey = m.type === 'black' ? 'K' : m.type === 'cyan' ? 'C' : m.type === 'magenta' ? 'M' : m.type === 'yellow' ? 'Y' : 'K';
+                                                                            const colorInfo = cartridgeColors[colorKey];
+                                                                            const stock = stockByModel[m.id];
+                                                                            return (
+                                                                                <label key={m.id} className={`flex items-center gap-2 p-2 rounded cursor-pointer transition ${isSelected ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white border border-gray-200 hover:bg-gray-50'}`}>
+                                                                                    <input type="checkbox"
+                                                                                        checked={isSelected}
+                                                                                        onChange={e => {
+                                                                                            if (e.target.checked) {
+                                                                                                setAddHistoryForm(prev => ({ ...prev, selectedCartridges: [...prev.selectedCartridges, m.id] }));
+                                                                                            } else {
+                                                                                                setAddHistoryForm(prev => ({ ...prev, selectedCartridges: prev.selectedCartridges.filter(id => id !== m.id) }));
+                                                                                            }
+                                                                                        }}
+                                                                                        className="rounded" />
+                                                                                    <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold flex-shrink-0"
+                                                                                        style={{ backgroundColor: colorInfo?.bg, color: colorInfo?.color }}>{colorInfo?.short}</span>
+                                                                                    <span className="flex-1 text-xs font-medium text-gray-800">{m.name}</span>
+                                                                                    <span className={`text-xs px-1.5 py-0.5 rounded ${stock?.quantity > 0 ? (stock.quantity <= 2 ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700') : 'bg-red-100 text-red-700'}`}>
+                                                                                        {stock?.quantity || 0} шт
+                                                                                    </span>
+                                                                                </label>
+                                                                            );
+                                                                        })}
+                                                                    </>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })()}
+                                                    </>
+                                                ) : (
+                                                    <div className="text-xs text-gray-500 py-2">Сначала выберите принтер</div>
+                                                )}
+                                            </div>
+                                        </div>
 
                                         <input type="text" value={addHistoryForm.notes} onChange={e => setAddHistoryForm(prev => ({ ...prev, notes: e.target.value }))}
                                             placeholder="Примечание (необязательно)" className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                        <button onClick={handleAddHistory} className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
-                                            Зарегистрировать замену
+                                        <button onClick={handleAddHistory}
+                                            disabled={addHistoryForm.selectedCartridges.length === 0}
+                                            className={`w-full py-2 rounded-lg font-medium transition ${
+                                                addHistoryForm.selectedCartridges.length > 0
+                                                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                            }`}>
+                                            {addHistoryForm.selectedCartridges.length > 0
+                                                ? `Зарегистрировать замену (${addHistoryForm.selectedCartridges.length})`
+                                                : 'Выберите картриджи'}
                                         </button>
                                     </div>
                                 )}
