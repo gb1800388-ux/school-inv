@@ -2346,7 +2346,7 @@
             const [printerSearch, setPrinterSearch] = useState('');
             const [selectedRoom, setSelectedRoom] = useState('');
             const [showAddModel, setShowAddModel] = useState(false);
-            const [newModelForm, setNewModelForm] = useState({ name: '', type: 'black', pageYield: '', avgPrice: '', compatiblePrinters: '' });
+            const [newModelForm, setNewModelForm] = useState({ name: '', type: 'black', pageYield: '', avgPrice: '', compatiblePrinters: '', minStock: '2', replacementDays: '90' });
             const [editingHistoryId, setEditingHistoryId] = useState(null);
             const [editHistoryForm, setEditHistoryForm] = useState(null);
             const [editingModelId, setEditingModelId] = useState(null);
@@ -2644,11 +2644,13 @@
                     type: newModelForm.type,
                     pageYield: parseInt(newModelForm.pageYield) || 0,
                     avgPrice: parseInt(newModelForm.avgPrice) || 0,
-                    compatiblePrinters: newModelForm.compatiblePrinters.split(',').map(s => s.trim()).filter(Boolean)
+                    compatiblePrinters: newModelForm.compatiblePrinters.split(',').map(s => s.trim()).filter(Boolean),
+                    minStock: parseInt(newModelForm.minStock) || 2,
+                    replacementDays: parseInt(newModelForm.replacementDays) || 90
                 };
                 setCartridgeModels(prev => [...prev, newModel]);
                 showToast('✅ Модель картриджа добавлена');
-                setNewModelForm({ name: '', type: 'black', pageYield: '', avgPrice: '', compatiblePrinters: '' });
+                setNewModelForm({ name: '', type: 'black', pageYield: '', avgPrice: '', compatiblePrinters: '', minStock: '2', replacementDays: '90' });
                 setShowAddModel(false);
             };
 
@@ -2682,7 +2684,9 @@
                     ...editModelForm,
                     pageYield: parseInt(editModelForm.pageYield) || 0,
                     avgPrice: parseInt(editModelForm.avgPrice) || 0,
-                    compatiblePrinters: editModelForm.compatiblePrinters.split(',').map(s => s.trim()).filter(Boolean)
+                    compatiblePrinters: editModelForm.compatiblePrinters.split(',').map(s => s.trim()).filter(Boolean),
+                    minStock: parseInt(editModelForm.minStock) || 2,
+                    replacementDays: parseInt(editModelForm.replacementDays) || 90
                 };
                 setCartridgeModels(prev => prev.map(m => m.id === editingModelId ? updated : m));
                 setEditingModelId(null);
@@ -4335,7 +4339,15 @@
             const [cartridgeModels, setCartridgeModels] = useState(() => {
                 try {
                     const saved = localStorage.getItem('inv_102_cartridge_models');
-                    return saved ? JSON.parse(saved) : initialCartridgeModels;
+                    const version = localStorage.getItem('inv_102_cartridge_models_version');
+
+                    // Версия 2: очищены автоматические compatiblePrinters, только ручные привязки
+                    if (version !== '2' || !saved) {
+                        localStorage.setItem('inv_102_cartridge_models_version', '2');
+                        return initialCartridgeModels;
+                    }
+
+                    return JSON.parse(saved);
                 } catch (e) { return initialCartridgeModels; }
             });
 
