@@ -1179,7 +1179,7 @@
             );
         };
 
-        const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenStats, onOpenExport, onOpenSettings, onOpenHistory, onOpenNotes, onOpenCartridges, problemCount, notesCount, criticalCartridgesCount }) => (
+        const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenStats, onOpenExport, onOpenSettings, onOpenHistory, onOpenNotes, onOpenCartridges, onOpenProcurement, problemCount, notesCount, criticalCartridgesCount, procurementCount }) => (
             <div className="nav-rail w-16 bg-gray-900 flex flex-col items-center py-4 flex-shrink-0">
                 <button onClick={onShowInfo} className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mb-6" title="О программе">
                     <span className="text-white font-bold text-sm">102</span>
@@ -1201,6 +1201,10 @@
                     <button onClick={onOpenCartridges} className="nav-btn text-gray-400 hover:text-white relative" title="Картриджи">
                         🖨️
                         {criticalCartridgesCount > 0 && <span className="nav-btn-badge bg-red-500">{criticalCartridgesCount}</span>}
+                    </button>
+                    <button onClick={onOpenProcurement} className="nav-btn text-gray-400 hover:text-white relative" title="Потребности">
+                        🛒
+                        {procurementCount > 0 && <span className="nav-btn-badge bg-amber-500">{procurementCount}</span>}
                     </button>
 
                     <div className="w-8 h-px bg-gray-700 my-2"></div>
@@ -1551,6 +1555,12 @@
                                 <span className="text-gray-400">•</span>
                                 {item.floor && <span>🔢 {item.floor} эт.</span>}
                                 {item.location && <span>📍 {item.location}</span>}
+                            </>
+                        )}
+                        {item.serialNumber?.trim() && (
+                            <>
+                                <span className="text-gray-400">•</span>
+                                <span className="font-mono text-gray-600" title="Серийный номер">S/N: {item.serialNumber}</span>
                             </>
                         )}
                     </div>
@@ -4300,9 +4310,270 @@
             );
         };
 
+        // Модальное окно потребностей / планирования закупок
+        const ProcurementNeedsModal = ({ isOpen, onClose, needs, setNeeds, directories, showToast }) => {
+            const [showAddForm, setShowAddForm] = useState(false);
+            const [editingId, setEditingId] = useState(null);
+            const [filterStatus, setFilterStatus] = useState('all');
+            const [newNeed, setNewNeed] = useState({
+                item: '',
+                quantity: 1,
+                building: 'Нансена',
+                floor: '',
+                room: '',
+                responsible: '',
+                priority: 'medium',
+                notes: ''
+            });
+
+            const handleAddNeed = () => {
+                if (!newNeed.item.trim()) {
+                    showToast('Укажите название');
+                    return;
+                }
+                const need = {
+                    id: 'need_' + Date.now(),
+                    ...newNeed,
+                    item: newNeed.item.trim(),
+                    status: 'pending',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                setNeeds(prev => [need, ...prev]);
+                setNewNeed({ item: '', quantity: 1, building: 'Нансена', floor: '', room: '', responsible: '', priority: 'medium', notes: '' });
+                setShowAddForm(false);
+                showToast('Потребность добавлена');
+            };
+
+            const handleUpdateNeed = (id, updates) => {
+                setNeeds(prev => prev.map(n => n.id === id ? { ...n, ...updates, updatedAt: new Date().toISOString() } : n));
+            };
+
+            const handleDeleteNeed = (id) => {
+                setNeeds(prev => prev.filter(n => n.id !== id));
+                showToast('Потребность удалена');
+            };
+
+            const handleMarkPurchased = (id) => {
+                handleUpdateNeed(id, { status: 'purchased', purchasedAt: new Date().toISOString() });
+                showToast('Отмечено как закуплено');
+            };
+
+            const filteredNeeds = useMemo(() => {
+                if (filterStatus === 'all') return needs;
+                return needs.filter(n => n.status === filterStatus);
+            }, [needs, filterStatus]);
+
+            const stats = useMemo(() => ({
+                total: needs.length,
+                pending: needs.filter(n => n.status === 'pending').length,
+                purchased: needs.filter(n => n.status === 'purchased').length,
+                highPriority: needs.filter(n => n.priority === 'high' && n.status === 'pending').length
+            }), [needs]);
+
+            const handlePrintNeeds = () => {
+                const pendingNeeds = needs.filter(n => n.status === 'pending');
+                if (pendingNeeds.length === 0) {
+                    showToast('Нет ожидающих потребностей');
+                    return;
+                }
+                const date = new Date().toLocaleDateString('ru-RU');
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>Потребности для закупки</title><style>');
+                printWindow.document.write('*{margin:0;padding:0;box-sizing:border-box}');
+                printWindow.document.write('body{font-family:"Segoe UI",Tahoma,sans-serif;padding:20px;color:#333;font-size:12px}');
+                printWindow.document.write('.header{text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid #3182ce}');
+                printWindow.document.write('.header h1{font-size:18px;color:#2c5282;margin-bottom:5px}');
+                printWindow.document.write('table{width:100%;border-collapse:collapse;font-size:11px}');
+                printWindow.document.write('th{background:#2c5282;color:white;padding:8px;text-align:left;font-weight:600}');
+                printWindow.document.write('td{padding:8px;border:1px solid #e2e8f0;vertical-align:top}');
+                printWindow.document.write('tr:nth-child(even){background:#f7fafc}');
+                printWindow.document.write('.priority-high{color:#e53e3e;font-weight:bold}');
+                printWindow.document.write('.priority-medium{color:#d69e2e}');
+                printWindow.document.write('.priority-low{color:#718096}');
+                printWindow.document.write('.footer{margin-top:20px;text-align:center;font-size:10px;color:#718096}');
+                printWindow.document.write('@media print{body{padding:10px}@page{margin:10mm;size:A4 portrait}}');
+                printWindow.document.write('</style></head><body>');
+                printWindow.document.write('<div class="header"><h1>ПОТРЕБНОСТИ ДЛЯ ЗАКУПКИ</h1><p>ГКОУ СКОШИ №102 • ' + date + '</p></div>');
+                printWindow.document.write('<table><thead><tr><th>№</th><th>Наименование</th><th>Кол-во</th><th>Кабинет</th><th>Для кого</th><th>Приоритет</th><th>Примечание</th></tr></thead><tbody>');
+
+                pendingNeeds.sort((a, b) => {
+                    const priorityOrder = { high: 0, medium: 1, low: 2 };
+                    return priorityOrder[a.priority] - priorityOrder[b.priority];
+                }).forEach((need, idx) => {
+                    const priorityText = need.priority === 'high' ? 'СРОЧНО' : need.priority === 'medium' ? 'Средний' : 'Низкий';
+                    const priorityClass = 'priority-' + need.priority;
+                    const location = [need.building, need.floor ? need.floor + ' эт.' : '', need.room].filter(Boolean).join(', ');
+                    printWindow.document.write('<tr><td>' + (idx + 1) + '</td><td>' + need.item + '</td><td>' + need.quantity + '</td><td>' + (location || '-') + '</td><td>' + (need.responsible || '-') + '</td><td class="' + priorityClass + '">' + priorityText + '</td><td>' + (need.notes || '-') + '</td></tr>');
+                });
+
+                printWindow.document.write('</tbody></table>');
+                printWindow.document.write('<div class="footer">Всего позиций: ' + pendingNeeds.length + ' • Сформировано: ' + new Date().toLocaleString('ru-RU') + '</div>');
+                printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
+                printWindow.document.close();
+                showToast('Печать списка потребностей');
+            };
+
+            if (!isOpen) return null;
+
+            const priorityColors = { high: 'bg-red-100 text-red-700 border-red-300', medium: 'bg-yellow-100 text-yellow-700 border-yellow-300', low: 'bg-gray-100 text-gray-600 border-gray-300' };
+            const priorityLabels = { high: 'Срочно', medium: 'Средний', low: 'Низкий' };
+
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title="Потребности / Планирование закупок" size="lg">
+                    <div className="space-y-4">
+                        {/* Статистика */}
+                        <div className="grid grid-cols-4 gap-2">
+                            <div className="text-center p-2 bg-gray-100 rounded-lg">
+                                <div className="text-lg font-bold text-gray-700">{stats.total}</div>
+                                <div className="text-xs text-gray-500">Всего</div>
+                            </div>
+                            <div className="text-center p-2 bg-amber-100 rounded-lg">
+                                <div className="text-lg font-bold text-amber-700">{stats.pending}</div>
+                                <div className="text-xs text-amber-600">Ожидает</div>
+                            </div>
+                            <div className="text-center p-2 bg-green-100 rounded-lg">
+                                <div className="text-lg font-bold text-green-700">{stats.purchased}</div>
+                                <div className="text-xs text-green-600">Закуплено</div>
+                            </div>
+                            <div className="text-center p-2 bg-red-100 rounded-lg">
+                                <div className="text-lg font-bold text-red-700">{stats.highPriority}</div>
+                                <div className="text-xs text-red-600">Срочно</div>
+                            </div>
+                        </div>
+
+                        {/* Кнопки */}
+                        <div className="flex gap-2 flex-wrap">
+                            <button onClick={() => setShowAddForm(true)} className="touch-btn px-4 py-2 bg-green-600 text-white rounded-lg font-semibold text-sm">
+                                + Добавить потребность
+                            </button>
+                            <button onClick={handlePrintNeeds} className="touch-btn px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm">
+                                Печать списка
+                            </button>
+                        </div>
+
+                        {/* Фильтр */}
+                        <div className="flex gap-2">
+                            <button onClick={() => setFilterStatus('all')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${filterStatus === 'all' ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-600'}`}>Все</button>
+                            <button onClick={() => setFilterStatus('pending')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${filterStatus === 'pending' ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-600'}`}>Ожидает</button>
+                            <button onClick={() => setFilterStatus('purchased')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${filterStatus === 'purchased' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}>Закуплено</button>
+                        </div>
+
+                        {/* Форма добавления */}
+                        {showAddForm && (
+                            <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 space-y-3">
+                                <h4 className="font-bold text-gray-800">Новая потребность</h4>
+                                <input
+                                    type="text"
+                                    value={newNeed.item}
+                                    onChange={e => setNewNeed(prev => ({ ...prev, item: e.target.value }))}
+                                    placeholder="Наименование (например: Наушники, Колонки)"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                    autoFocus
+                                />
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Количество</label>
+                                        <input type="number" min="1" value={newNeed.quantity} onChange={e => setNewNeed(prev => ({ ...prev, quantity: parseInt(e.target.value) || 1 }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Приоритет</label>
+                                        <select value={newNeed.priority} onChange={e => setNewNeed(prev => ({ ...prev, priority: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option value="low">Низкий</option>
+                                            <option value="medium">Средний</option>
+                                            <option value="high">Срочно</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Здание</label>
+                                        <select value={newNeed.building} onChange={e => setNewNeed(prev => ({ ...prev, building: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option value="Нансена">Нансена</option>
+                                            <option value="Ботаничка">Ботаничка</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Этаж</label>
+                                        <select value={newNeed.floor} onChange={e => setNewNeed(prev => ({ ...prev, floor: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option value="">—</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Кабинет</label>
+                                        <input type="text" list="rooms-list" value={newNeed.room} onChange={e => setNewNeed(prev => ({ ...prev, room: e.target.value }))} placeholder="Кабинет" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+                                        <datalist id="rooms-list">{directories.rooms?.map(r => <option key={r} value={r} />)}</datalist>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Для кого (ФИО)</label>
+                                        <input type="text" list="people-list" value={newNeed.responsible} onChange={e => setNewNeed(prev => ({ ...prev, responsible: e.target.value }))} placeholder="ФИО" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+                                        <datalist id="people-list">{directories.people?.map(p => <option key={p} value={p} />)}</datalist>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-500 mb-1">Примечание</label>
+                                    <textarea value={newNeed.notes} onChange={e => setNewNeed(prev => ({ ...prev, notes: e.target.value }))} placeholder="Дополнительная информация" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" />
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick={handleAddNeed} className="touch-btn flex-1 py-2 bg-green-600 text-white rounded-lg font-semibold text-sm">Добавить</button>
+                                    <button onClick={() => setShowAddForm(false)} className="touch-btn flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold text-sm">Отмена</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Список потребностей */}
+                        <div className="space-y-2 max-h-80 overflow-y-auto custom-scroll">
+                            {filteredNeeds.length === 0 ? (
+                                <div className="text-center py-8 text-gray-400">
+                                    <div className="text-4xl mb-2">📋</div>
+                                    <p>Нет записей</p>
+                                </div>
+                            ) : (
+                                filteredNeeds.map(need => (
+                                    <div key={need.id} className={`p-3 bg-white rounded-lg border-l-4 card-shadow ${need.status === 'purchased' ? 'border-l-green-500 opacity-60' : need.priority === 'high' ? 'border-l-red-500' : need.priority === 'medium' ? 'border-l-yellow-500' : 'border-l-gray-400'}`}>
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 flex-wrap mb-1">
+                                                    <span className="font-semibold text-gray-800">{need.item}</span>
+                                                    {need.quantity > 1 && <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">x{need.quantity}</span>}
+                                                    <span className={`text-xs px-1.5 py-0.5 rounded border ${priorityColors[need.priority]}`}>{priorityLabels[need.priority]}</span>
+                                                    {need.status === 'purchased' && <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">Закуплено</span>}
+                                                </div>
+                                                <div className="text-xs text-gray-500 space-x-2">
+                                                    {need.responsible && <span>👤 {need.responsible}</span>}
+                                                    {(need.building || need.room) && <span>📍 {[need.building, need.floor ? need.floor + ' эт.' : '', need.room].filter(Boolean).join(', ')}</span>}
+                                                </div>
+                                                {need.notes && <p className="text-xs text-gray-400 mt-1 italic">{need.notes}</p>}
+                                                <p className="text-xs text-gray-300 mt-1">{new Date(need.createdAt).toLocaleDateString('ru-RU')}</p>
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                {need.status === 'pending' && (
+                                                    <button onClick={() => handleMarkPurchased(need.id)} className="touch-btn px-2 py-1 bg-green-500 text-white rounded text-xs font-semibold" title="Отметить как закуплено">✓</button>
+                                                )}
+                                                {need.status === 'purchased' && (
+                                                    <button onClick={() => handleUpdateNeed(need.id, { status: 'pending' })} className="touch-btn px-2 py-1 bg-amber-500 text-white rounded text-xs font-semibold" title="Вернуть в ожидание">↩</button>
+                                                )}
+                                                <button onClick={() => handleDeleteNeed(need.id)} className="touch-btn px-2 py-1 bg-red-500 text-white rounded text-xs font-semibold" title="Удалить">✗</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </Modal>
+            );
+        };
+
         const App = () => {
             const contentRef = useRef(null);
-            
+
             const [equipment, setEquipment] = useState(() => {
                 try {
                     const saved = localStorage.getItem('inv_102_data_v12');
@@ -4376,6 +4647,16 @@
             const [cartridgesModal, setCartridgesModal] = useState({ open: false, tab: 'stock' });
             const [cartridgeReplaceModal, setCartridgeReplaceModal] = useState({ open: false, printer: null });
 
+            // Потребности / Планирование закупок
+            const [procurementNeeds, setProcurementNeeds] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('inv_102_procurement_needs');
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                return [];
+            });
+            const [procurementModal, setProcurementModal] = useState({ open: false });
+
             const [sidebarOpen, setSidebarOpen] = useState(false);
             const [activeCategory, setActiveCategory] = useState('Все оборудование');
             const [activeFilter, setActiveFilter] = useState('all');
@@ -4415,6 +4696,7 @@
             useEffect(() => { localStorage.setItem('inv_102_cartridge_stock', JSON.stringify(cartridgeStock)); }, [cartridgeStock]);
             useEffect(() => { localStorage.setItem('inv_102_cartridge_history', JSON.stringify(cartridgeHistory)); }, [cartridgeHistory]);
             useEffect(() => { localStorage.setItem('inv_102_manual_cartridge_mapping', JSON.stringify(manualCartridgeMapping)); }, [manualCartridgeMapping]);
+            useEffect(() => { localStorage.setItem('inv_102_procurement_needs', JSON.stringify(procurementNeeds)); }, [procurementNeeds]);
 
             const addToHistory = useCallback((action, item, actionText) => {
                 setHistory(prev => [{
@@ -4739,6 +5021,9 @@
                 const items = equipment.filter(item => selectedItems.has(item.id));
                 const date = new Date().toLocaleDateString('ru-RU');
 
+                // Категории, для которых нужно показывать серийный номер
+                const serialCategories = ['Ноутбуки', 'Компьютеры и моноблоки'];
+
                 // Группируем по категориям
                 const byCategory = {};
                 items.forEach(item => {
@@ -4749,16 +5034,29 @@
 
                 let sectionsHtml = '';
                 Object.entries(byCategory).sort((a, b) => a[0].localeCompare(b[0], 'ru')).forEach(([category, catItems]) => {
+                    const showSerial = serialCategories.includes(category);
                     sectionsHtml += '<div class="category-section">';
                     sectionsHtml += '<div class="category-header">' + category + ' (' + catItems.length + ' шт.)</div>';
-                    sectionsHtml += '<table><thead><tr><th style="width:3%">№</th><th style="width:10%">Инв. №</th><th style="width:25%">Название</th><th style="width:15%">Местоположение</th><th style="width:12%">Ответственный</th><th style="width:20%">Заметки</th><th style="width:15%">Статус</th></tr></thead><tbody>';
+
+                    if (showSerial) {
+                        // Таблица с серийным номером для компьютерной техники
+                        sectionsHtml += '<table><thead><tr><th style="width:3%">№</th><th style="width:10%">Инв. №</th><th style="width:12%">Серийный №</th><th style="width:22%">Название</th><th style="width:13%">Местоположение</th><th style="width:10%">Ответственный</th><th style="width:15%">Заметки</th><th style="width:15%">Статус</th></tr></thead><tbody>';
+                    } else {
+                        sectionsHtml += '<table><thead><tr><th style="width:3%">№</th><th style="width:10%">Инв. №</th><th style="width:25%">Название</th><th style="width:15%">Местоположение</th><th style="width:12%">Ответственный</th><th style="width:20%">Заметки</th><th style="width:15%">Статус</th></tr></thead><tbody>';
+                    }
 
                     catItems.sort((a, b) => (a.invNumber || '').localeCompare(b.invNumber || '')).forEach((item, idx) => {
                         const location = [item.building, item.floor ? 'эт.' + item.floor : '', item.location].filter(Boolean).join(', ') || '-';
                         const status = item.writeOff ? '📝 Списание' : item.checked ? '✓ Проверено' : '⏳ Ожидает';
                         const statusClass = item.writeOff ? 'status-writeoff' : item.checked ? 'status-checked' : 'status-pending';
                         const notes = (item.inventoryNote || '').trim() || '-';
-                        sectionsHtml += '<tr><td>' + (idx + 1) + '</td><td class="inv-number">' + (item.invNumber || '-') + '</td><td>' + (item.name || '-') + '</td><td class="location">' + location + '</td><td>' + (item.responsible || '-') + '</td><td class="notes">' + notes + '</td><td class="' + statusClass + '">' + status + '</td></tr>';
+
+                        if (showSerial) {
+                            const serial = (item.serialNumber || '').trim() || '-';
+                            sectionsHtml += '<tr><td>' + (idx + 1) + '</td><td class="inv-number">' + (item.invNumber || '-') + '</td><td class="serial-number">' + serial + '</td><td>' + (item.name || '-') + '</td><td class="location">' + location + '</td><td>' + (item.responsible || '-') + '</td><td class="notes">' + notes + '</td><td class="' + statusClass + '">' + status + '</td></tr>';
+                        } else {
+                            sectionsHtml += '<tr><td>' + (idx + 1) + '</td><td class="inv-number">' + (item.invNumber || '-') + '</td><td>' + (item.name || '-') + '</td><td class="location">' + location + '</td><td>' + (item.responsible || '-') + '</td><td class="notes">' + notes + '</td><td class="' + statusClass + '">' + status + '</td></tr>';
+                        }
                     });
 
                     sectionsHtml += '</tbody></table></div>';
@@ -4780,6 +5078,7 @@
                 printWindow.document.write('td{padding:6px 8px;border:1px solid #e2e8f0;vertical-align:top}');
                 printWindow.document.write('tr:nth-child(even){background:#f7fafc}');
                 printWindow.document.write('.inv-number{font-family:monospace;font-weight:bold;color:#2d3748;white-space:nowrap}');
+                printWindow.document.write('.serial-number{font-family:monospace;font-size:9px;color:#4a5568;white-space:nowrap}');
                 printWindow.document.write('.location{color:#718096;font-size:9px}');
                 printWindow.document.write('.notes{color:#4a5568;font-size:9px;font-style:italic}');
                 printWindow.document.write('.status-checked{color:#38a169;font-weight:bold}');
@@ -5612,9 +5911,11 @@
                         onOpenHistory={() => setHistoryModal({ open: true })}
                         onOpenNotes={() => setNotesModal({ open: true })}
                         onOpenCartridges={() => setCartridgesModal({ open: true, tab: 'stock' })}
+                        onOpenProcurement={() => setProcurementModal({ open: true })}
                         problemCount={problemItems.length}
                         notesCount={notesCount}
                         criticalCartridgesCount={criticalCartridgesCount}
+                        procurementCount={procurementNeeds.filter(n => n.status === 'pending').length}
                     />
 
                     {/* ИЗМЕНЕНО: добавлен onRoomClick */}
@@ -5808,6 +6109,16 @@
                         manualCartridgeMapping={manualCartridgeMapping}
                         setManualCartridgeMapping={setManualCartridgeMapping}
                         equipment={equipment}
+                        directories={directories}
+                        showToast={showToast}
+                    />
+
+                    {/* Модальное окно потребностей */}
+                    <ProcurementNeedsModal
+                        isOpen={procurementModal.open}
+                        onClose={() => setProcurementModal({ open: false })}
+                        needs={procurementNeeds}
+                        setNeeds={setProcurementNeeds}
                         directories={directories}
                         showToast={showToast}
                     />
