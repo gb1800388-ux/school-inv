@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Инвентаризация - Дизайн</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Шрифт -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        // Основная цветовая палитра
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        // Статусы
+                        success: '#22c55e',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        info: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Nunito', system-ui, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+            overflow: hidden;
+            height: 100dvh;
+        }
+
+        /* Контейнер приложения */
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100dvh;
+            max-width: 430px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        /* Шапка */
+        .header {
+            flex-shrink: 0;
+            padding: 16px 20px;
+            padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        /* Контент */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px;
+        }
+
+        /* Скроллбар */
+        .content::-webkit-scrollbar { width: 4px; }
+        .content::-webkit-scrollbar-track { background: transparent; }
+        .content::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 2px; }
+
+        /* Нижняя навигация */
+        .nav {
+            flex-shrink: 0;
+            display: flex;
+            padding: 8px 16px;
+            padding-bottom: calc(env(safe-area-inset-bottom, 8px) + 8px);
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 4px;
+            font-size: 12px;
+            color: #64748b;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: #2563eb;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
+        /* Карточка */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Бейдж статуса */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+
+        /* Кнопка */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
+        }
+
+        /* Поле ввода */
+        .input {
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        /* Список элементов */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .list-item:active {
+            background: #f8fafc;
+        }
+
+        /* Иконка */
+        .icon-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* FAB кнопка */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fab:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+        <!-- ═══════════════════════════════════════════════════════════
+             ШАПКА (HEADER)
+             ═══════════════════════════════════════════════════════════ -->
+        <header class="header">
+            <div class="flex items-center justify-between mb-2">
+                <h1 class="text-xl font-bold">Инвентаризация</h1>
+                <div class="flex gap-2">
+                    <!-- Кнопки в шапке -->
+                    <button class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                    <button class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V4a1 1 0 10-2 0v1.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <p class="text-white/70 text-sm">ГКОУ СКОШИ №102</p>
+        </header>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             КОНТЕНТ
+             ═══════════════════════════════════════════════════════════ -->
+        <main class="content">
+
+            <!-- Статистика -->
+            <section class="mb-6">
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="card text-center">
+                        <div class="text-2xl font-bold text-primary-600">1,234</div>
+                        <div class="text-xs text-gray-500 mt-1">Всего</div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="text-2xl font-bold text-success">892</div>
+                        <div class="text-xs text-gray-500 mt-1">Проверено</div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="text-2xl font-bold text-warning">342</div>
+                        <div class="text-xs text-gray-500 mt-1">Ожидает</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Поиск -->
+            <section class="mb-6">
+                <div class="relative">
+                    <input type="text" class="input pl-12" placeholder="Поиск по инвентарю...">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Список предметов -->
+            <section>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-gray-800">Последние</h2>
+                    <button class="text-primary-600 text-sm font-semibold">Все →</button>
+                </div>
+
+                <!-- Элемент списка: Проверен -->
+                <div class="list-item">
+                    <div class="icon-circle bg-green-100 text-success mr-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-gray-800 truncate">Компьютер Dell OptiPlex</div>
+                        <div class="text-sm text-gray-500">№ 0001234 • Каб. 301</div>
+                    </div>
+                    <span class="badge badge-success ml-2">✓</span>
+                </div>
+
+                <!-- Элемент списка: Ожидает -->
+                <div class="list-item">
+                    <div class="icon-circle bg-amber-100 text-warning mr-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-gray-800 truncate">Проектор Epson EB-X05</div>
+                        <div class="text-sm text-gray-500">№ 0005678 • Актовый зал</div>
+                    </div>
+                    <span class="badge badge-warning">!</span>
+                </div>
+
+                <!-- Элемент списка: Списание -->
+                <div class="list-item">
+                    <div class="icon-circle bg-red-100 text-danger mr-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-gray-800 truncate">Принтер HP LaserJet</div>
+                        <div class="text-sm text-gray-500">№ 0002341 • Бухгалтерия</div>
+                    </div>
+                    <span class="badge badge-danger">✕</span>
+                </div>
+
+                <!-- Еще элементы для скролла -->
+                <div class="list-item">
+                    <div class="icon-circle bg-green-100 text-success mr-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-gray-800 truncate">Стол письменный</div>
+                        <div class="text-sm text-gray-500">№ 0008912 • Каб. 105</div>
+                    </div>
+                    <span class="badge badge-success">✓</span>
+                </div>
+
+                <div class="list-item">
+                    <div class="icon-circle bg-blue-100 text-info mr-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-gray-800 truncate">Монитор LG 24"</div>
+                        <div class="text-sm text-gray-500">№ 0001235 • Каб. 301</div>
+                    </div>
+                    <span class="badge badge-success">✓</span>
+                </div>
+
+            </section>
+
+            <!-- Секция кнопок -->
+            <section class="mt-6">
+                <button class="btn btn-primary w-full mb-3">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                    </svg>
+                    Сканировать QR-код
+                </button>
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="btn btn-secondary">Экспорт</button>
+                    <button class="btn btn-secondary">Отчёты</button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FAB кнопка -->
+        <button class="fab">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+        </button>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             НИЖНЯЯ НАВИГАЦИЯ
+             ═══════════════════════════════════════════════════════════ -->
+        <nav class="nav">
+            <div class="nav-item active">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>Главная</span>
+            </div>
+            <div class="nav-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <span>Инвентарь</span>
+            </div>
+            <div class="nav-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                <span>Проверка</span>
+            </div>
+            <div class="nav-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span>Настройки</span>
+            </div>
+        </nav>
+    </div>
+
+</body>
+</html>
