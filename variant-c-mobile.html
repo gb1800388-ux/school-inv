@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Вариант C — Мобильный</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Nunito', system-ui, sans-serif;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            min-height: 100dvh;
+        }
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100dvh;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 60px rgba(0,0,0,0.3);
+        }
+        .safe-top { padding-top: env(safe-area-inset-top, 0px); }
+        .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- Хедер с градиентом -->
+    <header class="safe-top bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white px-5 pt-4 pb-6">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h1 class="text-xl font-bold">Инвентаризация</h1>
+                <p class="text-white/60 text-sm">СКОШИ №102</p>
+            </div>
+            <div class="flex gap-2">
+                <button class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V4a1 1 0 10-2 0v1.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                </button>
+                <button class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Статистика в хедере -->
+        <div class="grid grid-cols-4 gap-2">
+            <div class="bg-white/10 rounded-2xl p-3 text-center backdrop-blur-sm">
+                <div class="text-2xl font-bold">1234</div>
+                <div class="text-[10px] text-white/60 uppercase tracking-wide">Всего</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-3 text-center backdrop-blur-sm">
+                <div class="text-2xl font-bold text-emerald-300">892</div>
+                <div class="text-[10px] text-white/60 uppercase tracking-wide">Готово</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-3 text-center backdrop-blur-sm">
+                <div class="text-2xl font-bold text-amber-300">342</div>
+                <div class="text-[10px] text-white/60 uppercase tracking-wide">Ждут</div>
+            </div>
+            <div class="bg-white/10 rounded-2xl p-3 text-center backdrop-blur-sm">
+                <div class="text-2xl font-bold text-red-300">15</div>
+                <div class="text-[10px] text-white/60 uppercase tracking-wide">Списать</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Контент со скругленным верхом -->
+    <main class="flex-1 bg-gray-50 -mt-3 rounded-t-3xl overflow-hidden flex flex-col">
+        <!-- Поиск -->
+        <div class="px-5 pt-5 pb-3">
+            <div class="relative">
+                <input type="text" placeholder="Поиск по номеру, названию..."
+                    class="w-full px-4 py-3.5 pl-11 bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-100 shadow-sm">
+                <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Табы зданий -->
+        <div class="px-5 pb-3">
+            <div class="flex bg-gray-100 rounded-2xl p-1">
+                <button class="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-white shadow-sm text-gray-900">Все</button>
+                <button class="flex-1 py-2.5 text-sm font-semibold rounded-xl text-gray-500">🏫 Нансена</button>
+                <button class="flex-1 py-2.5 text-sm font-semibold rounded-xl text-gray-500">🏢 Ботаничка</button>
+            </div>
+        </div>
+
+        <!-- Список -->
+        <div class="flex-1 overflow-y-auto px-5 pb-24">
+            <!-- Секция -->
+            <div class="flex items-center gap-2 py-3">
+                <span class="text-lg">🖥️</span>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Компьютеры</span>
+                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">45/52</span>
+            </div>
+
+            <!-- Карточка — свайп-стиль -->
+            <div class="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-gray-900 truncate">Dell OptiPlex 7090</div>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs font-mono text-gray-500">0001234</span>
+                            <span class="text-xs text-purple-600">• Каб. 301</span>
+                        </div>
+                    </div>
+                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Карточка — ожидает -->
+            <div class="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-amber-200 active:scale-[0.98] transition-transform">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-gray-900 truncate">Монитор LG 27UK850</div>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs font-mono text-gray-500">0001235</span>
+                            <span class="text-xs text-purple-600">• Каб. 105</span>
+                        </div>
+                    </div>
+                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Карточка — списание -->
+            <div class="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-red-200 active:scale-[0.98] transition-transform">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-rose-500 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-gray-900 truncate">HP LaserJet 1020</div>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs font-mono text-gray-500">0000891</span>
+                            <span class="text-xs text-red-500 font-semibold">На списание</span>
+                        </div>
+                    </div>
+                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Секция -->
+            <div class="flex items-center gap-2 py-3 mt-2">
+                <span class="text-lg">🖨️</span>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Принтеры</span>
+                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">28/35</span>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-gray-900 truncate">Xerox VersaLink C7025</div>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs font-mono text-gray-500">0002341</span>
+                            <span class="text-xs text-purple-600">• Учительская</span>
+                        </div>
+                    </div>
+                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-gray-900 truncate">Canon iR 2206</div>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs font-mono text-gray-500">0002342</span>
+                            <span class="text-xs text-purple-600">• Приёмная</span>
+                        </div>
+                    </div>
+                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Нижняя навигация -->
+    <nav class="safe-bottom fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-white border-t border-gray-200 px-2 pt-2 pb-1">
+        <div class="flex">
+            <button class="flex-1 flex flex-col items-center py-2 text-purple-600">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span class="text-[10px] font-semibold mt-1">Главная</span>
+            </button>
+            <button class="flex-1 flex flex-col items-center py-2 text-gray-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <span class="text-[10px] font-semibold mt-1">Инвентарь</span>
+            </button>
+            <button class="flex-1 flex flex-col items-center py-2 relative">
+                <div class="absolute -top-5 w-16 h-16 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl shadow-lg shadow-purple-500/40 flex items-center justify-center">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                    </svg>
+                </div>
+                <span class="text-[10px] font-semibold mt-8 text-purple-600">Скан</span>
+            </button>
+            <button class="flex-1 flex flex-col items-center py-2 text-gray-400 relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                </svg>
+                <span class="absolute -top-0.5 right-5 w-4 h-4 bg-amber-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
+                <span class="text-[10px] font-semibold mt-1">Картриджи</span>
+            </button>
+            <button class="flex-1 flex flex-col items-center py-2 text-gray-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="text-[10px] font-semibold mt-1">Отчёты</span>
+            </button>
+        </div>
+    </nav>
+</div>
+
+</body>
+</html>

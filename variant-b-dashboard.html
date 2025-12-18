@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вариант B — Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(148, 163, 184, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div class="flex min-h-screen">
+        <!-- Боковая панель -->
+        <aside class="w-64 glass border-r border-slate-700/50 flex flex-col">
+            <!-- Лого -->
+            <div class="p-5 border-b border-slate-700/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center">
+                        <span class="text-white font-bold">102</span>
+                    </div>
+                    <div>
+                        <div class="font-bold text-white">Инвентаризация</div>
+                        <div class="text-xs text-slate-400">СКОШИ №102</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Навигация -->
+            <nav class="flex-1 p-3 space-y-1">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600/20 text-blue-400 font-semibold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                    Обзор
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-700/50 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                    Оборудование
+                    <span class="ml-auto text-xs bg-slate-600 px-2 py-0.5 rounded-full">1,234</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-700/50 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                    </svg>
+                    Картриджи
+                    <span class="ml-auto text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">3!</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-700/50 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    Здания
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-700/50 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Отчёты
+                </a>
+            </nav>
+
+            <!-- Пользователь -->
+            <div class="p-4 border-t border-slate-700/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold">А</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-semibold text-white truncate">Администратор</div>
+                        <div class="text-xs text-slate-500">admin@school102.ru</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="flex-1 flex flex-col min-w-0">
+            <!-- Хедер -->
+            <header class="glass border-b border-slate-700/50 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Обзор</h1>
+                        <p class="text-sm text-slate-400">Последнее обновление: сегодня, 14:32</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <input type="text" placeholder="Быстрый поиск..."
+                                class="w-64 px-4 py-2.5 pl-10 bg-slate-800 border border-slate-600 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                            <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 bg-slate-700 px-1.5 py-0.5 rounded">⌘K</kbd>
+                        </div>
+                        <button class="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Контент -->
+            <div class="flex-1 overflow-auto p-6">
+                <!-- Статистика -->
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="glass rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs text-slate-500">Всего</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white">1,234</div>
+                        <div class="text-sm text-slate-400 mt-1">единиц техники</div>
+                    </div>
+
+                    <div class="glass rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">+12</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white">892</div>
+                        <div class="text-sm text-slate-400 mt-1">проверено</div>
+                        <div class="mt-3 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 rounded-full" style="width: 72%"></div>
+                        </div>
+                    </div>
+
+                    <div class="glass rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs text-slate-500">27%</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white">342</div>
+                        <div class="text-sm text-slate-400 mt-1">ожидают проверки</div>
+                    </div>
+
+                    <div class="glass rounded-2xl p-5 border-red-500/30">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs text-red-400 bg-red-500/20 px-2 py-0.5 rounded-full">!</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white">15</div>
+                        <div class="text-sm text-slate-400 mt-1">на списание</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Список оборудования -->
+                    <div class="col-span-2 glass rounded-2xl overflow-hidden">
+                        <div class="px-5 py-4 border-b border-slate-700/50 flex items-center justify-between">
+                            <h2 class="font-bold text-white">Последние проверки</h2>
+                            <button class="text-sm text-blue-400 hover:text-blue-300">Все →</button>
+                        </div>
+                        <div class="divide-y divide-slate-700/30">
+                            <!-- Item -->
+                            <div class="px-5 py-4 flex items-center gap-4 hover:bg-slate-700/30 transition-colors cursor-pointer">
+                                <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                                    <span class="text-emerald-400">✓</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-semibold text-white truncate">Dell OptiPlex 7090</span>
+                                        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">Нансена</span>
+                                    </div>
+                                    <div class="text-sm text-slate-500">№ 0001234 • Каб. 301</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm text-emerald-400">Проверено</div>
+                                    <div class="text-xs text-slate-500">15 мин назад</div>
+                                </div>
+                            </div>
+                            <!-- Item -->
+                            <div class="px-5 py-4 flex items-center gap-4 hover:bg-slate-700/30 transition-colors cursor-pointer">
+                                <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                                    <span class="text-emerald-400">✓</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-semibold text-white truncate">Проектор Epson EB-X51</span>
+                                        <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Ботаничка</span>
+                                    </div>
+                                    <div class="text-sm text-slate-500">№ 0005678 • Актовый зал</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm text-emerald-400">Проверено</div>
+                                    <div class="text-xs text-slate-500">1 час назад</div>
+                                </div>
+                            </div>
+                            <!-- Item Pending -->
+                            <div class="px-5 py-4 flex items-center gap-4 hover:bg-slate-700/30 transition-colors cursor-pointer">
+                                <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                                    <span class="text-amber-400">!</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-semibold text-white truncate">МФУ Xerox B215</span>
+                                        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">Нансена</span>
+                                    </div>
+                                    <div class="text-sm text-slate-500">№ 0002341 • Учительская</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm text-amber-400">Ожидает</div>
+                                    <div class="text-xs text-slate-500">Не проверено</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Боковая панель -->
+                    <div class="space-y-4">
+                        <!-- Здания -->
+                        <div class="glass rounded-2xl p-5">
+                            <h3 class="font-bold text-white mb-4">По зданиям</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">🏫</span>
+                                        <div>
+                                            <div class="font-semibold text-white">Нансена</div>
+                                            <div class="text-xs text-slate-500">3 этажа</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-white">745</div>
+                                        <div class="text-xs text-emerald-400">89%</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">🏢</span>
+                                        <div>
+                                            <div class="font-semibold text-white">Ботаничка</div>
+                                            <div class="text-xs text-slate-500">2 этажа</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-white">489</div>
+                                        <div class="text-xs text-amber-400">65%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Критичные картриджи -->
+                        <div class="glass rounded-2xl p-5 border border-amber-500/30">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-white">Картриджи</h3>
+                                <span class="text-xs text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-full">3 критично</span>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between p-2 rounded-lg bg-red-500/10">
+                                    <span class="text-sm text-slate-300">HP 85A</span>
+                                    <span class="text-sm font-bold text-red-400">0 шт</span>
+                                </div>
+                                <div class="flex items-center justify-between p-2 rounded-lg bg-amber-500/10">
+                                    <span class="text-sm text-slate-300">Canon C-EXV 22</span>
+                                    <span class="text-sm font-bold text-amber-400">1 шт</span>
+                                </div>
+                                <div class="flex items-center justify-between p-2 rounded-lg bg-amber-500/10">
+                                    <span class="text-sm text-slate-300">Xerox 106R03745</span>
+                                    <span class="text-sm font-bold text-amber-400">2 шт</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
