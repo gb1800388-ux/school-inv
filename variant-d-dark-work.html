@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Вариант D — Тёмная тема для работы</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --bg-base: #0d1117;
+            --bg-surface: #161b22;
+            --bg-overlay: #1c2128;
+            --bg-hover: #262c36;
+            --border: #30363d;
+            --border-light: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-yellow: #d29922;
+            --accent-red: #f85149;
+            --accent-purple: #a371f7;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Кастомный скролл */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        .app {
+            display: flex;
+            height: 100dvh;
+            overflow: hidden;
+        }
+
+        /* Компактный сайдбар */
+        .sidebar {
+            width: 220px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            margin: 2px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+        .nav-item.active { background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); }
+        .nav-item .badge {
+            margin-left: auto;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: var(--bg-overlay);
+        }
+        .nav-item .badge.warn { background: rgba(210, 153, 34, 0.2); color: var(--accent-yellow); }
+
+        /* Основной контент */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        /* Хедер — компактный */
+        .header {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        /* Быстрые статы в хедере */
+        .quick-stats {
+            display: flex;
+            gap: 4px;
+        }
+        .quick-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .quick-stat:hover { border-color: var(--border); background: var(--bg-overlay); }
+        .quick-stat.active { border-color: var(--accent-blue); background: rgba(88, 166, 255, 0.1); }
+        .quick-stat .num { font-weight: 700; font-size: 14px; }
+        .quick-stat .num.green { color: var(--accent-green); }
+        .quick-stat .num.yellow { color: var(--accent-yellow); }
+        .quick-stat .num.red { color: var(--accent-red); }
+
+        /* Поиск */
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: all 0.15s;
+        }
+        .search-box input::placeholder { color: var(--text-muted); }
+        .search-box input:focus { outline: none; border-color: var(--accent-blue); background: var(--bg-overlay); }
+        .search-box svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-box kbd {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 2px 6px;
+            background: var(--bg-overlay);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Тулбар фильтров */
+        .toolbar {
+            padding: 8px 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            background: var(--bg-surface);
+        }
+
+        .filter-group {
+            display: flex;
+            background: var(--bg-base);
+            border-radius: 6px;
+            padding: 2px;
+        }
+        .filter-btn {
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+            border: none;
+            background: transparent;
+        }
+        .filter-btn:hover { color: var(--text-primary); }
+        .filter-btn.active { background: var(--bg-overlay); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
+        .divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .tag.blue { background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); }
+        .tag.green { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+
+        .results-count {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Таблица — главный контент */
+        .table-wrapper {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            position: sticky;
+            top: 0;
+            background: var(--bg-surface);
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            z-index: 10;
+        }
+        .data-table th:hover { color: var(--text-secondary); }
+        .data-table th.sorted { color: var(--accent-blue); }
+
+        .data-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+        }
+
+        .data-table tr { transition: background 0.1s; }
+        .data-table tbody tr:hover { background: var(--bg-overlay); }
+        .data-table tbody tr.selected { background: rgba(88, 166, 255, 0.1); }
+
+        /* Группировка */
+        .group-header {
+            background: var(--bg-surface) !important;
+            cursor: pointer;
+        }
+        .group-header td {
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .group-header:hover { background: var(--bg-overlay) !important; }
+
+        /* Ячейки */
+        .cell-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .cell-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            max-width: 280px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .cell-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .building-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+        .building-dot.nansen { background: var(--accent-blue); }
+        .building-dot.botanica { background: var(--accent-green); }
+
+        .cell-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .cell-status.checked { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+        .cell-status.pending { background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); }
+        .cell-status.writeoff { background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
+
+        .cell-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .cell-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .cell-actions {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        tr:hover .cell-actions { opacity: 1; }
+
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+            border: none;
+            background: transparent;
+        }
+        .action-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+        .action-btn.green:hover { background: rgba(63, 185, 80, 0.2); color: var(--accent-green); }
+        .action-btn.red:hover { background: rgba(248, 81, 73, 0.2); color: var(--accent-red); }
+
+        /* Чекбокс */
+        .checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .checkbox:hover { border-color: var(--accent-blue); }
+        .checkbox.checked { background: var(--accent-blue); border-color: var(--accent-blue); }
+
+        /* Нижняя панель */
+        .footer {
+            padding: 10px 20px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-surface);
+            flex-shrink: 0;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .page-btn {
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: var(--bg-overlay);
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .page-btn:hover { border-color: var(--border); color: var(--text-primary); }
+        .page-btn.active { background: var(--accent-blue); border-color: var(--accent-blue); color: white; }
+
+        /* FAB для мобильных */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: var(--accent-blue);
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4);
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        /* Адаптив */
+        @media (max-width: 1024px) {
+            .sidebar { width: 56px; }
+            .sidebar .nav-text, .sidebar .badge, .sidebar .logo-text { display: none; }
+            .sidebar .nav-item { justify-content: center; padding: 10px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .fab { display: flex; }
+            .header { padding: 12px 16px; }
+            .toolbar { padding: 8px 16px; overflow-x: auto; }
+            .quick-stats { display: none; }
+            .data-table th, .data-table td { padding: 8px 12px; }
+            .cell-name { max-width: 160px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- Сайдбар -->
+    <aside class="sidebar">
+        <div class="p-4 border-b border-[var(--border-light)]">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white text-xs font-bold">102</div>
+                <span class="logo-text text-sm font-semibold">Инвентарь</span>
+            </div>
+        </div>
+
+        <nav class="flex-1 py-2">
+            <div class="nav-item active">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                <span class="nav-text">Оборудование</span>
+                <span class="badge">1234</span>
+            </div>
+            <div class="nav-item">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="nav-text">Проверка</span>
+            </div>
+            <div class="nav-item">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"/></svg>
+                <span class="nav-text">Картриджи</span>
+                <span class="badge warn">3</span>
+            </div>
+            <div class="nav-item">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                <span class="nav-text">Здания</span>
+            </div>
+            <div class="nav-item">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="nav-text">Отчёты</span>
+            </div>
+        </nav>
+
+        <div class="p-3 border-t border-[var(--border-light)]">
+            <div class="nav-item">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span class="nav-text">Настройки</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Основной контент -->
+    <main class="main">
+        <!-- Хедер -->
+        <header class="header">
+            <div class="quick-stats">
+                <div class="quick-stat active">
+                    <span class="num">1234</span>
+                    <span style="color: var(--text-muted)">всего</span>
+                </div>
+                <div class="quick-stat">
+                    <span class="num green">892</span>
+                    <span style="color: var(--text-muted)">ок</span>
+                </div>
+                <div class="quick-stat">
+                    <span class="num yellow">342</span>
+                    <span style="color: var(--text-muted)">ждут</span>
+                </div>
+                <div class="quick-stat">
+                    <span class="num red">15</span>
+                    <span style="color: var(--text-muted)">списать</span>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" placeholder="Поиск по номеру, названию, кабинету...">
+                <kbd>/</kbd>
+            </div>
+
+            <button class="action-btn" title="Добавить">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </button>
+            <button class="action-btn" title="Экспорт">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            </button>
+        </header>
+
+        <!-- Тулбар -->
+        <div class="toolbar">
+            <div class="filter-group">
+                <button class="filter-btn active">Все</button>
+                <button class="filter-btn">Нансена</button>
+                <button class="filter-btn">Ботаничка</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="filter-group">
+                <button class="filter-btn active">Любой статус</button>
+                <button class="filter-btn">✓ Проверено</button>
+                <button class="filter-btn">⏳ Ожидает</button>
+                <button class="filter-btn">✕ Списание</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <span class="tag blue">🖥️ Компьютеры ×</span>
+            <span class="tag green">3 этаж ×</span>
+
+            <span class="results-count">Показано: 127 из 1234</span>
+        </div>
+
+        <!-- Таблица -->
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px"><div class="checkbox"></div></th>
+                        <th class="sorted" style="width: 100px">Инв. № ↓</th>
+                        <th>Наименование</th>
+                        <th style="width: 140px">Категория</th>
+                        <th style="width: 160px">Расположение</th>
+                        <th style="width: 100px">Статус</th>
+                        <th style="width: 90px">Дата</th>
+                        <th style="width: 80px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Группа -->
+                    <tr class="group-header">
+                        <td colspan="8">
+                            <span style="margin-right: 8px;">▼</span>
+                            🖥️ Компьютеры и мониторы
+                            <span style="margin-left: 8px; color: var(--accent-green);">45/52</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="checkbox"></div></td>
+                        <td class="cell-id">0001234</td>
+                        <td class="cell-name">Dell OptiPlex 7090 Micro</td>
+                        <td style="color: var(--text-secondary)">Компьютеры</td>
+                        <td class="cell-location">
+                            <span class="building-dot nansen"></span>
+                            <span>Каб. 301, 3 эт.</span>
+                        </td>
+                        <td><span class="cell-status checked"><span class="dot"></span>Проверено</span></td>
+                        <td class="cell-date">15.12.24</td>
+                        <td>
+                            <div class="cell-actions">
+                                <button class="action-btn green" title="Отметить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></button>
+                                <button class="action-btn" title="Изменить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="checkbox"></div></td>
+                        <td class="cell-id">0001235</td>
+                        <td class="cell-name">Монитор LG 27UK850-W 27"</td>
+                        <td style="color: var(--text-secondary)">Мониторы</td>
+                        <td class="cell-location">
+                            <span class="building-dot nansen"></span>
+                            <span>Каб. 301, 3 эт.</span>
+                        </td>
+                        <td><span class="cell-status checked"><span class="dot"></span>Проверено</span></td>
+                        <td class="cell-date">15.12.24</td>
+                        <td>
+                            <div class="cell-actions">
+                                <button class="action-btn green" title="Отметить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></button>
+                                <button class="action-btn" title="Изменить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="checkbox"></div></td>
+                        <td class="cell-id">0001240</td>
+                        <td class="cell-name">Компьютер HP ProDesk 400 G7</td>
+                        <td style="color: var(--text-secondary)">Компьютеры</td>
+                        <td class="cell-location">
+                            <span class="building-dot botanica"></span>
+                            <span>Каб. 105, 1 эт.</span>
+                        </td>
+                        <td><span class="cell-status pending"><span class="dot"></span>Ожидает</span></td>
+                        <td class="cell-date">—</td>
+                        <td>
+                            <div class="cell-actions">
+                                <button class="action-btn green" title="Отметить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></button>
+                                <button class="action-btn" title="Изменить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="checkbox"></div></td>
+                        <td class="cell-id">0000891</td>
+                        <td class="cell-name">Монитор Samsung SyncMaster 940n</td>
+                        <td style="color: var(--text-secondary)">Мониторы</td>
+                        <td class="cell-location">
+                            <span class="building-dot nansen"></span>
+                            <span>Бухгалтерия, 2 эт.</span>
+                        </td>
+                        <td><span class="cell-status writeoff"><span class="dot"></span>Списание</span></td>
+                        <td class="cell-date">10.12.24</td>
+                        <td>
+                            <div class="cell-actions">
+                                <button class="action-btn" title="Изменить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                                <button class="action-btn red" title="Удалить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Группа -->
+                    <tr class="group-header">
+                        <td colspan="8">
+                            <span style="margin-right: 8px;">▼</span>
+                            🖨️ Принтеры и МФУ
+                            <span style="margin-left: 8px; color: var(--accent-green);">28/35</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="checkbox"></div></td>
+                        <td class="cell-id">0002341</td>
+                        <td class="cell-name">МФУ Xerox VersaLink C7025</td>
+                        <td style="color: var(--text-secondary)">МФУ</td>
+                        <td class="cell-location">
+                            <span class="building-dot nansen"></span>
+                            <span>Учительская, 2 эт.</span>
+                        </td>
+                        <td><span class="cell-status checked"><span class="dot"></span>Проверено</span></td>
+                        <td class="cell-date">14.12.24</td>
+                        <td>
+                            <div class="cell-actions">
+                                <button class="action-btn green" title="Отметить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></button>
+                                <button class="action-btn" title="Изменить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="checkbox"></div></td>
+                        <td class="cell-id">0002342</td>
+                        <td class="cell-name">Принтер HP LaserJet Pro M404dn</td>
+                        <td style="color: var(--text-secondary)">Принтеры</td>
+                        <td class="cell-location">
+                            <span class="building-dot botanica"></span>
+                            <span>Приёмная, 1 эт.</span>
+                        </td>
+                        <td><span class="cell-status pending"><span class="dot"></span>Ожидает</span></td>
+                        <td class="cell-date">—</td>
+                        <td>
+                            <div class="cell-actions">
+                                <button class="action-btn green" title="Отметить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></button>
+                                <button class="action-btn" title="Изменить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="checkbox"></div></td>
+                        <td class="cell-id">0002350</td>
+                        <td class="cell-name">МФУ Canon imageRUNNER 2206</td>
+                        <td style="color: var(--text-secondary)">МФУ</td>
+                        <td class="cell-location">
+                            <span class="building-dot nansen"></span>
+                            <span>Каб. 201, 2 эт.</span>
+                        </td>
+                        <td><span class="cell-status checked"><span class="dot"></span>Проверено</span></td>
+                        <td class="cell-date">13.12.24</td>
+                        <td>
+                            <div class="cell-actions">
+                                <button class="action-btn green" title="Отметить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></button>
+                                <button class="action-btn" title="Изменить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Группа -->
+                    <tr class="group-header">
+                        <td colspan="8">
+                            <span style="margin-right: 8px;">▶</span>
+                            📺 Телевизоры и панели
+                            <span style="margin-left: 8px; color: var(--accent-yellow);">12/18</span>
+                        </td>
+                    </tr>
+
+                    <!-- Группа -->
+                    <tr class="group-header">
+                        <td colspan="8">
+                            <span style="margin-right: 8px;">▶</span>
+                            🎤 Аудиооборудование
+                            <span style="margin-left: 8px; color: var(--accent-green);">8/8</span>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Футер -->
+        <footer class="footer">
+            <div class="pagination">
+                <button class="page-btn">←</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <span>...</span>
+                <button class="page-btn">25</button>
+                <button class="page-btn">→</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted);">
+                <span>50 на странице</span>
+                <span>•</span>
+                <span>Последнее сохранение: 14:32</span>
+            </div>
+        </footer>
+    </main>
+</div>
+
+<!-- FAB для мобильных -->
+<button class="fab">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+</button>
+
+</body>
+</html>
