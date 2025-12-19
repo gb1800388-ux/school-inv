@@ -689,7 +689,7 @@
             );
         };
 
-        const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenStats, onOpenExport, onOpenSettings, onOpenHistory, onOpenNotes, onOpenCartridges, onOpenProcurement, problemCount, notesCount, criticalCartridgesCount, procurementCount }) => (
+        const NavRail = ({ onOpenRooms, onOpenPeople, onAddEquipment, onShowInfo, onGoHome, onOpenStats, onOpenExport, onOpenSettings, onOpenHistory, onOpenNotes, onOpenCartridges, onOpenProcurement, onOpenConsumables, problemCount, notesCount, criticalCartridgesCount, procurementCount, consumablesCount }) => (
             <div className="nav-rail w-16 bg-gray-900 flex flex-col items-center py-4 flex-shrink-0">
                 <button onClick={onShowInfo} className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mb-6" title="О программе">
                     <span className="text-white font-bold text-sm">102</span>
@@ -715,6 +715,10 @@
                     <button onClick={onOpenProcurement} className="nav-btn text-gray-400 hover:text-white relative" title="Потребности">
                         🛒
                         {procurementCount > 0 && <span className="nav-btn-badge bg-amber-500">{procurementCount}</span>}
+                    </button>
+                    <button onClick={onOpenConsumables} className="nav-btn text-gray-400 hover:text-white relative" title="Склад расходников">
+                        📦
+                        {consumablesCount > 0 && <span className="nav-btn-badge bg-purple-500">{consumablesCount}</span>}
                     </button>
 
                     <div className="w-8 h-px bg-gray-700 my-2"></div>
@@ -4081,6 +4085,426 @@
             );
         };
 
+        // Модальное окно склада расходников (мелочёвка)
+        const ConsumablesModal = ({ isOpen, onClose, stock, setStock, history, setHistory, directories, showToast }) => {
+            const [activeTab, setActiveTab] = useState('stock');
+            const [showAddForm, setShowAddForm] = useState(false);
+            const [showIssueForm, setShowIssueForm] = useState(null); // id товара для выдачи
+            const [filterCategory, setFilterCategory] = useState('all');
+            const [newItem, setNewItem] = useState({
+                name: '',
+                category: 'flash',
+                quantity: 1,
+                notes: ''
+            });
+            const [issueForm, setIssueForm] = useState({
+                quantity: 1,
+                building: 'Нансена',
+                floor: '',
+                room: '',
+                recipient: '',
+                notes: ''
+            });
+
+            const categories = [
+                { id: 'flash', name: 'Флешки', icon: '💾' },
+                { id: 'mouse', name: 'Мышки', icon: '🖱️' },
+                { id: 'keyboard', name: 'Клавиатуры', icon: '⌨️' },
+                { id: 'ssd', name: 'SSD', icon: '💽' },
+                { id: 'hdd', name: 'HDD', icon: '💿' },
+                { id: 'ram', name: 'Память (RAM)', icon: '🧩' },
+                { id: 'cable', name: 'Кабели', icon: '🔌' },
+                { id: 'headphones', name: 'Наушники', icon: '🎧' },
+                { id: 'other', name: 'Прочее', icon: '📦' }
+            ];
+
+            const getCategoryInfo = (catId) => categories.find(c => c.id === catId) || { name: catId, icon: '📦' };
+
+            const handleAddItem = () => {
+                if (!newItem.name.trim()) {
+                    showToast('Укажите название');
+                    return;
+                }
+                const item = {
+                    id: 'cons_' + Date.now(),
+                    ...newItem,
+                    name: newItem.name.trim(),
+                    quantity: parseInt(newItem.quantity) || 1,
+                    createdAt: new Date().toISOString()
+                };
+                setStock(prev => [item, ...prev]);
+                setNewItem({ name: '', category: 'flash', quantity: 1, notes: '' });
+                setShowAddForm(false);
+                showToast('Товар добавлен на склад');
+            };
+
+            const handleUpdateQuantity = (id, delta) => {
+                setStock(prev => prev.map(item => {
+                    if (item.id === id) {
+                        const newQty = Math.max(0, (item.quantity || 0) + delta);
+                        return { ...item, quantity: newQty };
+                    }
+                    return item;
+                }));
+            };
+
+            const handleDeleteItem = (id) => {
+                setStock(prev => prev.filter(item => item.id !== id));
+                showToast('Товар удалён со склада');
+            };
+
+            const handleIssue = (itemId) => {
+                const item = stock.find(i => i.id === itemId);
+                if (!item) return;
+
+                if (!issueForm.recipient.trim()) {
+                    showToast('Укажите получателя');
+                    return;
+                }
+
+                const issueQty = parseInt(issueForm.quantity) || 1;
+                if (issueQty > item.quantity) {
+                    showToast('Недостаточно на складе');
+                    return;
+                }
+
+                // Уменьшаем количество на складе
+                setStock(prev => prev.map(i => {
+                    if (i.id === itemId) {
+                        return { ...i, quantity: i.quantity - issueQty };
+                    }
+                    return i;
+                }));
+
+                // Добавляем в историю выдач
+                const historyEntry = {
+                    id: 'issue_' + Date.now(),
+                    itemId,
+                    itemName: item.name,
+                    category: item.category,
+                    quantity: issueQty,
+                    ...issueForm,
+                    recipient: issueForm.recipient.trim(),
+                    issuedAt: new Date().toISOString()
+                };
+                setHistory(prev => [historyEntry, ...prev]);
+
+                setShowIssueForm(null);
+                setIssueForm({ quantity: 1, building: 'Нансена', floor: '', room: '', recipient: '', notes: '' });
+                showToast(`Выдано: ${item.name} x${issueQty}`);
+            };
+
+            const filteredStock = useMemo(() => {
+                if (filterCategory === 'all') return stock;
+                return stock.filter(item => item.category === filterCategory);
+            }, [stock, filterCategory]);
+
+            const stats = useMemo(() => ({
+                totalItems: stock.length,
+                totalQuantity: stock.reduce((sum, item) => sum + (item.quantity || 0), 0),
+                lowStock: stock.filter(item => item.quantity > 0 && item.quantity <= 2).length,
+                outOfStock: stock.filter(item => item.quantity === 0).length,
+                issuedToday: history.filter(h => {
+                    const issued = new Date(h.issuedAt);
+                    const today = new Date();
+                    return issued.toDateString() === today.toDateString();
+                }).length
+            }), [stock, history]);
+
+            const handlePrintStock = () => {
+                const itemsInStock = stock.filter(item => item.quantity > 0);
+                if (itemsInStock.length === 0) {
+                    showToast('Склад пуст');
+                    return;
+                }
+                const date = new Date().toLocaleDateString('ru-RU');
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>Склад расходников</title><style>');
+                printWindow.document.write('*{margin:0;padding:0;box-sizing:border-box}');
+                printWindow.document.write('body{font-family:"Segoe UI",Tahoma,sans-serif;padding:20px;color:#333;font-size:12px}');
+                printWindow.document.write('.header{text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid #805ad5}');
+                printWindow.document.write('.header h1{font-size:18px;color:#553c9a;margin-bottom:5px}');
+                printWindow.document.write('table{width:100%;border-collapse:collapse;font-size:11px}');
+                printWindow.document.write('th{background:#553c9a;color:white;padding:8px;text-align:left;font-weight:600}');
+                printWindow.document.write('td{padding:8px;border:1px solid #e2e8f0;vertical-align:top}');
+                printWindow.document.write('tr:nth-child(even){background:#f7fafc}');
+                printWindow.document.write('.low-stock{background:#fff5f5;color:#c53030}');
+                printWindow.document.write('.footer{margin-top:20px;text-align:center;font-size:10px;color:#718096}');
+                printWindow.document.write('@media print{body{padding:10px}@page{margin:10mm;size:A4 portrait}}');
+                printWindow.document.write('</style></head><body>');
+                printWindow.document.write('<div class="header"><h1>СКЛАД РАСХОДНИКОВ</h1><p>ГКОУ СКОШИ №102 • ' + date + '</p></div>');
+                printWindow.document.write('<table><thead><tr><th>№</th><th>Наименование</th><th>Категория</th><th>Кол-во</th><th>Примечание</th></tr></thead><tbody>');
+
+                itemsInStock.forEach((item, idx) => {
+                    const cat = getCategoryInfo(item.category);
+                    const lowClass = item.quantity <= 2 ? ' class="low-stock"' : '';
+                    printWindow.document.write('<tr' + lowClass + '><td>' + (idx + 1) + '</td><td>' + item.name + '</td><td>' + cat.icon + ' ' + cat.name + '</td><td>' + item.quantity + '</td><td>' + (item.notes || '-') + '</td></tr>');
+                });
+
+                printWindow.document.write('</tbody></table>');
+                printWindow.document.write('<div class="footer">Всего наименований: ' + itemsInStock.length + ' • Общее количество: ' + stats.totalQuantity + ' • Сформировано: ' + new Date().toLocaleString('ru-RU') + '</div>');
+                printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
+                printWindow.document.close();
+                showToast('Печать склада');
+            };
+
+            const handlePrintHistory = () => {
+                if (history.length === 0) {
+                    showToast('История пуста');
+                    return;
+                }
+                const date = new Date().toLocaleDateString('ru-RU');
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write('<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>История выдач</title><style>');
+                printWindow.document.write('*{margin:0;padding:0;box-sizing:border-box}');
+                printWindow.document.write('body{font-family:"Segoe UI",Tahoma,sans-serif;padding:20px;color:#333;font-size:12px}');
+                printWindow.document.write('.header{text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid #2f855a}');
+                printWindow.document.write('.header h1{font-size:18px;color:#276749;margin-bottom:5px}');
+                printWindow.document.write('table{width:100%;border-collapse:collapse;font-size:11px}');
+                printWindow.document.write('th{background:#276749;color:white;padding:8px;text-align:left;font-weight:600}');
+                printWindow.document.write('td{padding:8px;border:1px solid #e2e8f0;vertical-align:top}');
+                printWindow.document.write('tr:nth-child(even){background:#f7fafc}');
+                printWindow.document.write('.footer{margin-top:20px;text-align:center;font-size:10px;color:#718096}');
+                printWindow.document.write('@media print{body{padding:10px}@page{margin:10mm;size:A4 landscape}}');
+                printWindow.document.write('</style></head><body>');
+                printWindow.document.write('<div class="header"><h1>ИСТОРИЯ ВЫДАЧ РАСХОДНИКОВ</h1><p>ГКОУ СКОШИ №102 • ' + date + '</p></div>');
+                printWindow.document.write('<table><thead><tr><th>№</th><th>Дата</th><th>Наименование</th><th>Кол-во</th><th>Получатель</th><th>Кабинет</th><th>Примечание</th></tr></thead><tbody>');
+
+                history.forEach((entry, idx) => {
+                    const issuedDate = new Date(entry.issuedAt).toLocaleDateString('ru-RU');
+                    const location = [entry.building, entry.floor ? entry.floor + ' эт.' : '', entry.room].filter(Boolean).join(', ');
+                    printWindow.document.write('<tr><td>' + (idx + 1) + '</td><td>' + issuedDate + '</td><td>' + entry.itemName + '</td><td>' + entry.quantity + '</td><td>' + entry.recipient + '</td><td>' + (location || '-') + '</td><td>' + (entry.notes || '-') + '</td></tr>');
+                });
+
+                printWindow.document.write('</tbody></table>');
+                printWindow.document.write('<div class="footer">Всего выдач: ' + history.length + ' • Сформировано: ' + new Date().toLocaleString('ru-RU') + '</div>');
+                printWindow.document.write('<script>window.onload=function(){window.print();}<\/script></body></html>');
+                printWindow.document.close();
+                showToast('Печать истории выдач');
+            };
+
+            if (!isOpen) return null;
+
+            return (
+                <Modal isOpen={isOpen} onClose={onClose} title="Склад расходников" size="lg">
+                    <div className="space-y-4">
+                        {/* Статистика */}
+                        <div className="grid grid-cols-5 gap-2">
+                            <div className="text-center p-2 bg-purple-100 rounded-lg">
+                                <div className="text-lg font-bold text-purple-700">{stats.totalItems}</div>
+                                <div className="text-xs text-purple-600">Позиций</div>
+                            </div>
+                            <div className="text-center p-2 bg-blue-100 rounded-lg">
+                                <div className="text-lg font-bold text-blue-700">{stats.totalQuantity}</div>
+                                <div className="text-xs text-blue-600">Всего шт.</div>
+                            </div>
+                            <div className="text-center p-2 bg-amber-100 rounded-lg">
+                                <div className="text-lg font-bold text-amber-700">{stats.lowStock}</div>
+                                <div className="text-xs text-amber-600">Мало</div>
+                            </div>
+                            <div className="text-center p-2 bg-red-100 rounded-lg">
+                                <div className="text-lg font-bold text-red-700">{stats.outOfStock}</div>
+                                <div className="text-xs text-red-600">Нет</div>
+                            </div>
+                            <div className="text-center p-2 bg-green-100 rounded-lg">
+                                <div className="text-lg font-bold text-green-700">{stats.issuedToday}</div>
+                                <div className="text-xs text-green-600">Выдано сегодня</div>
+                            </div>
+                        </div>
+
+                        {/* Вкладки */}
+                        <div className="flex gap-2 border-b border-gray-200 pb-2">
+                            <button onClick={() => setActiveTab('stock')} className={`px-4 py-2 rounded-t-lg text-sm font-semibold ${activeTab === 'stock' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                📦 Склад
+                            </button>
+                            <button onClick={() => setActiveTab('history')} className={`px-4 py-2 rounded-t-lg text-sm font-semibold ${activeTab === 'history' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                📋 История выдач ({history.length})
+                            </button>
+                        </div>
+
+                        {activeTab === 'stock' && (
+                            <>
+                                {/* Кнопки */}
+                                <div className="flex gap-2 flex-wrap">
+                                    <button onClick={() => setShowAddForm(true)} className="touch-btn px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold text-sm">
+                                        + Добавить на склад
+                                    </button>
+                                    <button onClick={handlePrintStock} className="touch-btn px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm">
+                                        🖨️ Печать
+                                    </button>
+                                </div>
+
+                                {/* Фильтр по категориям */}
+                                <div className="flex gap-1 flex-wrap">
+                                    <button onClick={() => setFilterCategory('all')} className={`px-2 py-1 rounded text-xs font-semibold ${filterCategory === 'all' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-600'}`}>Все</button>
+                                    {categories.map(cat => (
+                                        <button key={cat.id} onClick={() => setFilterCategory(cat.id)} className={`px-2 py-1 rounded text-xs font-semibold ${filterCategory === cat.id ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                            {cat.icon}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Форма добавления */}
+                                {showAddForm && (
+                                    <div className="p-4 bg-purple-50 rounded-xl border border-purple-200 space-y-3">
+                                        <h4 className="font-bold text-gray-800">Добавить на склад</h4>
+                                        <input
+                                            type="text"
+                                            value={newItem.name}
+                                            onChange={e => setNewItem(prev => ({ ...prev, name: e.target.value }))}
+                                            placeholder="Название (например: USB Flash 32GB)"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                            autoFocus
+                                        />
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-gray-500 mb-1">Категория</label>
+                                                <select value={newItem.category} onChange={e => setNewItem(prev => ({ ...prev, category: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                                    {categories.map(cat => (
+                                                        <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-gray-500 mb-1">Количество</label>
+                                                <input type="number" min="1" value={newItem.quantity} onChange={e => setNewItem(prev => ({ ...prev, quantity: parseInt(e.target.value) || 1 }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-500 mb-1">Примечание</label>
+                                            <input type="text" value={newItem.notes} onChange={e => setNewItem(prev => ({ ...prev, notes: e.target.value }))} placeholder="Доп. информация" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={handleAddItem} className="touch-btn flex-1 py-2 bg-purple-600 text-white rounded-lg font-semibold text-sm">Добавить</button>
+                                            <button onClick={() => setShowAddForm(false)} className="touch-btn flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold text-sm">Отмена</button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Список товаров */}
+                                <div className="space-y-2 max-h-72 overflow-y-auto custom-scroll">
+                                    {filteredStock.length === 0 ? (
+                                        <div className="text-center py-8 text-gray-400">
+                                            <div className="text-4xl mb-2">📦</div>
+                                            <p>Склад пуст</p>
+                                        </div>
+                                    ) : (
+                                        filteredStock.map(item => {
+                                            const cat = getCategoryInfo(item.category);
+                                            const isLow = item.quantity > 0 && item.quantity <= 2;
+                                            const isEmpty = item.quantity === 0;
+                                            return (
+                                                <div key={item.id} className={`p-3 bg-white rounded-lg border-l-4 card-shadow ${isEmpty ? 'border-l-red-500 opacity-60' : isLow ? 'border-l-amber-500' : 'border-l-purple-500'}`}>
+                                                    {showIssueForm === item.id ? (
+                                                        <div className="space-y-2">
+                                                            <div className="font-semibold text-gray-800 text-sm">{cat.icon} {item.name}</div>
+                                                            <div className="grid grid-cols-2 gap-2">
+                                                                <div>
+                                                                    <label className="block text-xs font-semibold text-gray-500 mb-1">Кол-во (макс: {item.quantity})</label>
+                                                                    <input type="number" min="1" max={item.quantity} value={issueForm.quantity} onChange={e => setIssueForm(prev => ({ ...prev, quantity: Math.min(parseInt(e.target.value) || 1, item.quantity) }))} className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm" />
+                                                                </div>
+                                                                <div>
+                                                                    <label className="block text-xs font-semibold text-gray-500 mb-1">Получатель*</label>
+                                                                    <input type="text" list="cons-people-list" value={issueForm.recipient} onChange={e => setIssueForm(prev => ({ ...prev, recipient: e.target.value }))} placeholder="ФИО" className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm" />
+                                                                    <datalist id="cons-people-list">{directories.people?.map(p => <option key={p} value={p} />)}</datalist>
+                                                                </div>
+                                                            </div>
+                                                            <div className="grid grid-cols-3 gap-2">
+                                                                <select value={issueForm.building} onChange={e => setIssueForm(prev => ({ ...prev, building: e.target.value }))} className="px-2 py-1.5 border border-gray-300 rounded text-xs">
+                                                                    <option value="Нансена">Нансена</option>
+                                                                    <option value="Ботаничка">Ботаничка</option>
+                                                                </select>
+                                                                <select value={issueForm.floor} onChange={e => setIssueForm(prev => ({ ...prev, floor: e.target.value }))} className="px-2 py-1.5 border border-gray-300 rounded text-xs">
+                                                                    <option value="">Этаж</option>
+                                                                    <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                                                                </select>
+                                                                <input type="text" list="cons-rooms-list" value={issueForm.room} onChange={e => setIssueForm(prev => ({ ...prev, room: e.target.value }))} placeholder="Каб." className="px-2 py-1.5 border border-gray-300 rounded text-xs" />
+                                                                <datalist id="cons-rooms-list">{directories.rooms?.map(r => <option key={r} value={r} />)}</datalist>
+                                                            </div>
+                                                            <input type="text" value={issueForm.notes} onChange={e => setIssueForm(prev => ({ ...prev, notes: e.target.value }))} placeholder="Примечание" className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm" />
+                                                            <div className="flex gap-2">
+                                                                <button onClick={() => handleIssue(item.id)} className="touch-btn flex-1 py-1.5 bg-green-600 text-white rounded text-xs font-semibold">Выдать</button>
+                                                                <button onClick={() => setShowIssueForm(null)} className="touch-btn flex-1 py-1.5 bg-gray-200 text-gray-700 rounded text-xs font-semibold">Отмена</button>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <div className="flex-1">
+                                                                <div className="flex items-center gap-2 flex-wrap mb-1">
+                                                                    <span className="text-lg">{cat.icon}</span>
+                                                                    <span className="font-semibold text-gray-800">{item.name}</span>
+                                                                    <span className={`text-xs px-1.5 py-0.5 rounded font-mono ${isEmpty ? 'bg-red-100 text-red-700' : isLow ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'}`}>
+                                                                        {item.quantity} шт
+                                                                    </span>
+                                                                </div>
+                                                                <div className="text-xs text-gray-400">{cat.name}{item.notes ? ' • ' + item.notes : ''}</div>
+                                                            </div>
+                                                            <div className="flex items-center gap-1">
+                                                                <button onClick={() => handleUpdateQuantity(item.id, -1)} disabled={item.quantity <= 0} className="touch-btn w-7 h-7 bg-gray-200 rounded text-sm font-bold disabled:opacity-40">−</button>
+                                                                <button onClick={() => handleUpdateQuantity(item.id, 1)} className="touch-btn w-7 h-7 bg-gray-200 rounded text-sm font-bold">+</button>
+                                                                {item.quantity > 0 && (
+                                                                    <button onClick={() => setShowIssueForm(item.id)} className="touch-btn px-2 py-1 bg-green-500 text-white rounded text-xs font-semibold ml-1" title="Выдать">📤</button>
+                                                                )}
+                                                                <button onClick={() => handleDeleteItem(item.id)} className="touch-btn w-7 h-7 bg-red-500 text-white rounded text-xs font-semibold ml-1" title="Удалить">✗</button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            </>
+                        )}
+
+                        {activeTab === 'history' && (
+                            <>
+                                <div className="flex gap-2 flex-wrap">
+                                    <button onClick={handlePrintHistory} className="touch-btn px-4 py-2 bg-green-600 text-white rounded-lg font-semibold text-sm">
+                                        🖨️ Печать истории
+                                    </button>
+                                </div>
+
+                                <div className="space-y-2 max-h-80 overflow-y-auto custom-scroll">
+                                    {history.length === 0 ? (
+                                        <div className="text-center py-8 text-gray-400">
+                                            <div className="text-4xl mb-2">📋</div>
+                                            <p>История выдач пуста</p>
+                                        </div>
+                                    ) : (
+                                        history.map(entry => {
+                                            const cat = getCategoryInfo(entry.category);
+                                            const issuedDate = new Date(entry.issuedAt);
+                                            const location = [entry.building, entry.floor ? entry.floor + ' эт.' : '', entry.room].filter(Boolean).join(', ');
+                                            return (
+                                                <div key={entry.id} className="p-3 bg-white rounded-lg border-l-4 border-l-green-500 card-shadow">
+                                                    <div className="flex items-start justify-between gap-2">
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                                                                <span>{cat.icon}</span>
+                                                                <span className="font-semibold text-gray-800">{entry.itemName}</span>
+                                                                <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">x{entry.quantity}</span>
+                                                            </div>
+                                                            <div className="text-xs text-gray-500 space-x-2">
+                                                                <span>👤 {entry.recipient}</span>
+                                                                {location && <span>📍 {location}</span>}
+                                                            </div>
+                                                            {entry.notes && <p className="text-xs text-gray-400 mt-1 italic">{entry.notes}</p>}
+                                                            <p className="text-xs text-gray-300 mt-1">{issuedDate.toLocaleDateString('ru-RU')} {issuedDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </Modal>
+            );
+        };
+
         const App = () => {
             const contentRef = useRef(null);
 
@@ -4157,6 +4581,23 @@
             });
             const [procurementModal, setProcurementModal] = useState({ open: false });
 
+            // Склад расходников (мелочёвка: флешки, мышки, клавиатуры, SSD, HDD, RAM)
+            const [consumablesStock, setConsumablesStock] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('inv_102_consumables_stock');
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                return [];
+            });
+            const [consumablesHistory, setConsumablesHistory] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('inv_102_consumables_history');
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                return [];
+            });
+            const [consumablesModal, setConsumablesModal] = useState({ open: false });
+
             const [sidebarOpen, setSidebarOpen] = useState(false);
             const [activeCategory, setActiveCategory] = useState('Все оборудование');
             const [activeFilter, setActiveFilter] = useState('all');
@@ -4197,6 +4638,9 @@
             useEffect(() => { localStorage.setItem('inv_102_cartridge_history', JSON.stringify(cartridgeHistory)); }, [cartridgeHistory]);
             useEffect(() => { localStorage.setItem('inv_102_manual_cartridge_mapping', JSON.stringify(manualCartridgeMapping)); }, [manualCartridgeMapping]);
             useEffect(() => { localStorage.setItem('inv_102_procurement_needs', JSON.stringify(procurementNeeds)); }, [procurementNeeds]);
+            // Сохранение данных склада расходников
+            useEffect(() => { localStorage.setItem('inv_102_consumables_stock', JSON.stringify(consumablesStock)); }, [consumablesStock]);
+            useEffect(() => { localStorage.setItem('inv_102_consumables_history', JSON.stringify(consumablesHistory)); }, [consumablesHistory]);
 
             const addToHistory = useCallback((action, item, actionText) => {
                 setHistory(prev => [{
@@ -5285,7 +5729,7 @@
             // Полный экспорт всех данных (бэкап)
             const handleExportJSON = () => {
                 const fullBackup = {
-                    version: '2.0',
+                    version: '2.1',
                     exportedAt: new Date().toISOString(),
                     equipment,
                     directories,
@@ -5294,7 +5738,9 @@
                     cartridgeStock,
                     cartridgeHistory,
                     manualCartridgeMapping,
-                    procurementNeeds
+                    procurementNeeds,
+                    consumablesStock,
+                    consumablesHistory
                 };
                 const data = JSON.stringify(fullBackup, null, 2);
                 const blob = new Blob([data], { type: 'application/json' });
@@ -5352,6 +5798,14 @@
                         // Восстанавливаем потребности
                         if (json.procurementNeeds) {
                             setProcurementNeeds(json.procurementNeeds);
+                        }
+
+                        // Восстанавливаем склад расходников
+                        if (json.consumablesStock) {
+                            setConsumablesStock(json.consumablesStock);
+                        }
+                        if (json.consumablesHistory) {
+                            setConsumablesHistory(json.consumablesHistory);
                         }
 
                         showToast(`📥 Восстановлено: ${imp.length} элементов`);
@@ -5469,10 +5923,12 @@
                         onOpenNotes={() => setNotesModal({ open: true })}
                         onOpenCartridges={() => setCartridgesModal({ open: true, tab: 'stock' })}
                         onOpenProcurement={() => setProcurementModal({ open: true })}
+                        onOpenConsumables={() => setConsumablesModal({ open: true })}
                         problemCount={problemItems.length}
                         notesCount={notesCount}
                         criticalCartridgesCount={criticalCartridgesCount}
                         procurementCount={procurementNeeds.filter(n => n.status === 'pending').length}
+                        consumablesCount={consumablesStock.filter(item => item.quantity > 0 && item.quantity <= 2).length}
                     />
 
                     {/* ИЗМЕНЕНО: добавлен onRoomClick */}
@@ -5676,6 +6132,18 @@
                         onClose={() => setProcurementModal({ open: false })}
                         needs={procurementNeeds}
                         setNeeds={setProcurementNeeds}
+                        directories={directories}
+                        showToast={showToast}
+                    />
+
+                    {/* Модальное окно склада расходников */}
+                    <ConsumablesModal
+                        isOpen={consumablesModal.open}
+                        onClose={() => setConsumablesModal({ open: false })}
+                        stock={consumablesStock}
+                        setStock={setConsumablesStock}
+                        history={consumablesHistory}
+                        setHistory={setConsumablesHistory}
                         directories={directories}
                         showToast={showToast}
                     />
